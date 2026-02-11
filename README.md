@@ -17,3 +17,9 @@
 - `fig` (includes both figures and tables)
 - `paper` (primarily `.tex` files, macros, bibliography)
 
+## For 2/18
+
+- Finish populating the `package_name` dir and pick a name. 
+- Reconcile Violet + Frannie's version of `model.py` so that it works with other scripts.
+- Verify that everything runs. 
+  
