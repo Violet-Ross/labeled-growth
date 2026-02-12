@@ -15,7 +15,7 @@ general <- dbReadTable(con, "general")
 
 dbDisconnect(con)
 
-write_csv(general, "general.csv")
+write_csv(general, "throughput/general.csv")
 
 # Reading in author_gender
 con <- dbConnect(
@@ -30,7 +30,7 @@ genauth_old <- dbReadTable(con, "genauth_old")
 
 dbDisconnect(con)
 
-write_csv(genauth_old, "author_gender.csv")
+write_csv(genauth_old, "throughput/author_gender.csv")
 
 
 # Reading in authors
@@ -46,6 +46,6 @@ authors <- dbReadTable(con, "authors")
 
 dbDisconnect(con)
 
-write_csv(authors, "authors.csv")
+write_csv(authors, "throughput/authors.csv")
 
 

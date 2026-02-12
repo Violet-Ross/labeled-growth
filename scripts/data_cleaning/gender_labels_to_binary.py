@@ -31,4 +31,4 @@ new_H = xgi.Hypergraph(new_edges)
 new_H.set_node_attributes(label_dict, name = "label")
 
 # save the hypergraph locally
-xgi.write_json(new_H, "gender_coauth_sorted.json")
+xgi.write_json(new_H, "throughput/gender_coauth_sorted.json")
