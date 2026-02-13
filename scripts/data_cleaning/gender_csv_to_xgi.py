@@ -37,4 +37,4 @@ year_id_dict = dict(zip(H.edges, years))
 H.set_edge_attributes(year_id_dict, name = "year")
 
 # save the hypergraph locally
-xgi.write_json(H, "gender_coauth.json")
+xgi.write_json(H, "throughput/gender_coauth.json")

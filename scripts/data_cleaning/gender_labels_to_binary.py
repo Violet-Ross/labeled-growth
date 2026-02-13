@@ -2,7 +2,7 @@ import xgi
 import numpy as np
 
 # read in data from csv_to_xgi.py
-H_json = xgi.read_json("gender_coauth.json")
+H_json = xgi.read_json("throughput/gender_coauth.json")
 
 nodes = np.array(list(H_json.nodes))
 labels = np.array(H_json.nodes.attrs('label').aslist())
