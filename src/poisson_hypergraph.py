@@ -276,7 +276,7 @@ class GH:
                     self.total_num_1 += 1
 
             ## Add the edge to the hypergraph
-            # self.H.add_edge(e_prime)
+            self.H.add_edge(e_prime)
             self.edge_members.append(set(e_prime))
             self.last_added.append(last)
 
