@@ -1,9 +1,7 @@
 import xgi
 
-try:
-    from src.poisson_hypergraph import GH
-except:
-    from poisson_hypergraph import GH
+
+from src.poisson_hypergraph import GH
 import numpy as np
 import csv
 import random

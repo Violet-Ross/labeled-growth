@@ -1,7 +1,4 @@
-try:
-    from poisson_hypergraph import GH
-except:
-    from src.poisson_hypergraph import GH
+from src.poisson_hypergraph import GH
 import numpy as np
 import math
 

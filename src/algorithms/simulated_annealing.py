@@ -1,13 +1,9 @@
 
 import xgi
-try:
-    from src.poisson_hypergraph import GH
-    from src.NMI_func import NMI
-    from src.f_e_pair import FEPair
-except:
-    from poisson_hypergraph import GH
-    from NMI_func import NMI
-    from f_e_pair import FEPair
+
+
+from src.poisson_hypergraph import GH
+from src.algorithms.f_e_pair import FEPair
 import numpy as np
 import csv
 import random
@@ -259,7 +255,7 @@ class SimulatedAnnealingApprox:
         elif epoch > 0 and epoch < 5:
             if self.standard_deviation == None:
                 self.standard_deviation = statistics.stdev(self.LL_change_data)
-                print(self.standard_deviation)
+                # print(self.standard_deviation)
                 # print(self.standard_deviation)
                 if math.isnan(self.standard_deviation):
                     print("back sd")
