@@ -12,11 +12,11 @@ import xgi
 # import src
 from src.poisson_hypergraph import GH
 from src.algorithms.gradient_descent import GradientDescent
+from src.algorithms.simulated_annealing import SimulatedAnnealingApprox
 import numpy as np
 import csv
 import random
 import networkx as nx
-from src.algorithms.simulated_annealing import SimulatedAnnealingApprox
 import time
 from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
 # takes in the algorithm and the timesteps to generate the graph from
