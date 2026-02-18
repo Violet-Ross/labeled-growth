@@ -23,3 +23,10 @@
 - Reconcile Violet + Frannie's version of `model.py` so that it works with other scripts.
 - Verify that everything runs. 
   
+## For 2/25
+
+- Violet will log in to Ada, Phil to help if not possible.
+- Violet to reproduce experiments and move towards producing equivalent versions of figures on new data set. 
+- Phil to buy Boulder plane tix and schedule some work time with Violet.
+- Frannie to work on optimization for community detection: no Float64 booleans!
+- Frannie to give his awesome talk and tell us how awesome it was. 
