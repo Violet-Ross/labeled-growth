@@ -1,8 +1,6 @@
 import xgi
-import poisson_hypergraph as poisson_hypergraph
-from NMI_func import NMI
-from simulated_annealing import simulated_annealing_approx_likelihood, simulated_annealing_full_likelihood, SimulatedAnnealingApprox
-from gradient_descent import GradientDescent
+from src.poisson_hypergraph import GH
+from src.algorithms.gradient_descent import GradientDescent
 import numpy as np
 import networkx as nx
 import sys
@@ -33,7 +31,7 @@ new_H = xgi.Hypergraph(new_edges)
 new_H.set_node_attributes(sorted_label_dict, name = "label")
 
 # turn the data set into an object of the GH class (so we can perform SEM on it)
-g = poisson_hypergraph.GH(new_H, [0, 1], 0, 0)
+g = GH(new_H, [0, 1], 0, 0)
 
 # # true_theta = [.43, .37, 0.001, .001, .91, .65] # Violet's approx
 # true_thetas = [[.9, .1, .001, .001, 1, .25],
@@ -68,7 +66,7 @@ gd = GradientDescent(true_theta, g, .01, (.9,.99))
 total_steps = 5
 for step in range(total_steps):
     gd.run(1)
-    with open('gradient_descent_senate_bills_results.csv', 'a', newline="") as file:
+    with open('./throughput/gradient_descent_senate_bills_results.csv', 'a', newline="") as file:
         writer = csv.writer(file)
         writer.writerows([[step, gd.label_aris[-1]]])
 
