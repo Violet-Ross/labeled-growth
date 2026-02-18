@@ -1,17 +1,22 @@
 # Evaluate algorithm performance on different parameters
-
+import os
 
 
 import sys
+# target_dir = os.path.abspath('../src')
+# project_root = os.path.abspath(os.path.join(os.getcwd(), '..'))
+# sys.path.insert(0, project_root)
+
+import sys
 import xgi
-from poisson_hypergraph import GH
-from NMI_func import NMI
-from gradient_descent import GradientDescent
+# import src
+from src.poisson_hypergraph import GH
+from src.algorithms.gradient_descent import GradientDescent
 import numpy as np
 import csv
 import random
 import networkx as nx
-from simulated_annealing import simulated_annealing_full_likelihood, simulated_annealing_approx_likelihood, simulated_annealing_likelihood_batch_approx, SimulatedAnnealingApprox
+from src.algorithms.simulated_annealing import SimulatedAnnealingApprox
 import time
 from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
 # takes in the algorithm and the timesteps to generate the graph from
@@ -200,7 +205,7 @@ def parameter_sweep_thesis(timesteps):
 
     
     from statistics import mean
-    with open('thesis_parameter_sweep_25_steps.csv', 'a', newline="") as file:
+    with open('./throughput/parameter_sweep_mean.csv', 'a', newline="") as file:
         writer = csv.writer(file)
         row = [mean(modularity_time), mean(simulated_annealing_time), mean(gradient_descent_time)]
         writer.writerows([row])
@@ -213,7 +218,7 @@ time.sleep(-1*parameter_index)
 data = parameter_sweep_thesis(50)
 
 
-with open('thesis_parameter_sweep_25_steps.csv', 'a', newline="") as file:
+with open('./throughput/parameter_sweep.csv', 'a', newline="") as file:
     writer = csv.writer(file)
     row = [parameter_index]
     row = row + data
