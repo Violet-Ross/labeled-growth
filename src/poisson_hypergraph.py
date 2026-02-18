@@ -157,8 +157,18 @@ class GH:
         # Get the external nodes
         # total_num_1 = sum(node_labels)
         # total_num_0 = len(node_labels) - total_num_1
-        all_ext_num_0 = self.total_num_0 - e_num_0
-        all_ext_num_1 = self.total_num_1 - e_num_1
+
+        # PREVIOUS
+        # all_ext_num_0 = self.total_num_0 - e_num_0
+        # all_ext_num_1 = self.total_num_1 - e_num_1
+
+        # NEW REVISIONS
+        all_ext_nodes = set(prev_nodes) - e
+        all_ext_labels = [node_labels[node] for node in all_ext_nodes]
+
+        all_ext_num_1 = sum(all_ext_labels)
+        all_ext_num_0 = len(all_ext_labels) - sum(all_ext_labels)
+
 
         # external_nodes = set(prev_nodes).intersection(e_prime) - set(e)
         # external_labels = [node_labels[node] for node in external_nodes]           
