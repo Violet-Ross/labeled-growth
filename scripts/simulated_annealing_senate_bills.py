@@ -7,7 +7,7 @@ import sys
 import csv
 from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
 
-H = xgi.load_xgi_data("senate-bills")
+H = xgi.read_json("throughput/senate_bills.json")
 
 # Violet's Code Congress Sem
 party_affs = H.nodes.attrs('affiliation').asdict()
