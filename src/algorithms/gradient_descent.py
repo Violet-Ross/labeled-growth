@@ -1,6 +1,5 @@
 import xgi
 
-
 from src.poisson_hypergraph import GH
 import numpy as np
 import csv
@@ -87,16 +86,29 @@ class GradientDescent:
             # hardcoded in for testing
             if e_index >= batch_size: 
                 break 
-            
-            if e_index % 1000 == 0:
-                with open('gradient_descent_senate_bills.csv', 'a', newline="") as file:
-                    writer = csv.writer(file)
-                    writer.writerows([[e_index]])
+
                 
 
             # neighbors = H.edges.neighbors(e)
             e = self.g.get_edges()[e_index]
-            prev_nodes = list(range(self.g.last_added[e_index - 1] + 1))
+            
+            # DEPRACATED
+            # prev_nodes = list(range(self.g.last_added[e_index - 1] + 1))
+            prev_nodes = []
+
+            for node in range(len(self.g.get_labels())):
+                if (self.g.first_seen[node] < e_index):
+                    prev_nodes.append(node)
+
+
+            # DEBUGGING
+            # from collections import Counter
+
+            # print(Counter(prev_nodes) == Counter(prev_nodes_test))
+
+            # print(len(prev_nodes))
+            # print(len(prev_nodes_test))
+
             novel_nodes = set(e) - set(prev_nodes)
             for f_index in self.generate_canidate_f_indexes(e_index):
                 f = self.g.get_edges()[f_index]
@@ -268,10 +280,10 @@ class GradientDescent:
             if e_index >= batch_size: 
                 break 
             
-            if e_index % 1000 == 0:
-                with open('gradient_descent_senate_bills.csv', 'a', newline="") as file:
-                    writer = csv.writer(file)
-                    writer.writerows([[e_index]])
+            # if e_index % 1000 == 0:
+            #     with open('gradient_descent_senate_bills.csv', 'a', newline="") as file:
+            #         writer = csv.writer(file)
+            #         writer.writerows([[e_index]])
                 
 
             # neighbors = H.edges.neighbors(e)
