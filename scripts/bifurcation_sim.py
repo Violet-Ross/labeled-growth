@@ -1,5 +1,5 @@
 import xgi
-import poisson_hypergraph
+from src.poisson_hypergraph import GH
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
@@ -15,15 +15,15 @@ for beta in beta_vals:
         # print(" exp: " + str(experiment))
         H = xgi.Hypergraph([[0, 1]])
         H.set_node_attributes({0 : 0, 1 : 1}, name = "label")
-        GH = poisson_hypergraph.GH(H, [0, 1], 0.6, 0.2)
+        growing_hypergraph = GH(H, [0, 1], 0.6, 0.2)
 
         timesteps = 10000
-        GH.add_hyperedge(timesteps, r * beta, r * (1 - beta), r * beta, r * (1 - beta))
+        growing_hypergraph.add_hyperedge(timesteps, r * beta, r * (1 - beta), r * beta, r * (1 - beta))
         
         k_0_list = []
         k_1_list = []
-        labels = GH.get_labels()
-        edges = GH.get_edges()
+        labels = growing_hypergraph.get_labels()
+        edges = growing_hypergraph.get_edges()
         for edge in edges:
             edge_labels = [labels[node] for node in edge]
             k_1_list.append(sum(edge_labels))

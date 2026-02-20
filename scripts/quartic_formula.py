@@ -64,6 +64,6 @@ for b in beta_vals:
     solutions.append(solution)
 
 # solns from newest a,b,c,d vals
-with open('analytic_results_newest.csv', 'w', newline='') as csvfile:
+with open('throughput/analytic_results.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(solutions)
