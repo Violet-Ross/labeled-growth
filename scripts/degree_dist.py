@@ -1,10 +1,12 @@
-import sem_expo
-import poisson_hypergraph
+from src.algorithms.sem import sem_functions
+from src.poisson_hypergraph import GH
 import xgi
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
 import seaborn as sns
+
+sem = sem_functions()
 
 thetas = [[0.9, 0.1, 0.75, 0.25, 0.75, 0.25],
           [0.6, 0.4, 0.75, 0.25, 0.75, 0.25],
@@ -14,9 +16,8 @@ centers_list = []
 heights_list = []
 size_counts_list = []
 for theta in thetas:
-    func = sem_expo.sem_functions()
     gh_size = 100000
-    GH = func.generate_hypergraph(theta, gh_size)
+    GH = sem.generate_hypergraph(theta, gh_size)
     H = xgi.Hypergraph(GH.edge_members)
     centers, heights = xgi.degree_histogram(H)
     centers_list.append(centers)

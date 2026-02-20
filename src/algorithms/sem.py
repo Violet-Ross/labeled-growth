@@ -1,6 +1,6 @@
 import numpy as np
 import random
-import poisson_hypergraph
+from src.poisson_hypergraph import GH
 import xgi
 import matplotlib.pyplot as plt 
 import math
@@ -164,14 +164,14 @@ class sem_functions:
     def generate_hypergraph(self, theta, size):
         H = xgi.Hypergraph([[0, 1]])
         H.set_node_attributes({0 : 0, 1 : 1}, name = "label")
-        GH = poisson_hypergraph.GH(H, [0, 1], theta[0], theta[1])
-        GH.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
-        return GH
+        growing_hypergraph = GH(H, [0, 1], theta[0], theta[1])
+        growing_hypergraph.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
+        return growing_hypergraph
 
     def generate_hypergraph_big(self, theta, size):
         H = xgi.Hypergraph([[0, 1], [0, 2, 3, 4], [1, 5, 6, 7, 8]])
         H.set_node_attributes({0 : 0, 1 : 1, 2 : 0, 3 : 1, 4 : 0, 5 : 1, 6 : 0, 7 : 1, 8 : 0}, name = "label")
-        GH = poisson_hypergraph.GH(H, [0, 1], theta[0], theta[1])
-        GH.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
-        return GH
+        growing_hypergraph = GH(H, [0, 1], theta[0], theta[1])
+        growing_hypergraph.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
+        return growing_hypergraph
 
