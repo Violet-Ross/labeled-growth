@@ -1,4 +1,4 @@
-import poisson_hypergraph
+from src.poisson_hypergraph import GH
 import xgi
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,9 +14,9 @@ def generate_data_assm2(p, q, timesteps, experiments):
         for experiment in range(experiments):
             H = xgi.Hypergraph([[0, 1]])
             H.set_node_attributes({0 : 0, 1 : 1}, name = "label")
-            GH = poisson_hypergraph.GH(H, [0, 1], p, q)
+            growing_hypergraph = GH(H, [0, 1], p, q)
 
-            GH.add_hyperedge(timesteps, beta, 1 - beta, beta, 1 - beta)
+            growing_hypergraph.add_hyperedge(timesteps, beta, 1 - beta, beta, 1 - beta)
             
             k_0_list = []
             k_1_list = []
@@ -25,8 +25,8 @@ def generate_data_assm2(p, q, timesteps, experiments):
             prop_1_list = []
             prop_0_sq_list = []
             prop_1_sq_list = []
-            labels = GH.node_labels
-            for edge in GH.edge_members:
+            labels = growing_hypergraph.node_labels
+            for edge in growing_hypergraph.edge_members:
                 edge_labels = [labels[node] for node in edge]
                 k_1_list.append(sum(edge_labels))
                 k_0_list.append(len(edge_labels) - sum(edge_labels))
@@ -63,9 +63,9 @@ def generate_data_assm4(p, q, timesteps, experiments):
         for experiment in range(experiments):
             H = xgi.Hypergraph([[0, 1]])
             H.set_node_attributes({0 : 0, 1 : 1}, name = "label")
-            GH = poisson_hypergraph.GH(H, [0, 1], p, q)
+            growing_hypergraph = GH(H, [0, 1], p, q)
 
-            GH.add_hyperedge(timesteps, beta, 1 - beta, beta, 1 - beta)
+            growing_hypergraph.add_hyperedge(timesteps, beta, 1 - beta, beta, 1 - beta)
             
             k_0_list = []
             k_1_list = []
@@ -74,8 +74,8 @@ def generate_data_assm4(p, q, timesteps, experiments):
             prop_1_list = []
             prop_0_sq_list = []
             prop_1_sq_list = []
-            labels = GH.node_labels
-            for edge in GH.edge_members:
+            labels = growing_hypergraph.node_labels
+            for edge in growing_hypergraph.edge_members:
                 edge_labels = [labels[node] for node in edge]
                 k_1_list.append(sum(edge_labels))
                 k_0_list.append(len(edge_labels) - sum(edge_labels))
@@ -105,9 +105,9 @@ def generate_data_assm1(p, q, timesteps, experiments):
         for experiment in range(experiments):
             H = xgi.Hypergraph([[0, 1]])
             H.set_node_attributes({0 : 0, 1 : 1}, name = "label")
-            GH = poisson_hypergraph.GH(H, [0, 1], p, q)
+            growing_hypergraph = GH(H, [0, 1], p, q)
 
-            GH.add_hyperedge(timesteps, beta, 1 - beta, beta, 1 - beta)
+            growing_hypergraph.add_hyperedge(timesteps, beta, 1 - beta, beta, 1 - beta)
             
             e_k_0_list = []
             e_k_1_list = []
@@ -115,18 +115,18 @@ def generate_data_assm1(p, q, timesteps, experiments):
             e_prop_1_list = []
             e_prop_0_sq_list = []
             e_prop_1_sq_list = []
-            labels = GH.node_labels
+            labels = growing_hypergraph.node_labels
             i_ests = []
             e_ests = []
-            for edge_ind in range(1, len(GH.edge_members)):
-                edge = GH.edge_members[edge_ind]
+            for edge_ind in range(1, len(growing_hypergraph.edge_members)):
+                edge = growing_hypergraph.edge_members[edge_ind]
                 i_k_0_list = []
                 i_k_1_list = []
                 i_prop_0_list = []
                 i_prop_1_list = []
                 i_prop_0_sq_list = []
                 i_prop_1_sq_list = []
-                prev_edges = GH.edge_members[0:edge_ind]
+                prev_edges = growing_hypergraph.edge_members[0:edge_ind]
                 for i in prev_edges:
                     i_labels = [labels[node] for node in i]
                     i_k_1_list.append(sum(i_labels))
@@ -170,47 +170,48 @@ def generate_data_assm1(p, q, timesteps, experiments):
     return data
 
 
-data = generate_data_assm1(0.9, 0.1, 5000, 5)
+# data = generate_data_assm1(0.9, 0.1, 5000, 5)
+data = generate_data_assm1(0.9, 0.1, 10, 5)
 with open('throughput/assumption1_09_01.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm1(0.1, 0.9, 5000, 5)
+data = generate_data_assm1(0.1, 0.9, 10, 5)
 with open('throughput/assumption1_01_09.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm1(0.6, 0.4, 5000, 5)
+data = generate_data_assm1(0.6, 0.4, 10, 5)
 with open('throughput/assumption1_06_04.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm2(0.9, 0.1, 5000, 5)
+data = generate_data_assm2(0.9, 0.1, 10, 5)
 with open('throughput/assumption2_09_01.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm2(0.1, 0.9, 5000, 5)
+data = generate_data_assm2(0.1, 0.9, 10, 5)
 with open('throughput/assumption2_01_09.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm2(0.6, 0.4, 5000, 5)
+data = generate_data_assm2(0.6, 0.4, 10, 5)
 with open('throughput/assumption2_06_04.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm4(0.9, 0.1, 5000, 5)
+data = generate_data_assm4(0.9, 0.1, 10, 5)
 with open('throughput/assumption4_09_01.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm4(0.1, 0.9, 5000, 5)
+data = generate_data_assm4(0.1, 0.9, 10, 5)
 with open('throughput/assumption4_01_09.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm4(0.6, 0.4, 5000, 5)
+data = generate_data_assm4(0.6, 0.4, 10, 5)
 with open('throughput/assumption4_06_04.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)

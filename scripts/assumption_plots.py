@@ -1,4 +1,3 @@
-import poisson_hypergraph
 import xgi
 import numpy as np
 import matplotlib.pyplot as plt
@@ -267,7 +266,7 @@ with open('throughput/assumption4_01_09.csv', 'r') as file:
         assm4_1_9.append(row)
 assm4_1_9 = np.array(assm4_1_9)[1:].astype(float)
 
-assm1_viz(assm1_9_1, assm1_6_4. assm1_1_9)
-assm2_viz(assm2_9_1, assm2_6_4. assm2_1_9)
-assm3_viz(assm2_9_1, assm2_6_4. assm2_1_9)
-assm4_viz(assm4_9_1, assm4_6_4. assm4_1_9)
+assm1_viz(assm1_9_1, assm1_6_4, assm1_1_9)
+assm2_viz(assm2_9_1, assm2_6_4, assm2_1_9)
+assm3_viz(assm2_9_1, assm2_6_4, assm2_1_9)
+assm4_viz(assm4_9_1, assm4_6_4, assm4_1_9)
