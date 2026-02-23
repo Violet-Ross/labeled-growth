@@ -1,5 +1,5 @@
-import poisson_hypergraph
-import sem_expo
+from src.poisson_hypergraph import GH
+from src.algorithms.sem import sem_functions
 import xgi
 import numpy as np
 import matplotlib.pyplot as plt 
@@ -7,8 +7,8 @@ import seaborn as sns
 from collections import Counter
 from itertools import combinations
 
-H = xgi.read_json("throughput/senate_bills.json")
-GH = poisson_hypergraph.GH(H, [0, 1])
+H = xgi.read_json("throughput/senate_bills.json", nodetype=int)
+growing_hypergraph = GH(H, [0, 1], 0, 0)
 
 def SEM_viz(estimates1):
     sns.set_style("whitegrid")
@@ -75,8 +75,8 @@ axs[1].set_yscale('log')
 plt.savefig('fig/senate_degree_and_edge_distribution.png', dpi=300, bbox_inches="tight")
 
 ## SEM on senate data
-func = sem_expo.sem_functions()
+sem = sem_functions()
 s_intial = np.array([1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5])
-estimates = func.SEM(GH, s_intial, 3000, 0.01, 0.001)
+estimates = sem.SEM_without_likelihood(growing_hypergraph, s_intial, 3000, 0.01, 0.001)
 
 SEM_viz(np.array(estimates))
