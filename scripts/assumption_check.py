@@ -170,48 +170,47 @@ def generate_data_assm1(p, q, timesteps, experiments):
     return data
 
 
-# data = generate_data_assm1(0.9, 0.1, 5000, 5)
-data = generate_data_assm1(0.9, 0.1, 10, 5)
+data = generate_data_assm1(0.9, 0.1, 5000, 5)
 with open('throughput/assumption1_09_01.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm1(0.1, 0.9, 10, 5)
+data = generate_data_assm1(0.1, 0.9, 5000, 5)
 with open('throughput/assumption1_01_09.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm1(0.6, 0.4, 10, 5)
+data = generate_data_assm1(0.6, 0.4, 5000, 5)
 with open('throughput/assumption1_06_04.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm2(0.9, 0.1, 10, 5)
+data = generate_data_assm2(0.9, 0.1, 5000, 5)
 with open('throughput/assumption2_09_01.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm2(0.1, 0.9, 10, 5)
+data = generate_data_assm2(0.1, 0.9, 5000, 5)
 with open('throughput/assumption2_01_09.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm2(0.6, 0.4, 10, 5)
+data = generate_data_assm2(0.6, 0.4, 5000, 5)
 with open('throughput/assumption2_06_04.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm4(0.9, 0.1, 10, 5)
+data = generate_data_assm4(0.9, 0.1, 5000, 5)
 with open('throughput/assumption4_09_01.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm4(0.1, 0.9, 10, 5)
+data = generate_data_assm4(0.1, 0.9, 5000, 5)
 with open('throughput/assumption4_01_09.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
 
-data = generate_data_assm4(0.6, 0.4, 10, 5)
+data = generate_data_assm4(0.6, 0.4, 5000, 5)
 with open('throughput/assumption4_06_04.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(data)
