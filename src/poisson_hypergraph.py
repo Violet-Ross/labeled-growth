@@ -220,6 +220,100 @@ class GH:
         prob = prob_e * prob_u * prob_e_prime
 
         return(prob)
+    
+    def f_likelihood(self, e_index, u_index, e_prime_index, theta):
+        p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er = theta
+
+        node_labels = self.node_labels
+
+        e = self.edge_members[e_index]
+        e_prime = self.edge_members[e_prime_index]
+        u_label = node_labels[u_index]
+
+        intersect = e.intersection(e_prime)
+
+        if len(intersect) == 0:
+            return(0)
+        if u_index not in e_prime:
+            return(0)
+
+        node_labels = self.get_labels()
+        e_labels = [node_labels[node] for node in e]
+        e_prime_labels = [node_labels[node] for node in e_prime]
+        int_labels = [node_labels[node] for node in intersect]
+
+        # Get edge and intersection sizes
+        e_prime_num_1 = sum(e_prime_labels)
+        e_prime_num_0 = len(e_prime_labels) - e_prime_num_1
+        e_num_1 = sum(e_labels)
+        e_num_0 = len(e_labels) - e_num_1
+        e_num_u, e_num_r = self.set_values(e_num_0, e_num_1, u_label)
+        e_prime_num_u, e_prime_num_r = self.set_values(e_prime_num_0, e_prime_num_1, u_label)
+        int_num_u, int_num_r = self.set_values(len(int_labels) - sum(int_labels), sum(int_labels), u_label)
+
+        # Get the new nodes
+        prev_edges = self.edge_members[0:e_prime_index]
+        prev_nodes = list(range(self.last_added[e_prime_index - 1] + 1))
+
+        novel_nodes = set(e_prime) - set(prev_nodes)
+        novel_labels = [node_labels[node] for node in novel_nodes]
+
+        novel_num_u, novel_num_r = self.set_values(len(novel_labels) - sum(novel_labels), sum(novel_labels), u_label)
+      
+        # Get the external nodes
+        # total_num_1 = sum(node_labels)
+        # total_num_0 = len(node_labels) - total_num_1
+        all_ext_num_0 = self.total_num_0 - e_num_0
+        all_ext_num_1 = self.total_num_1 - e_num_1
+
+        # external_nodes = set(prev_nodes).intersection(e_prime) - set(e)
+        # external_labels = [node_labels[node] for node in external_nodes]           
+        ext_num_u = e_prime_num_u - int_num_u - novel_num_u
+        ext_num_r = e_prime_num_r - int_num_r - novel_num_r
+
+
+        all_ext_num_u, all_ext_num_r = self.set_values(all_ext_num_0, all_ext_num_1, u_label)
+        # ext_num_u, ext_num_r = self.set_values(len(external_labels) - sum(external_labels), sum(external_labels), u_label)
+
+        # Probability calculation
+        prob_e = 1 / e_prime_index
+
+        prob_u = 1 / len(e)
+
+        P1 = p ** (int_num_u - 1)
+        P2 = (1 - p) ** (e_num_u - int_num_u)
+        P3 = q ** (int_num_r)
+        P4 = (1 - q) ** (e_num_r - int_num_r)
+
+        if ext_num_u == 0:
+            prob_those_ext_u = 1
+        else:
+            prob_those_ext_u = 1 / ss.binom(all_ext_num_u, ext_num_u) # formerly: ext_num_u / all_ext_num_u
+        if ext_num_r == 0:
+            prob_those_ext_r = 1
+        else: prob_those_ext_r = 1 / ss.binom(all_ext_num_r, ext_num_r) # formerly: ext_num_r / all_ext_num_r
+
+        P5_numer = (math.e ** (-gamma_eu)) * (gamma_eu ** ext_num_u) * prob_those_ext_u * (math.e ** (-gamma_er)) * (gamma_er ** ext_num_r) * prob_those_ext_r
+        P5_denom = math.factorial(ext_num_u) * math.factorial(ext_num_r)
+        P5 = P5_numer / P5_denom
+        P6_numer = (math.e ** (-gamma_nu)) * (gamma_nu ** novel_num_u) * (math.e ** (-gamma_nr)) * (gamma_nr ** novel_num_r)
+        P6_denom = (math.factorial(novel_num_u) * math.factorial(novel_num_r))
+        P6 = P6_numer / P6_denom
+        prob_e_prime = P1 * P2 * P3 * P4  * P5 * P6
+        
+        lik = prob_e * prob_u * prob_e_prime
+
+        # get s_u and t_u
+        s_u = e_num_u - 1
+        t_u = int_num_u - 1
+
+        # get s_r and t_r
+        s_r = e_num_r
+        t_r = int_num_r
+
+        f = np.array([t_u, s_u, t_r, s_r, ext_num_u, ext_num_r, novel_num_u, novel_num_r])
+
+        return([lik, f])
 
     def add_hyperedge(self, num_edges = 1, gamma_nu = 1, gamma_nr = 1, gamma_eu = 1, gamma_er = 1):
         for i in range(num_edges):
