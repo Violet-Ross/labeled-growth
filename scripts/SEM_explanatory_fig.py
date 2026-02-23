@@ -1,4 +1,3 @@
-from src.poisson_hypergraph import GH
 import numpy as np
 import xgi
 import matplotlib.pyplot as plt
