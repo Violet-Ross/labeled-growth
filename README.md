@@ -30,3 +30,17 @@
 - Phil to buy Boulder plane tix and schedule some work time with Violet.
 - Frannie to work on optimization for community detection: no Float64 booleans!
 - Frannie to give his awesome talk and tell us how awesome it was. 
+
+## For 3/4
+
+- Phil to request VPN and Ada access for Violet.
+- Violet to run experiments.
+- Violet to implement an SEM convergence criterion based on the parameter vector.
+- Violet to try constructing subsets of the coauthorship data.
+   - For Frannie's purposes: 30K hyperedges and 300 nodes (Senate Bills) is the upper bound. More nodes probably ok if fewer edges. 
+- Generate likelihood heatmaps with revised likelihood calculation
+- Phil to bring in his own scripts and structure the relative imports in the same way that Violet did.
+- Frannie to try two more ideas for making gradient descent more tractable.
+
+
+## For Later
