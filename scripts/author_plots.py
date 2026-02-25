@@ -7,7 +7,7 @@ import seaborn as sns
 from collections import Counter
 from itertools import combinations
 
-H = xgi.read_json("throughput/senate_bills.json", nodetype=int)
+H = xgi.read_json("throughput/gender_coauth_sorted.json", nodetype=int)
 growing_hypergraph = GH(H, [0, 1], 0, 0)
 
 def SEM_viz(estimates1):
@@ -43,7 +43,7 @@ def SEM_viz(estimates1):
     axs[1].set_xlabel("iterations")
     axs[2].set_xlabel("iterations")
 
-    fig.savefig('fig/senate_SEM.png', dpi=300, bbox_inches="tight")
+    fig.savefig('fig/coauth_SEM.png', dpi=300, bbox_inches="tight")
 
 ## Degree distribution of senate data
 centers, heights = xgi.degree_histogram(H)
@@ -72,7 +72,7 @@ axs[1].set_ylabel("P(s)")
 axs[1].set_xlabel("s")
 axs[1].set_yscale('log')
 
-plt.savefig('fig/senate_degree_and_edge_distribution.png', dpi=300, bbox_inches="tight")
+plt.savefig('fig/coauth_degree_and_edge_distribution.png', dpi=300, bbox_inches="tight")
 
 ## SEM on senate data
 sem = sem_functions()

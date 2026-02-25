@@ -1,6 +1,6 @@
 import numpy as np
 import random
-import poisson_hypergraph
+from src.poisson_hypergraph import GH
 import xgi
 import matplotlib.pyplot as plt 
 import math
@@ -110,7 +110,29 @@ class sem_functions:
             this_likelihood += np.log(self.e_prime_prob(GH, e_prime_index, theta))
         return this_likelihood
 
-    def SEM(self, GH, s, timesteps, initial_rate, constant):
+    def SEM_with_likelihood(self, GH, s, timesteps, initial_rate, constant):
+        p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er = self.g(s)
+        edges = GH.get_edges()
+        lr = initial_rate
+        estimates = [[0, p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er]]
+        likelihoods = [self.GH_prob(GH, [p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er])]
+        for t in range(1, timesteps):
+            e_prime_index = random.randint(1, len(edges) - 1)
+            s_prime = self.exp_stats(GH, e_prime_index, [p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er])
+            lr = lr * (math.e ** (-constant))
+            s = ((1 - lr) * s) + (lr * s_prime)
+            p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er  = self.g(s)
+            estimates.append([t, p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er])
+            likelihoods.append(self.GH_prob(GH, [p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er]))
+            if t > 400:
+                i = 2
+                while False not in (np.abs(np.array(estimates[-1][1:]) - np.array(estimates[-i][1:])) < 0.05):
+                    if i == 400:
+                        return estimates, likelihoods
+                    i += 1
+        return estimates, likelihoods
+    
+    def SEM_without_likelihood(self, GH, s, timesteps, initial_rate, constant):
         p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er = self.g(s)
         edges = GH.get_edges()
         lr = initial_rate
@@ -164,14 +186,14 @@ class sem_functions:
     def generate_hypergraph(self, theta, size):
         H = xgi.Hypergraph([[0, 1]])
         H.set_node_attributes({0 : 0, 1 : 1}, name = "label")
-        GH = poisson_hypergraph.GH(H, [0, 1], theta[0], theta[1])
-        GH.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
-        return GH
+        growing_hypergraph = GH(H, [0, 1], theta[0], theta[1])
+        growing_hypergraph.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
+        return growing_hypergraph
 
     def generate_hypergraph_big(self, theta, size):
         H = xgi.Hypergraph([[0, 1], [0, 2, 3, 4], [1, 5, 6, 7, 8]])
         H.set_node_attributes({0 : 0, 1 : 1, 2 : 0, 3 : 1, 4 : 0, 5 : 1, 6 : 0, 7 : 1, 8 : 0}, name = "label")
-        GH = poisson_hypergraph.GH(H, [0, 1], theta[0], theta[1])
-        GH.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
-        return GH
+        growing_hypergraph = GH(H, [0, 1], theta[0], theta[1])
+        growing_hypergraph.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
+        return growing_hypergraph
 

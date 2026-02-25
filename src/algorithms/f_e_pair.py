@@ -60,7 +60,15 @@ class FEPair:
         e = self.g.get_edges()[self.e_index]
         f = self.g.get_edges()[self.f_index]
 
-        prev_nodes = list(range(self.g.last_added[self.e_index - 1] + 1))
+        # DEPRACATED
+        # prev_nodes = list(range(self.g.last_added[self.e_index - 1] + 1))
+
+        prev_nodes = []
+
+        for node in range(len(self.g.get_labels())):
+            if (self.g.first_seen[node] < self.e_index):
+                prev_nodes.append(node)
+
 
         # novel nodes counting
         self.novel_nodes = set(e) - set(prev_nodes)

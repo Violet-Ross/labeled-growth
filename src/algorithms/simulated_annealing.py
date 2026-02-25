@@ -35,10 +35,10 @@ class SimulatedAnnealingApprox:
         self.likelihoods_per_step.append(self.calculate_likelihood_with_f_e_pairs(self.labels))
         self.aris_per_step.append(adjusted_rand_score(self.labels, self.g.get_labels()))
 
-        with open('likelihood_of_good_labels.csv', 'a', newline="") as file:
-            writer = csv.writer(file)
-            row = [self.aris_per_step[0], self.likelihoods_per_step[0]]
-            writer.writerows([row])
+        # with open('likelihood_of_good_labels.csv', 'a', newline="") as file:
+        #     writer = csv.writer(file)
+        #     row = [self.aris_per_step[0], self.likelihoods_per_step[0]]
+        #     writer.writerows([row])
 
         # store best likelihood and labels
         self.max_LL = self.likelihoods_per_step[0]

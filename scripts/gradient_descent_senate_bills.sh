@@ -7,7 +7,7 @@
 #SBATCH --output=./throughput/senate_bills%j.out # Output file incorporating job ID
 #SBATCH --partition=himem-long        # Partition (queue) 
 #SBATCH --time=144:00:00             # Time limit hrs:min:sec
-#SBATCH --mem=400G                 # Job memory request 
+#SBATCH --mem=700G                 # Job memory request 
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=fcataldo@middlebury.edu
 

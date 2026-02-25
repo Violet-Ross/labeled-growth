@@ -1,5 +1,3 @@
-import sem_expo
-import poisson_hypergraph
 import xgi
 import numpy as np
 import matplotlib.pyplot as plt 
@@ -69,7 +67,7 @@ def viz_with_likelihood(true_values1, estimates1, liks1, true_values2, estimates
     axs[1, 2].plot(estimates3[:, 0], [true_values3[5]] * len(estimates3[:, 0]), c = 'C1', linestyle = 'dotted', linewidth=2.5)
     axs[1, 2].plot(estimates3[:, 0], estimates3[:, 5])
     axs[1, 2].plot(estimates3[:, 0], estimates3[:, 6])
-    axs[2, 2].set_title('$\hat{\gamma}_{n, z_u} = $' f'{estimates3[-1][3]:.2f}' ", " '$\hat{\gamma}_{n, \\bar{z}_u}} = $' f'{estimates3[-1][4]:.2f}')
+    axs[2, 2].set_title('$\hat{\gamma}_{n, z_u} = $' f'{estimates3[-1][3]:.2f}' ", " '$\hat{\gamma}_{n, \\bar{z}_u} = $' f'{estimates3[-1][4]:.2f}')
     axs[2, 2].plot(estimates3[:, 0], [true_values3[2]] * len(estimates3[:, 0]), c = 'C0', linestyle = 'dotted', linewidth=2.5)
     axs[2, 2].plot(estimates3[:, 0], [true_values3[3]] * len(estimates3[:, 0]), c = 'C1', linestyle = 'dotted', linewidth=2.5)
     axs[2, 2].plot(estimates3[:, 0], estimates3[:, 3])
@@ -230,7 +228,7 @@ def viz_without_likelihood(true_values1, estimates1, true_values2, estimates2, t
     axs[1, 2].plot(estimates3[:, 0], [true_values3[5]] * len(estimates3[:, 0]), c = 'C1', linestyle = 'dotted', linewidth=2.5)
     axs[1, 2].plot(estimates3[:, 0], estimates3[:, 5])
     axs[1, 2].plot(estimates3[:, 0], estimates3[:, 6])
-    axs[2, 2].set_title('$\hat{\gamma}_{n, z_u} = $' f'{estimates3[-1][3]:.2f}' ", " '$\hat{\gamma}_{n, \\bar{z}_u}} = $' f'{estimates3[-1][4]:.2f}')
+    axs[2, 2].set_title('$\hat{\gamma}_{n, z_u} = $' f'{estimates3[-1][3]:.2f}' ", " '$\hat{\gamma}_{n, \\bar{z}_u} = $' f'{estimates3[-1][4]:.2f}')
     axs[2, 2].plot(estimates3[:, 0], [true_values3[2]] * len(estimates3[:, 0]), c = 'C0', linestyle = 'dotted', linewidth=2.5)
     axs[2, 2].plot(estimates3[:, 0], [true_values3[3]] * len(estimates3[:, 0]), c = 'C1', linestyle = 'dotted', linewidth=2.5)
     axs[2, 2].plot(estimates3[:, 0], estimates3[:, 3])
@@ -262,20 +260,38 @@ def viz_without_likelihood(true_values1, estimates1, true_values2, estimates2, t
 
     return plt
 
-func = sem_expo.sem_functions()
-s_intial = np.array([1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5])
+estimates1_extended = []
+with open('throughput/graph1_sem_ests_extended.csv', 'r') as file:
+    csv_reader = csv.reader(file)
+    for row in csv_reader:
+        estimates1_extended.append(row)
+estimates1_extended = np.array(estimates1_extended).astype(float)
 
-print("Graph 1")
-GH1 = func.generate_hypergraph(g1_true_theta, 2000)
-estimates1 = func.SEM(GH1, s_intial, 2000, 0.01, 0.001)
-print("Graph 2")
-GH2 = func.generate_hypergraph(g2_true_theta, 2000)
-estimates2 = func.SEM(GH2, s_intial, 2000, 0.01, 0.001)
-print("Graph 3")
-GH3 = func.generate_hypergraph(g3_true_theta, 2000)
-estimates3 = func.SEM(GH3, s_intial, 2000, 0.01, 0.001)
-print("Graph 4")
-GH4 = func.generate_hypergraph(g4_true_theta, 2000)
-estimates4 = func.SEM(GH4, s_intial, 2000, 0.01, 0.001)
+estimates2_extended = []
+with open('throughput/graph2_sem_ests_extended.csv', 'r') as file:
+    csv_reader = csv.reader(file)
+    for row in csv_reader:
+        estimates2_extended.append(row)
+estimates2_extended = np.array(estimates2_extended).astype(float)
 
-viz_without_likelihood(g1_true_theta, np.array(estimates1), g2_true_theta, np.array(estimates2), g3_true_theta, np.array(estimates3), g4_true_theta, np.array(estimates4))
+estimates3_extended = []
+with open('throughput/graph3_sem_ests_extended.csv', 'r') as file:
+    csv_reader = csv.reader(file)
+    for row in csv_reader:
+        estimates3_extended.append(row)
+estimates3_extended = np.array(estimates3_extended).astype(float)
+
+estimates4_extended = []
+with open('throughput/graph4_sem_ests_extended.csv', 'r') as file:
+    csv_reader = csv.reader(file)
+    for row in csv_reader:
+        estimates4_extended.append(row)
+estimates4_extended = np.array(estimates4_extended).astype(float)
+
+g1_true_theta = [0.9, 0.1, 0.75, 0.25, 0.75, 0.25]
+g2_true_theta = [0.6, 0.4, 0.75, 0.25, 0.75, 0.25]
+g3_true_theta = [0.1, 0.9, 0.9, 0.1, 0.9, 0.1]
+g4_true_theta = [0.6, 0.4, 0.9, 0.1, 0.9, 0.1]
+
+viz_with_likelihood(g1_true_theta, estimates1, liks1, g2_true_theta, estimates2, liks2, g3_true_theta, estimates3, liks3, g4_true_theta, estimates4, liks4)
+viz_without_likelihood(g1_true_theta, estimates1_extended, g2_true_theta, estimates2_extended, g3_true_theta, estimates3_extended, g4_true_theta, estimates4_extended)
