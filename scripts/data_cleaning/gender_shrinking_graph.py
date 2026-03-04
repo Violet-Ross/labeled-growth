@@ -53,6 +53,29 @@ def shrink_hypergraph(H, num_pivots):
         ego_union = hypergraph_union(ego_union, ego_net)
     return ego_union
 
+def reindex_hypergraph(H):
+    old_nodes = list(H.nodes)
+    old_edges = list(H.edges)
+
+    node_map = {old: new for new, old in enumerate(old_nodes, start=0)}
+    edge_map = {old: new for new, old in enumerate(old_edges, start=0)}
+
+    H_new = xgi.Hypergraph()
+
+    # Add nodes with remapped IDs, preserving attributes
+    for old_node in old_nodes:
+        attrs = H.nodes[old_node]
+        H_new.add_node(node_map[old_node], **attrs)
+
+    # Add edges with remapped node IDs, preserving attributes
+    for old_edge in old_edges:
+        old_members = H.edges.members(old_edge)
+        new_members = [node_map[n] for n in old_members]
+        attrs = H.edges[old_edge]
+        H_new.add_edge(new_members, id=edge_map[old_edge], **attrs)
+
+    return H_new
+
 # Estimate number of pivot edges needed to generate a subgraph with
 # the same number of hyperedges as senate bills data
 edge_counts = []
@@ -68,6 +91,7 @@ x_pred = (target_num_edges - b) / m
 
 start = time.time()
 H = shrink_hypergraph(gender, np.ceil(x_pred).astype(int))
+H = reindex_hypergraph(H) 
 end = time.time()
 xgi.write_json(H, "throughput/gender_coauth_shrunk.json")
 total_time = end - start
