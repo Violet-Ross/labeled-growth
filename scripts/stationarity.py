@@ -18,7 +18,7 @@ from linear_map import matrix_of_linear_map
 
 if __name__ == "__main__":
     
-    np.random.seed(123)
+    # np.random.seed(123)
     
     k_max = 12
     theta = [0.8, 0.2, 0.5, 0.2, 0.4, 0.2]
