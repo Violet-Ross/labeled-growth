@@ -30,3 +30,33 @@
 - Phil to buy Boulder plane tix and schedule some work time with Violet.
 - Frannie to work on optimization for community detection: no Float64 booleans!
 - Frannie to give his awesome talk and tell us how awesome it was. 
+
+## For 3/4
+
+- Phil to request VPN and Ada access for Violet.
+- Violet to run experiments.
+- Violet to implement an SEM convergence criterion based on the parameter vector.
+  - Already implemented. 
+- Violet to try constructing subsets of the coauthorship data.
+   - For Frannie's purposes: 30K hyperedges and 300 nodes (Senate Bills) is the upper bound. More nodes probably ok if fewer edges. 
+- Generate likelihood heatmaps with revised likelihood calculation
+- Phil to bring in his own scripts and structure the relative imports in the same way that Violet did.
+- Frannie to try two more ideas for making gradient descent more tractable.
+
+## For 3/11
+
+- Violet to try a percentage-based convergence criterion rather than an absolute error.
+- Violet to rerun viz related to likelihood, including the heatmap (now that likelihood is updated).
+- Violet to continue corresponding with helpdesk on Ada access.
+- Frannie to try some more with simulated annealing on edge-size limited senate bills.
+- Frannie to try on new data set.
+- Frannie to try SEM inferred parameters.
+- Frannie to try importing local senate bills in the same way that Violet did on `senate_plots.py`.
+  - Important to read nodetype as `int`. 
+
+### Issues
+
+- Label initialization on senate bills data set.
+  
+
+## For Later

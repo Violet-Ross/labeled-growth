@@ -7,7 +7,8 @@ import seaborn as sns
 from collections import Counter
 from itertools import combinations
 
-H = xgi.read_json("throughput/gender_coauth_sorted.json", nodetype=int)
+H = xgi.read_json("throughput/gender_coauth_shrunk.json", nodetype=int)
+
 growing_hypergraph = GH(H, [0, 1], 0, 0)
 
 def SEM_viz(estimates1):
