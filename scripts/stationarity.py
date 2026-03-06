@@ -1,3 +1,4 @@
+from cmath import rect
 import sys 
 sys.path.append("src")
 sys.path.append("scripts")
@@ -12,7 +13,14 @@ from matplotlib.gridspec import GridSpec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from math import factorial
 from linear_map import matrix_of_linear_map
+import matplotlib.patches as patches
 
+def get_dist(TS, window, k_max):
+    C = np.zeros((k_max + 1, k_max + 1))
+    for e in TS.edge_list[-window:]: 
+        if e[0] <= k_max and e[1] <= k_max:
+            C[e[0], e[1]] += 1
+    return C / C.sum() 
 
 
 
@@ -20,8 +28,54 @@ if __name__ == "__main__":
     
     # np.random.seed(123)
     
+    # spectral gap analysis
+    
     k_max = 12
-    theta = [0.8, 0.2, 0.5, 0.2, 0.4, 0.2]
+    grid_resolution = 9
+    gaps = np.zeros((grid_resolution, grid_resolution))
+    
+    ETA_PLUS = np.linspace(0.1, 0.9, grid_resolution)
+    ETA_MINUS = np.linspace(0.1, 0.9, grid_resolution)
+    
+    for i, eta_plus in enumerate(ETA_PLUS):
+        for j, eta_minus in enumerate(ETA_MINUS):
+            theta = [eta_plus, eta_minus, 0.5, 0.2, 0.4, 0.2]
+            M = matrix_of_linear_map(k_max, theta)
+            vals, E = np.linalg.eig(M)
+            idx = vals.argsort()[::-1]
+            spectral_gap = np.abs(vals[idx[0]]) - np.abs(vals[idx[1]])
+            gaps[j, i] = spectral_gap
+            
+    fig, ax = plt.subplots(1, 1, figsize = (6, 6))
+    im = ax.imshow(gaps, cmap = "viridis", interpolation = "nearest", origin = "lower")
+    ax.set_title("Spectral gap of linear map")
+    ax.set_xlabel(r"$\eta_+$")
+    ax.set_ylabel(r"$\eta_-$")
+    ax.set_xticks(range(grid_resolution))
+    ax.set_xticklabels([f"{x:.1f}" for x in np.linspace(0.1, 0.9, grid_resolution)])
+    ax.set_yticks(range(grid_resolution))
+    ax.set_yticklabels([f"{x:.1f}" for x in np.linspace(0.1, 0.9, grid_resolution)])
+    plt.colorbar(im, ax = ax)
+    plt.savefig("fig/spectral_gap.png", dpi = 300)
+            
+    
+    
+    
+    
+    # 
+    
+    # eta_plus_index = 8
+    # eta_minus_index = 1
+    eta_plus_index = 1
+    eta_minus_index = 0
+    eta_plus = ETA_PLUS[eta_plus_index]
+    eta_minus = ETA_MINUS[eta_minus_index]
+    
+    
+    
+    
+    k_max = 12
+    theta = [eta_plus, eta_minus, 0.5, 0.2, 0.4, 0.2]
     
     # FIRST: spectral analysis of the linear operator governing the system dynamics
     
@@ -29,14 +83,23 @@ if __name__ == "__main__":
     
     # column sums should be equal to 1
     
-    
     fig, ax = plt.subplots(1, 1, figsize = (6, 6))
     
     ax.imshow(M, cmap = "viridis", interpolation = "nearest", origin = "lower")
-    ax.set_title("Matrix of Linear Map")
+    ax.set_title("Matrix of Linear Map (shouldn't this be symmetric?)")
+    ax.set_xlabel(r"$k_0', k_1'$ (new edge size)")
+    ax.set_ylabel(r"$k_0, k_1$ (old edge size)")
+    plt.savefig("fig/linear_map_matrix.png", dpi = 300)
     
     # time for eigenstuff
     vals, E = np.linalg.eig(M)    
+
+    fig, ax = plt.subplots(1, 1, figsize = (6, 6))
+    ax.plot(vals.real, vals.imag, "o")
+    ax.set_title("Eigenvalues of Linear Map")
+    ax.set_xlabel("Real part")
+    ax.set_ylabel("Imaginary part")
+    plt.savefig("fig/linear_map_eigenvalues.png", dpi = 300)
 
     # retrieve the top eigenvectors 
     idx = vals.argsort()[::-1]
@@ -44,22 +107,21 @@ if __name__ == "__main__":
     E = E[:, idx]
     
     eigvecs = []
-    for i in range(3):
+    for i in range(2):
         vi = E[:, i].real
         vi = vi / vi.sum()
         vi = vi / np.abs(vi).sum()
         eigvecs.append(vi.reshape((k_max + 1, k_max + 1)))
     
-    
     # SECOND: simulation with the same parameters
     
-    n_steps = int(1e5)
-    project_every = 1
+    n_steps = int(1e4)
+    project_every = 100
+    window = 100
     
-    C = np.zeros((k_max + 1, k_max + 1))
     TS = ToySimulator(edge_list = [[5,5]], theta = theta, force_label = None)
 
-    projections = {i: [] for i in range(3)}
+    projections = {i: [] for i in range(2)}
     projection_timesteps = []
     
     # print(Cz)
@@ -67,12 +129,14 @@ if __name__ == "__main__":
     
     for j in range(1, n_steps): 
         TS.simulate(n_samples = 1)
-        e = TS.edge_list[-1]
-        if e[0] <= k_max and e[1] <= k_max:
-            C[e[0], e[1]] += 1
             
         if j % project_every == 0:
-            for i in range(3): 
+            C = get_dist(TS, window, k_max)
+            
+            # experimental results here are a bit weird since the 
+            # projection onto the third eigenvector doesn't seem to decay. 
+            # Are the eigenvectors not orthogonal? 
+            for i in range(2): 
                 
                 C_ = C / np.sqrt((C**2).sum())
                 E_ = eigvecs[i]
@@ -81,21 +145,26 @@ if __name__ == "__main__":
                 projections[i].append((E_norm*C_).sum())
             projection_timesteps.append(j)
             
-        
-    fig = plt.figure(layout="constrained", figsize = (9.5, 6))
     
-    widths = [1, 1, 1, 0.1]
-    gs = GridSpec(2, 4, figure=fig, width_ratios=widths)
+    # fig = plt.figure(figsize = (11, 7))    
+    fig = plt.figure(figsize = (12, 8))
+    
+    cbar_ax_width = 0.1
+    
+    widths = [1, cbar_ax_width,  1, 1, cbar_ax_width]
+    gs = GridSpec(2, 5, figure=fig, width_ratios=widths, hspace = 0.3, wspace = 0.0)
     
     axes = []
-    for i in range(3): 
+    
+    for i in range(5):
         axes.append(fig.add_subplot(gs[0, i]))
     
-    axes.append(fig.add_subplot(gs[1, 0:2]))
-    axes.append(fig.add_subplot(gs[1, 2]))
+    axes.append(fig.add_subplot(gs[1, 0:3]))
+    axes.append(fig.add_subplot(gs[1, 3]))
+    axes.append(fig.add_subplot(gs[1, 4]))
     
     
-    # num_eigvecs = 3
+    # num_eigvecs = 2
     
     v_min = -0.05
     vmax  = 0.05
@@ -104,59 +173,72 @@ if __name__ == "__main__":
     
     colors = ["steelblue", "darkgrey", "lightgrey"]
     
-    for i in range(3):
+    for i in range(2):
         vi = np.real(E[:, i])
         val = np.real(vals[i])
         vi = vi / vi.sum()
         vi = vi / np.abs(vi).sum()
         P = vi.reshape((k_max + 1, k_max + 1))
         
-        im = axes[i].imshow(P, cmap = "BrBG", interpolation = "none", vmin = v_min, vmax = vmax, origin = "lower")
-        axes[i].set_title(rf"$v_{i+1}$ ($\lambda_{i+1} = {val:.2f}$)")
-        axes[i].set_xlabel(r"$k_0$")
+        ax = axes[i+2]
+        im = ax.imshow(P, cmap = "BrBG", interpolation = "none", vmin = v_min, vmax = vmax, origin = "lower")
+        ax.set_title(rf"$v_{i+1}$ ($\lambda_{i+1} = {val:.2f}$)")
+        ax.set_xlabel(r"$k_0$")
         if i == 0: 
-            axes[i].set_ylabel(r"$k_1$")
+            ax.set_ylabel(r"$k_1$")
             
-        axes[i].set_xticks(range(0, k_max + 1, 3))
-        axes[i].set_yticks(range(0, k_max + 1, 3))
+        ax.set_xticks(range(0, k_max + 1, 3))
+        ax.set_yticks(range(0, k_max + 1, 3))
         
-        
-        axes[3].plot(projection_timesteps, projections[i], label = fr"$v_{i+1}$", color = colors[i])
-        axes[3].legend()
-        axes[3].semilogx()
-        axes[3].set_title("Cosine similarity of  sample edge size\ndistribution with top 3 eigenvectors")
+        ax = axes[5]
+        ax.plot(projection_timesteps, projections[i], label = fr"$v_{i+1}$", color = colors[i])
+        ax.legend()
+        ax.semilogx()
+        ax.set_title("Projection of simulation state onto eigenvectors")
     
     
     
-    
-    axes[3].plot([1, n_steps], [0, 0], "k--", alpha = 0.5)
-    axes[3].set_xlabel("Timestep")
-    axes[3].set_ylabel("Cosine similarity")
+    ax = axes[5]
+    ax.plot([min(projection_timesteps), n_steps], [0, 0], "k--", alpha = 0.5)
+    ax.set_xlabel("Timestep")
+    ax.set_ylabel("Cosine similarity")
+    # axes[3].set_xlim(window, None)
     
     
     #     fig.colorbar(im, ax = ax[i])
     
-    final = axes[4].imshow(C / C.sum(), cmap = "Greys", interpolation = "none", vmin = 0, origin = "lower")
-    axes[4].set_title(f"Final simulation state")
+    ax = axes[6]
+    final_window = n_steps
+    C = get_dist(TS, final_window, k_max)
+    final = ax.imshow(C / C.sum(), cmap = "Greys", interpolation = "none", vmin = 0, origin = "lower")
+    ax.set_title(f"Final simulation state")
     
-    axes[4].set_xlabel(r"$k_0$")
-    axes[4].set_ylabel(r"$k_1$")
+    ax.set_xlabel(r"$k_0$")
+    ax.set_ylabel(r"$k_1$")
     
-    axes[4].set_xticks(range(0, k_max + 1, 3))
-    axes[4].set_yticks(range(0, k_max + 1, 3))
+    ax.set_xticks(range(0, k_max + 1, 3))
+    ax.set_yticks(range(0, k_max + 1, 3))
     
-    cbar_ax = fig.add_subplot(gs[0, 3])
-    fig.colorbar(im, cax=cbar_ax)
+    fig.colorbar(im, cax = axes[4])
+    fig.colorbar(final, cax=axes[7])
     
-    cbar_ax = fig.add_subplot(gs[1, 3])
-    fig.colorbar(final, cax=cbar_ax)
     
-    # plt.tight_layout()
+    ax = axes[0]
+    im = ax.imshow(gaps, cmap = "inferno", interpolation = "none", origin = "lower")
+    ax.set_title("Spectral gap")
+    ax.set_xlabel(r"$\eta_+$")
+    ax.set_ylabel(r"$\eta_-$")
+    ax.set_xticks(range(grid_resolution))
+    ax.set_xticklabels([f"{x:.1f}" for x in np.linspace(0.1, 0.9, grid_resolution)])
+    ax.set_yticks(range(grid_resolution))
+    ax.set_yticklabels([f"{x:.1f}" for x in np.linspace(0.1, 0.9, grid_resolution)])
+    
+    fig.colorbar(im, cax=axes[1])
+    
+    
 
-    
-    # divider = make_axes_locatable(axes[4])
-    # cax = divider.append_axes('right', size='5%', pad=0.05)
-    # fig.colorbar(final, cax=cax, orientation='vertical');
+    # highlight the eta_plus and eta_minus values used in the simulation
+    rect = patches.Rectangle((eta_plus_index - 0.5, eta_minus_index - 0.5), 1, 1, linewidth=2, edgecolor='white', facecolor='none')
+    axes[0].add_patch(rect)
 
-    
-    plt.savefig("fig/linear_map_eigenvectors.png", dpi = 300)
+    plt.savefig("fig/linear_map_eigenvectors.png", dpi = 300, bbox_inches = "tight")
