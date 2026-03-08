@@ -13,8 +13,9 @@ import torch
 
 
 class GradientDescent:
-    def __init__(self, theta, g, learning_rate, momentum):
+    def __init__(self, theta, g, learning_rate, momentum, novel_nodes=True):
         self.debug = False
+        self.novel_nodes = novel_nodes
 
         self.theta = theta
         self.g = g
@@ -23,14 +24,24 @@ class GradientDescent:
         self.label_LLs = []
         self.label_aris = []
 
+        self.labels = [.5]*len(g.get_labels())
+        # self.labels[0] = .8
+        self.tensor_labels = torch.tensor(self.labels, dtype=torch.float64, requires_grad=True)
+        # self.tensor_labels = torch.full((len(g.get_labels()),), 0.5, requires_grad=True, dtype=torch.float64)
+        self.optimizer = torch.optim.Adam([self.tensor_labels], lr=learning_rate, betas=momentum)
+
         self.tensors = self.generate_tensors()
 
-        self.labels = [.5]*len(g.get_labels())
-        self.tensor_labels = torch.full((len(g.get_labels()),), 0.5, requires_grad=True, dtype=torch.float64)
-        self.optimizer = torch.optim.Adam([self.tensor_labels], lr=learning_rate, betas=momentum)
+        self.divide_by_e_index = []
+        for i in range(len(self.g.get_edges())):
+            self.divide_by_e_index.extend([float(i)] * len(self.g.get_edges()))
+
+        self.divide_by_e_index = torch.tensor(self.divide_by_e_index, requires_grad=False)
 
         self.label_aris.append(adjusted_rand_score(self.g.get_labels(), self.convert_final_labels(self.tensor_labels)))
         self.label_LLs.append(self.differentiable_log_likelihood_3D_tensor(self.tensor_labels).item())
+
+        
         # if self.debug == True:
         #     self.label_LLs_converted.append(self.g.total_log_likelihood_complete(self.theta, self.convert_final_labels(self.tensor_labels)))
 
@@ -80,35 +91,34 @@ class GradientDescent:
         ix_ext = []
         ix_posext = []
         ix_nov = []
+        ix_nt = []
 
         for e_index, e in enumerate(self.g.get_edges()):
             
             # hardcoded in for testing
             if e_index >= batch_size: 
                 break 
-
+            
+            if e_index % 1000 == 0:
+                with open('gradient_descent_senate_bills.csv', 'a', newline="") as file:
+                    writer = csv.writer(file)
+                    writer.writerows([[e_index]])
                 
 
             # neighbors = H.edges.neighbors(e)
             e = self.g.get_edges()[e_index]
+            prev_nodes = list(range(self.g.last_added[e_index - 1] + 1))
+
+            if self.novel_nodes:
+                prev_nodes = []
+                
+                for node in range(len(self.g.get_labels())):
+                    if (self.g.first_seen[node] < e_index):
+                        prev_nodes.append(node)
             
-            # DEPRACATED
-            # prev_nodes = list(range(self.g.last_added[e_index - 1] + 1))
-            prev_nodes = []
-
-            for node in range(len(self.g.get_labels())):
-                if (self.g.first_seen[node] < e_index):
-                    prev_nodes.append(node)
-
-
-            # DEBUGGING
-            # from collections import Counter
-
-            # print(Counter(prev_nodes) == Counter(prev_nodes_test))
-
-            # print(len(prev_nodes))
-            # print(len(prev_nodes_test))
-
+            for v in set(prev_nodes):
+                ix_nt.append((e_index, int(v)))
+                    
             novel_nodes = set(e) - set(prev_nodes)
             for f_index in self.generate_canidate_f_indexes(e_index):
                 f = self.g.get_edges()[f_index]
@@ -131,15 +141,9 @@ class GradientDescent:
                     for v in novel_nodes: 
                         ix_nov.append((int(e_index), int(f_index), int(v)))
 
-                # TODO: try to get rid of possible external nodes for compute ease
-                # if len(external_nodes) != 0:
-                #     for v in external_nodes: 
-                #         ix_posext.append((int(e_index), int(f_index), int(v)))
-
                 if len(external_nodes_added) != 0:
                     for v in external_nodes_added: 
                         ix_ext.append((int(e_index), int(f_index), int(v)))
-
 
         cop_tens = self.ix_to_tensor(ix_cop, m, n)
         notcop_tens = self.ix_to_tensor(ix_notcop, m, n)
@@ -148,28 +152,25 @@ class GradientDescent:
         # TODO: testing
         # posext_tens = self.ix_to_tensor(ix_posext, m, n)
         posext_tens = self.ix_to_tensor([], m, n)
+        nt = torch.sparse_coo_tensor(
+                indices=torch.tensor(ix_nt).T,
+                values=torch.ones(len(ix_nt)),
+                size=(m, n), check_invariants=False, requires_grad=False,
+                dtype=torch.float64
+            )
 
-
-        return cop_tens, notcop_tens, nov_tens, ext_tens, posext_tens
+        return cop_tens, notcop_tens, nov_tens, ext_tens, posext_tens, nt
     
-    
-
     def differentiable_log_likelihood_3D_tensor(self, tensor_labels):
         m = len(self.g.get_edges())
         p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er = self.theta
 
         summ = torch.tensor([0.0], requires_grad=True)
 
-
-        
         one_minus_tensor_labels = 1-tensor_labels
 
-        # copied node label sum for each label 1 and 0 for each f e pair
-        # is there a way with an if statement? would allow for storing bools instead of float64
         cop1 = self.tensors[0]@tensor_labels
         cop0 = self.tensors[0]@one_minus_tensor_labels
-
-
 
         notcop1 = self.tensors[1]@tensor_labels
         notcop0 = self.tensors[1]@one_minus_tensor_labels
@@ -182,8 +183,7 @@ class GradientDescent:
 
         # posext1 = self.tensors[4]@tensor_labels
         # posext0 = self.tensors[4]@(1-tensor_labels)
-
-
+        
 
         # try vectorized
         prob_u_label_equals_1 = cop1 / (cop1 + cop0)
@@ -194,6 +194,13 @@ class GradientDescent:
         # as approximate stand in for external nodes of each label
         count_1_label_nodes = torch.sum(tensor_labels).detach().clone()
         count_0_label_nodes = torch.sum(1-tensor_labels).detach().clone()
+
+        if self.novel_nodes:
+            count_1_label_nodes = self.tensors[5]@tensor_labels
+            count_0_label_nodes = self.tensors[5]@one_minus_tensor_labels
+
+            count_1_label_nodes = torch.repeat_interleave(count_1_label_nodes, m)
+            count_0_label_nodes = torch.repeat_interleave(count_0_label_nodes, m)
 
         
 
@@ -218,7 +225,7 @@ class GradientDescent:
             divide_by_e_index.extend([float(i)] * len(self.g.get_edges()))
 
 
-        divide_by_e_index = torch.tensor(divide_by_e_index, requires_grad=False) # requires_grad=True for good results...
+        divide_by_e_index = torch.tensor(divide_by_e_index, requires_grad=True)
 
             
         summ = ((prob_u_label_equals_1*prob_given_f_u_label_1 + prob_u_label_equals_0*prob_given_f_u_label_0)) /divide_by_e_index
@@ -227,21 +234,15 @@ class GradientDescent:
         summ = torch.sum(summ, dim=1)
 
         # add epsilon to avoid infinity underflow
-        epsilon = torch.tensor(10**-40, dtype=torch.float64, requires_grad=False) # for good results it was requires grad = True... untested like this
+        epsilon = torch.tensor(10**-40, requires_grad=True)
         summ = torch.sum(torch.log(summ[1:] + epsilon))
 
-    
         
-        REGULARIZATION_CONSTANT = math.sqrt(len(self.g.get_edges()))
+        REGULARIZATION_CONSTANT = math.sqrt(len(self.g.get_edges())) # LL goes down based on the number of edges, so this makes sense
+
         regularization = torch.sum(torch.log(tensor_labels) + torch.log(1-tensor_labels))
 
-    
-        # Testing
-        # with open('gradient_descent_senate_bills_results.csv', 'a', newline="") as file:
-        #     writer = csv.writer(file)
-        #     writer.writerows([[-1*summ - regularization * REGULARIZATION_CONSTANT]])
-
-        return -1*summ - regularization * REGULARIZATION_CONSTANT
+        return -1*summ - regularization * REGULARIZATION_CONSTANT    
     
     def generate_canidate_f_indexes_approx(self, e_index):
         canidate_f_indexes = []
@@ -279,11 +280,6 @@ class GradientDescent:
             # hardcoded in for testing
             if e_index >= batch_size: 
                 break 
-            
-            # if e_index % 1000 == 0:
-            #     with open('gradient_descent_senate_bills.csv', 'a', newline="") as file:
-            #         writer = csv.writer(file)
-            #         writer.writerows([[e_index]])
                 
 
             # neighbors = H.edges.neighbors(e)
@@ -337,8 +333,11 @@ class GradientDescent:
         for step in range(num_steps):
             if equal_count == 20:
                 break
+
+            
             loss = self.differentiable_log_likelihood_3D_tensor(self.tensor_labels)
-            # print(loss)
+            #print("real loss:" + str(loss))
+            
             if (torch.isnan(loss)):
                 print("NAN")
                 break
