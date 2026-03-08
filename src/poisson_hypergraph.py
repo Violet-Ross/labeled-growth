@@ -28,8 +28,8 @@ class GH:
     
     def initialize_first_seen(self):
         # stores the edge index where each node first appears
-        print(len(self.get_edges()))
-        print(len(self.get_labels()))
+        # print(len(self.get_edges()))
+        # print(len(self.get_labels()))
         first_seen = [len(self.get_edges())] * len(self.get_labels())
 
         for e_index in range(len(self.get_edges())):
