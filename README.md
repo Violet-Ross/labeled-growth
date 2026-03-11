@@ -54,6 +54,15 @@
 - Frannie to try importing local senate bills in the same way that Violet did on `senate_plots.py`.
   - Important to read nodetype as `int`. 
 
+## 3/11 Notes
+
+- Violet has Ada access.
+- SEM now has a relative error convergence criterion, looks good on small test cases, to run on next.
+- Suggestion: sensitivity analysis with respect to which data subset we take.
+- Frannie working on underflow issue with novel nodes in the likelihood.
+- Frannie to test simulated annealing as well.
+- (No rush): put citations in the intro section of the paper file and make a note.  
+
 ### Issues
 
 - Label initialization on senate bills data set.
