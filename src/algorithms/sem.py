@@ -154,7 +154,7 @@ class sem_functions:
                     if not np.allclose(
                         estimates[-1][1:],
                         estimates[-i][1:],
-                        rtol=0.5,
+                        rtol=0.05,
                         atol=1e-2     # absolute floor for near-zero params
                     ):
                         all_converged = False
