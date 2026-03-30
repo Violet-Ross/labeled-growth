@@ -22,10 +22,10 @@ def p_q_likelihoods(growing_hypergraph, grain, gammas):
     edges = growing_hypergraph.get_edges()
     step = 1 / grain
 
-    # P = np.linspace(0 + step, 1 - step, num = grain)
-    # Q = np.linspace(0 + step, 1 - step, num = grain)
-    P = np.linspace(0, 1, num = grain)
-    Q = np.linspace(0, 1, num = grain)
+    P = np.linspace(0 + step, 1 - step, num = grain)
+    Q = np.linspace(0 + step, 1 - step, num = grain)
+    # P = np.linspace(0, 1, num = grain)
+    # Q = np.linspace(0, 1, num = grain)
     
     likelihood_values = np.zeros((grain, grain))
 
@@ -115,8 +115,8 @@ def experiment(theta, timesteps, grain):
     return lik_values_pq, p_max, q_max, lik_values_ext, geu_max, ger_max, lik_values_new, gnu_max, gnr_max
 
 
-#lik_values_pq, p_max, q_max, lik_values_ext, geu_max, ger_max, lik_values_new, gnu_max, gnr_max = experiment([0.6, 0.4, 0.75, 0.25, 0.5, 0.5], 500, 50)
-lik_values_pq, p_max, q_max, lik_values_ext, geu_max, ger_max, lik_values_new, gnu_max, gnr_max = experiment([0.6, 0.4, 0.75, 0.25, 0.5, 0.5], 20, 5)
+lik_values_pq, p_max, q_max, lik_values_ext, geu_max, ger_max, lik_values_new, gnu_max, gnr_max = experiment([0.6, 0.4, 0.75, 0.25, 0.5, 0.5], 500, 50)
+#lik_values_pq, p_max, q_max, lik_values_ext, geu_max, ger_max, lik_values_new, gnu_max, gnr_max = experiment([0.6, 0.4, 0.75, 0.25, 0.5, 0.5], 20, 5)
 
 
 with open('throughput/SEM_explanatory_pq.csv', 'w', newline='') as csvfile:

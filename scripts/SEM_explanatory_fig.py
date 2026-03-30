@@ -21,7 +21,12 @@ def make_plot(grain, lik_values_pq, p_max, q_max, lik_values_ext, geu_max, ger_m
     GNU = np.linspace(0, 1, num = bins_3)
     GNR = np.linspace(0, 1, num = bins_3)
 
-    vmin = min(np.min(lik_values_pq), np.min(lik_values_ext), np.min(lik_values_new))
+    # vmin = min(np.min(lik_values_pq), np.min(lik_values_ext), np.min(lik_values_new))
+    # vmax = max(np.max(lik_values_pq), np.max(lik_values_ext), np.max(lik_values_new))
+
+    vmin = min(np.min(lik_values_pq[np.isfinite(lik_values_pq)]),
+           np.min(lik_values_ext[np.isfinite(lik_values_ext)]),
+           np.min(lik_values_new[np.isfinite(lik_values_new)]))
     vmax = max(np.max(lik_values_pq), np.max(lik_values_ext), np.max(lik_values_new))
 
     sns.set_style("whitegrid")
