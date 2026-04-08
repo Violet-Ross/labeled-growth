@@ -41,7 +41,14 @@
 
 
 \section{Introduction}
-    
+The use of a network to model a complex system is often carried out with one of two aims: modeling dynamics \textit{on} a network or modeling the dynamics \textit{of} a network. This work falls into the latter category — we model the growth of a complex system via the growth of its network representation. Specifically we focus on a type of complex system called a higher-order network and a type of network representation called a hypergraph.
+
+Higher-order networks (HONs) are complex systems composed of entities and the multi-way relationships between them. Many real-world systems are composed of higher-order interactions. Social interaction (both in-person \cite{chodrowGenerativeHypergraphClustering2021} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship \cite{wu2022hypergraph}, and ecological systems \cite{levine2017beyond} all contain interactions consisting of more than two entities.
+
+It is often useful to represent an HON using a data structure that models its interactions. Hypergraphs, bipartite graphs, and simplicial complexes can all be used to model HONs \cite{battistonNetworksPairwiseInteractions2020}. Dyadic networks, or graphs, can be used to model dynamics on HONs when the equations of the dynamics properly account for multiway interaction \cite{peixoto2026graphs}. However, when multiway interactions are not incorporated into the model specification, down-the-line analyses suffer \cite{bensonSimplicialClosureHigherorder2018, klamt2009hypergraphs}.
+
+A hypergraph $\mathcal{H}$ is composed of a set of nodes $\mathcal{N}$ and a set of hyperedges between them $\mathcal{E}$. A hyperedge is an edge that can contain any number of nodes. We propose a model of HON growth using hypergraphs. The primary mechanism of our model is noisy copying of group interactions, or hyperedges. We therefore choose to formulate the approach as a hypergraph growth model in the interest of clear model description and analysis. Note, however, that this model could be equivalently formulated as a bipartite graph, simplicial complex, or annotated dyadic network growth model.
+
 \subsection{Higher order!!!}
 
 \cite{torresWhyHowWhen2021,battiston2021physics,battistonNetworksPairwiseInteractions2020}. 
