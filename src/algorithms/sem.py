@@ -36,8 +36,7 @@ class sem_functions:
         t_r = int_num_r
 
         # Get the novel nodes
-        prev_nodes = list(range(GH.last_added[e_prime_index - 1] + 1))
-        novel_nodes = set(e_prime) - set(prev_nodes)
+        novel_nodes = {node for node in e_prime if GH.first_seen[node] == e_prime_index}
         novel_labels = [labels[node] for node in novel_nodes]
 
         novel_num_u, novel_num_r = GH.set_values(len(novel_labels) - sum(novel_labels), sum(novel_labels), u_label)
@@ -206,4 +205,3 @@ class sem_functions:
         growing_hypergraph = GH(H, [0, 1], theta[0], theta[1])
         growing_hypergraph.add_hyperedge(size, theta[2], theta[3], theta[4], theta[5])
         return growing_hypergraph
-

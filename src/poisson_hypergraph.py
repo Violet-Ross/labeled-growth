@@ -160,38 +160,23 @@ class GH:
         int_num_u, int_num_r = self.set_values(len(int_labels) - sum(int_labels), sum(int_labels), u_label)
 
         # Get the new nodes
-        prev_edges = self.edge_members[0:e_prime_index]
-        prev_nodes = list(range(self.last_added[e_prime_index - 1] + 1))
-
-        novel_nodes = set(e_prime) - set(prev_nodes)
+        prev_nodes = {node for node in self.nodes if self.first_seen[node] < e_prime_index}
+        novel_nodes = {node for node in e_prime if self.first_seen[node] == e_prime_index}
         novel_labels = [node_labels[node] for node in novel_nodes]
 
         novel_num_u, novel_num_r = self.set_values(len(novel_labels) - sum(novel_labels), sum(novel_labels), u_label)
       
         # Get the external nodes
-        # total_num_1 = sum(node_labels)
-        # total_num_0 = len(node_labels) - total_num_1
-
-        # PREVIOUS
-        # all_ext_num_0 = self.total_num_0 - e_num_0
-        # all_ext_num_1 = self.total_num_1 - e_num_1
-
-        # NEW REVISIONS
-        all_ext_nodes = set(prev_nodes) - e
+        all_ext_nodes = prev_nodes - e
         all_ext_labels = [node_labels[node] for node in all_ext_nodes]
 
         all_ext_num_1 = sum(all_ext_labels)
         all_ext_num_0 = len(all_ext_labels) - sum(all_ext_labels)
 
-
-        # external_nodes = set(prev_nodes).intersection(e_prime) - set(e)
-        # external_labels = [node_labels[node] for node in external_nodes]           
         ext_num_u = e_prime_num_u - int_num_u - novel_num_u
         ext_num_r = e_prime_num_r - int_num_r - novel_num_r
 
-
         all_ext_num_u, all_ext_num_r = self.set_values(all_ext_num_0, all_ext_num_1, u_label)
-        # ext_num_u, ext_num_r = self.set_values(len(external_labels) - sum(external_labels), sum(external_labels), u_label)
 
         # Probability calculation
         prob_e = 1 / e_prime_index
@@ -254,37 +239,23 @@ class GH:
         int_num_u, int_num_r = self.set_values(len(int_labels) - sum(int_labels), sum(int_labels), u_label)
 
         # Get the new nodes
-        prev_edges = self.edge_members[0:e_prime_index]
-        prev_nodes = list(range(self.last_added[e_prime_index - 1] + 1))
-
-        novel_nodes = set(e_prime) - set(prev_nodes)
+        prev_nodes = {node for node in self.nodes if self.first_seen[node] < e_prime_index}
+        novel_nodes = {node for node in e_prime if self.first_seen[node] == e_prime_index}
         novel_labels = [node_labels[node] for node in novel_nodes]
 
         novel_num_u, novel_num_r = self.set_values(len(novel_labels) - sum(novel_labels), sum(novel_labels), u_label)
-      
+
         # Get the external nodes
-        # total_num_1 = sum(node_labels)
-        # total_num_0 = len(node_labels) - total_num_1
-
-        # PREVIOUS
-        # all_ext_num_0 = self.total_num_0 - e_num_0
-        # all_ext_num_1 = self.total_num_1 - e_num_1
-
-        # NEW REVISIONS
-        all_ext_nodes = set(prev_nodes) - e
+        all_ext_nodes = prev_nodes - e
         all_ext_labels = [node_labels[node] for node in all_ext_nodes]
 
         all_ext_num_1 = sum(all_ext_labels)
         all_ext_num_0 = len(all_ext_labels) - sum(all_ext_labels)
 
-        # external_nodes = set(prev_nodes).intersection(e_prime) - set(e)
-        # external_labels = [node_labels[node] for node in external_nodes]           
         ext_num_u = e_prime_num_u - int_num_u - novel_num_u
         ext_num_r = e_prime_num_r - int_num_r - novel_num_r
 
-
         all_ext_num_u, all_ext_num_r = self.set_values(all_ext_num_0, all_ext_num_1, u_label)
-        # ext_num_u, ext_num_r = self.set_values(len(external_labels) - sum(external_labels), sum(external_labels), u_label)
 
         # Probability calculation
         prob_e = 1 / e_prime_index
