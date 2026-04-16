@@ -126,7 +126,7 @@ class sem_functions:
             likelihoods.append(self.GH_prob(GH, [p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er]))
             if t > 400:
                 i = 2
-                while False not in (np.abs(np.array(estimates[-1][1:]) - np.array(estimates[-i][1:])) < 0.05):
+                while np.allclose(estimates[-1][1:], estimates[-i][1:], rtol=0.05, atol=1e-2):
                     if i == 400:
                         return estimates, likelihoods
                     i += 1
