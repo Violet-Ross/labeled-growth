@@ -5,6 +5,7 @@ import networkx as nx
 
 # read in csv files
 contacts = np.array(pd.read_csv('data/highschool/HighSchool2013_proximity_net.csv', header=None))
+genders = np.array(pd.read_csv('data/highschool/metadata.txt', header=None, sep="\t"))
 
 hyperedges = []
 class_labels = {}
@@ -73,3 +74,48 @@ for edge in H.edges:
 
 # save the hypergraph locally
 xgi.write_json(H2, "throughput/highschool.json")
+
+
+# make another file with gender labels instead of classes
+H = xgi.Hypergraph(hyperedges)
+
+gender_dict = {}
+
+for gender in genders:
+    gender_dict[str(gender[0])] = gender[2]
+
+# make 9 classes into binary labeled
+for node, gender_label in gender_dict.items():
+    if gender_label == "M":
+        gender_dict[node] = 1
+    elif gender_label == "F":
+        gender_dict[node] = 0
+    else:
+        print(node)
+        H.remove_node(node)
+
+
+# set the node labels
+H.set_node_attributes(gender_dict, name = "label")
+
+# save old labels
+old_labels = {n: n for n in H.nodes}
+H.set_node_attributes(old_labels, name="dataset_id")
+
+# make new hypergraph with correct indexing
+H2 = xgi.Hypergraph()
+mapping = {old: i for i, old in enumerate(H.nodes)}
+
+# Add nodes with attributes
+for old_node in H.nodes:
+    new_node = mapping[old_node]
+    H2.add_node(new_node, **H.nodes[old_node])
+
+# add edges
+for edge in H.edges:
+    new_edge = [mapping[n] for n in H.edges.members(edge)]
+    H2.add_edge(new_edge, **H.edges[edge])
+
+# save the hypergraph locally
+xgi.write_json(H2, "throughput/highschool_gender.json")
+
