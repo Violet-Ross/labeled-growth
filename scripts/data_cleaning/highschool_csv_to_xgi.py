@@ -8,6 +8,7 @@ contacts = np.array(pd.read_csv('data/highschool/HighSchool2013_proximity_net.cs
 genders = np.array(pd.read_csv('data/highschool/metadata.txt', header=None, sep="\t"))
 
 hyperedges = []
+prev_added_hyperedges = set()
 class_labels = {}
 g = nx.Graph()
 
@@ -29,9 +30,17 @@ for contact in contacts:
     if prev_timestep != timestep:
         # print("timestep: " + str(prev_timestep))
         prev_timestep = timestep
-        for hyperedge in nx.connected_components(g):
-            hyperedges.append(hyperedge)
-            # print("hyperedge: " + str(hyperedge))
+        connected_components = set([tuple(hyperedge) for hyperedge in nx.connected_components(g)])
+
+        hyperedges.extend(list(connected_components - prev_added_hyperedges))
+        prev_added_hyperedges = connected_components
+
+        # Depracated
+        # for hyperedge in nx.connected_components(g):
+        #     if hyperedge not in prev_added_hyperedges:
+        #         hyperedges.append(hyperedge)
+        #     prev_added_hyperedges.append
+        #     # print("hyperedge: " + str(hyperedge))
         
         # clear graph
         g = nx.Graph()
@@ -40,6 +49,8 @@ for contact in contacts:
 
 # create hypergraph from the edgelist
 H = xgi.Hypergraph(hyperedges)
+
+H.cleanup(singletons=False, multiedges=True, relabel=False, isolates=True)
 
 
 # make 9 classes into binary labeled
@@ -94,6 +105,8 @@ for node, gender_label in gender_dict.items():
         print(node)
         H.remove_node(node)
 
+# remove singleton edges
+H.cleanup(singletons=False, multiedges=True, relabel=False, isolates=True)
 
 # set the node labels
 H.set_node_attributes(gender_dict, name = "label")
