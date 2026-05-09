@@ -12,6 +12,7 @@ genders = np.array(pd.read_csv('data/primaryschool/metadata.txt', header=None, s
 hyperedges = []
 class_labels = {}
 g = nx.Graph()
+prev_added_hyperedges = set()
 
 gender_dict = {}
 
@@ -38,9 +39,14 @@ for contact in contacts:
     if prev_timestep != timestep:
         # print("timestep: " + str(prev_timestep))
         prev_timestep = timestep
-        for hyperedge in nx.connected_components(g):
-            hyperedges.append(hyperedge)
-            # print("hyperedge: " + str(hyperedge))
+        connected_components = set([tuple(hyperedge) for hyperedge in nx.connected_components(g)])
+
+        hyperedges.extend(list(connected_components - prev_added_hyperedges))
+        prev_added_hyperedges = connected_components
+        
+        # for hyperedge in nx.connected_components(g):
+        #     hyperedges.append(hyperedge)
+        #     # print("hyperedge: " + str(hyperedge))
         
         # clear graph
         g = nx.Graph()
@@ -53,6 +59,9 @@ for contact in contacts:
 
 # create hypergraph from the edgelist
 H = xgi.Hypergraph(hyperedges)
+
+# remove singleton
+H.cleanup(singletons=False, multiedges=True, relabel=False, isolates=True)
 
 
 # make 9 classes into binary labeled
