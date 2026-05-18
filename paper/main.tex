@@ -117,16 +117,33 @@
 
 \section{Model Description}
 
-    Blah blah blah The Model. Establish notation here, use macros and propagate to sections below. 
+    Our model builds on the Hyperedge Copy Model (HCM) of He et al. \cite{heEdgeCorrelationsLink2025}. 
+    In their model, edges form through a combination of three distinct steps: a copy step, in which a previous edge is sampled and imperfectly copied; an extant node addition step, in which new nodes are added to the new edge from the existing node set; and a new node addition step, in which new nodes are added to the new edge from outside the existing node set.
+    Our model replicates these mechanisms but adds label-aware parameters to regulate each. 
 
+    Formally, a state of our model at time $t$ is a hypergraph $\at{\hypergraph}{t} = \at{\nodes}, \at{\edges}{t}$, where $\nodes$ is the set of nodes and $\edges$ is the set of hyperedges. 
+    Each node $\node \in \nodes$ has a binary label $z_{\node} \in \{0, 1\}$.
+    We let $\bar{z} = 1 - z$ denote the opposite label of $z$.
+    At timestep $t$, add edge $\newedge$ to $\at{\edges}{t}$ to obtain $\at{\edges}{t+1}$, where $\newedge$ is formed according to the following process:
+    \begin{itemize}
+        \item[Edge-Copying] 
+            An edge $\seededge$ is sampled uniformly at random from $\at{\edges}{t - 1}$, and a node $\focalnode$ is sampled uniformly at random from $\seededge$. 
+            Then, each node $\node$ in $\seededge$ is included in $\newedge$ with probability $\eta_+$ if $z_{\node} = z_{\focalnode}$ and with probability $\eta_-$ if $z_{\node} \neq z_{\focalnode}$.
+        \item[Extant Node Addition] 
+            We sample $\extantnodesinedge_{z_\focalnode}$ nodes from $\nodes \setminus \seededge$ with label $z_\focalnode$ and add them to $\newedge$, where $\extantnodesinedge_z$ is a Poisson random variable with mean $\lambda_+$. 
+            We similarly sample $\extantnodesinedge_{\bar{z}_\focalnode}$ nodes from $\nodes \setminus \seededge$ with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\extantnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\lambda_-$.
+        \item[Novel Node Addition]
+            We sample $\novelnodesinedge_{z_\focalnode}$ new nodes with label $z_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_z$ is a Poisson random variable with mean $\gamma_+$.
+            We similarly sample $\novelnodesinedge_{\bar{z}_\focalnode}$ new nodes with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\gamma_-$.   
+    \end{itemize}
+    In our simulations we initialize $\at{H}{0}$ with a single edge containing one node of each label, but any combination of hypergraph and node labels can be used as an initial condition.
 
-\subsection{Long-Run Dynamics}
+\subsection{Asymptotics} \label{sec:asymptotics}
 
+    \subsubsection{Joint Distribution of Labels in Edges} \label{sec:joint-distribution}
 
-\subsubsection{Joint Distribution of Edge Labels} \label{sec:joint-distribution}
-
-    We consider the joint distribution $p(k_0, k_1)$ of label counts in a uniformly random edge, where $k_0$ is the number of nodes with label 0 in the edge and $k_1$ is the number of nodes with label 1 in the edge. 
-    Although we are unable to find a closed-form expression for this distribution at stationarity, we can write down a linear map whose leading eigenvector corresponds to the stationary distribution.
+    The asymptotics of this model can be described in terms of the joint distribution $p_{K_0, K_1}(k_0, k_1)$ of nodes of labels 0 and 1 in a uniformly random edge. 
+    This joint distribution can be obtained as the leading eigenvector of a linear map. 
     Let $p^{(t)}(k_0, k_1)$ be the joint distribution of label counts in a uniformly random edge after $t$ timesteps. 
     Then, the probability $q(k_0', k_1')$ of realizing an edge with $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 at time $t+1$ is given by 
     \begin{align}
@@ -135,11 +152,11 @@
     where $T(k_0', k_1' | k_0, k_1)$ gives the probability that the edge $e$ realized in step $t+1$ has $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 given that the edge $f$ sampled to form $e$ has $k_0$ nodes of label 0 and $k_1$ nodes of label 1.
     At stationarity, we must have $q(k_0', k_1') = p^{(t)}(k_0', k_1') = p^{(t+1)}(k_0', k_1')$, so the stationarity condition can be obtained by solving the linear system 
     \begin{align}
-        p(k_0', k_1') = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)p(k_0, k_1)  \;.
+        \at{\jointdist}{t+1} \paren{k_0', k_1'} = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)\at{\jointdist}{t} \paren{k_0, k_1}  \;.
     \end{align}
-    The stationary joint distribution $p(k_0, k_1)$ is therefore given by the leading eigenvector of the doubly-indexed matrix $T$ with entries $T(k_0', k_1' | k_0, k_1)$.
+    The stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ is therefore given by the leading eigenvector of the doubly-indexed matrix $T$ with entries $T(k_0', k_1' | k_0, k_1)$.
     The entries of this matrix can be computed analytically. 
-    Conditional on choosing an edge $f$ with $k_0$ nodes of label 0 and $k_1$ nodes of label 1, a node of label $z$ is selected as the seed node $u$ with probability $k_z / (k_0 + k_1)$.
+    Conditional on choosing an edge $f$ with $k_0$ nodes of label 0 and $k_1$ nodes of label 1, a node of label $z$ is selected as the seed node $u$ with probability $\frac{k_z}{k_0 + k_1}$.
     Then, the number of nodes of labels $z$ and $\bar{z}$ in $e$ have distributions
     \begin{align*}
         k_z' &\sim 1 + \text{Binom}\paren{k_z - 1, \eta_+} + \text{Poisson}(\lambda_+ + \gamma_+) \;, \\
@@ -158,106 +175,40 @@
     \begin{align}
         T(k_0', k_1' | k_0, k_1) = t(k_0' | k_0, k_1) t(k_1' | k_0, k_1) \;.
     \end{align}
-    In \Cref{fig:dynamics-eigenvectors}, we show projections of the joint distribution $p^{(t)}(k_0, k_1)$ onto the top three eigenvectors of the matrix $T$ during a simulation run. 
+    In \Cref{fig:dynamics-eigenvectors}, we show projections of the joint distribution $\at{\jointdist}{t} \paren{k_0, k_1}$ onto the top two eigenvectors of the matrix $T$ during a simulation run. 
     These eigenvectors are computed numerically. 
-    The Perron eigenvector $v_1$ with eigenvalue $1$ corresponds to the stationary distribution $p(k_0, k_1)$, while the second and third eigenvectors $v_2$ and $v_3$ correspond to transient dynamics.
-    The corresponding eigenvalues are relatively large, indicating that these transients decay relatively slowly. 
-
+    The Perron eigenvector $v_1$ with eigenvalue $1$ corresponds to the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$. 
+    The second eigenvector $v_2$ with eigenvalue $\lambda_2 < 1$ corresponds to the slowest-decaying transient in the dynamics of $\at{\jointdist}{t} \paren{k_0, k_1}$.
+    The spectral gap $1 - \lambda_2$ is relatively small, indicating slow transients in the subspace spanned by $v_1$ and $v_2$.
     \begin{figure*}[t]
         \centering
         \includegraphics[width=1\textwidth]{../fig/linear_map_eigenvectors.png}
-        \caption{Dynamics! Top shows the three leading eigenvectors of the distribution $p(k_0, k_1)$. Bottom left gives the cosine similarity (normalized projection) between one run of simulation dynamics and these eigenvectors. Bottom right gives the final simulation state.
-        \phil{Need to check these projections, looks a bit strange. Can run $10^7$ steps in two minutes on laptop.}
+        \caption{Dynamics! Top shows the three leading eigenvectors of the distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$. Bottom left gives the cosine similarity (normalized projection) between one run of simulation dynamics and these eigenvectors. Bottom right gives the final simulation state.
         }
         \label{fig:dynamics-eigenvectors}
     \end{figure*}
 
 \subsubsection{Degree Distribution}
 
-    The mean degree $\brackets{d}$ of a node satisfies 
-    \begin{align}
-        \brackets{d} = \frac{m}{n}\brackets{k} \;,
-    \end{align}
-    where $\brackets{k}$ is the mean edge size, $m$ is the number of edges, and $n$ is the number of nodes.
-    In expectation, there are $\gamma_- + \gamma_+$ new nodes added per new edge, which means that $\frac{m}{n} \to \frac{1}{\gamma_- + \gamma_+}$ as $m, n \to \infty$ in expectation.
-    So, we have 
-    \begin{align}
-        \brackets{d} = \frac{\brackets{k}}{\gamma_- + \gamma_+} \;. \label{eq:average-degree}
-    \end{align}
-    We don't have a closed-form expression for the stationary value of $\brackets{k}$, but we can compute it numerically from the stationary distribution of the joint label counts $p(k_0, k_1)$. 
-
-
+    The degree distribution of a hypergraph generated from our model follows an asymptotic power law with an exponent which can be computed in closed form from the model parameters and the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$. 
+    Our derivation follows that of \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by \cite{mitzenmacherBriefHistoryGenerative2004}. 
+    To carry out the argument, we require a mean-field assumption that, when a node $v$ is selected from edge $f$ in the edge-sampling step, the degree $d$ of $v$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
     
-
-
-
-    This argument follows that of \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by \cite{mitzenmacherBriefHistoryGenerative2004}. 
-
-    Under the mean-field assumption that the degree of a node is independent of the ratio $\frac{k_0}{k}$ of the edge it is contained in, we can write down an argument to show that the degree distribution follows a power law and give a formula for the exponent. 
-    Define the moments 
+    Under this assumption, it is possible to show that the degree distribution follows a power law with exponent $\zeta = 1 + \frac{\gamma}{\tilde{\sigma}}$, where 
     \begin{align}
-        \rho_{0} &= \brackets{\frac{k_0^2}{k}} \quad \text{,} \quad \rho_{1} &= \brackets{\frac{k_1^2}{k}} \quad \text{and} \quad \rho_{01} = \brackets{\frac{k_0 k_1}{k}} \;.
+        \tilde{\sigma} = \frac{1 + \eta_+(\rho_{00} + \rho_{11} - 1) + 2\eta_- \rho_{01}}{\brackets{d}} \\
+        \rho_{ij} = \brackets{\frac{k_i k_j}{k}} \;. 
     \end{align}
-    We'll first calculate the expected number of nodes of label 0 sampled in the edge-sampling step.
-    Suppose that an edge $f$ is sampled with $K_0$ nodes of label 0 and $K_1$ nodes of label 1, and $K_0 + K_1 = K$ total nodes. 
-    Conditional on this event, the probability that a node of label 0 is selected as the seed node $u$ is $\frac{K_0}{K}$, and when this occurs, the expected number of nodes of label 0 in $e$ is $1 + \eta_+ (K_0 - 1)$. 
-    If, on the other hand, a node of label 1 is selected as the seed node $u$, which occurs with probability $\frac{K_1}{K}$, then the expected number of nodes of label 0 in $e$ is $\eta_- K_0$. 
-    So, the expected number of nodes of label 0 copied into the new edge $e$ from $f$ is 
-    \begin{align}
-        \sigma_0 \triangleq \brackets{\frac{k_0}{k}\paren{1 + \eta_+(k_0 - 1)} + \frac{k_1}{k} \eta_- k_0} = 1 + \eta_+ \squarebrackets{\rho_0 + \rho_1 - 1} + \eta_- \rho_{01}\;. 
-    \end{align}
-    Similarly, the expected number of nodes of label 1 copied into the new edge $e$ from $f$ is 
-    \begin{align}
-        \sigma_1 \triangleq \brackets{\frac{k_1}{k}\paren{1 + \eta_+(k_1 - 1)} + \frac{k_0}{k} \eta_- k_1} = 1 + \eta_+ \squarebrackets{\rho_0 + \rho_1 - 1} + \eta_- \rho_{01}\;. 
-    \end{align}
-    We let 
-    \begin{align}
-        \sigma \triangleq \sigma_0 + \sigma_1 = 1 + \eta_+(\rho_0 + \rho_1 - 1) + 2\eta_- \rho_{01}\;.
-    \end{align}
-    Importantly, $\sigma$ depends only on the parameters and the moments of the joint distribution $p(k_0, k_1)$, which can be computed via linear algebra as described in \Cref{sec:joint-distribution}.
-    Let $\tilde{\sigma} = \frac{\sigma}{\brackets{d}}$, where $\brackets{d}$ is the average degree of a node in the hypergraph given by \Cref{eq:average-degree}. 
-    
-    We make a mean-field assumption in which the degree $d$ of a node is independent from the counts $k_0$ and $k_1$ of labels in an edge containing that node. 
-    Under this assumption, the probability that a single node selected in the sampling step has degree $d$ is $dp_d^{(t)}$, where $p_d^{(t)}$ is the fraction of nodes with degree $d$ at time $t$, since that node participates in $d$ edges.
-    The expected number of nodes of degree $d$ sampled in the edge-sampling step is therefore $\tilde{\sigma} d p_d^{(t)}$, and the expected \emph{change} in the count of degree $d$ nodes through the edge-sampling step is 
-    \begin{align}
-        \tilde{\sigma} ((d-1)p_{d-1}^{(t)} - d p_d^{(t)})
-    \end{align}
-    Similarly, the expected number of nodes which are sampled in the extant node addition step is $\lambda \triangleq \lambda_+ + \lambda_-$. 
-    Since this step does not involve any selection proportional to degree, the expected change in the count of degree $d$ nodes through this step is
-    \begin{widetext}
-        \begin{align}
-            n^{(t+1)}p_{d}^{(t+1)} - n^{(t)}p_{d}^{(t)} = \tilde{\sigma} \squarebrackets{(d-1)p_{d-1}^{(t)} - d p_d^{(t)}} + \lambda (p_{d-1}^{(t)} - p_d^{(t)}) \;.
-        \end{align}
-    \end{widetext}
-    We know that at stationarity, $n^{(t+1)} - n^{(t)}$ is in expectation equal to $\gamma \triangleq \gamma_+ + \gamma_-$, the expected number of novel nodes, while at stationarity $p_d^{(t+1)} = p_d^{(t)} = p_d$ independent of $t$. 
-    Thus, we obtain 
-    \begin{widetext}
-        \begin{align*}
-            p_d \gamma  = \tilde{\sigma} \squarebrackets{(d-1)p_{d-1} - d p_d} + \lambda (p_{d-1} - p_d) \;.
-        \end{align*}
-    \end{widetext}
-    Rearranging, we obtain 
-    \begin{align*}
-        \frac{p_d}{p_{d-1}} &= \frac{\tilde{\sigma}(d-1) + \lambda}{\tilde{\sigma} d + \gamma + \lambda} \\ 
-        &= 1 - \frac{\tilde{\sigma} + \gamma + \lambda}{\tilde{\sigma} d + \gamma + \lambda}
-    \end{align*}
-    Allowing $d$ to become large (which describes the tail of the degree distribution), we have
-    \begin{align*}
-        \frac{p_d}{p_{d-1}} &\approx 1 - \frac{\tilde{\sigma} + \gamma + \lambda}{\tilde{\sigma} d} \;,
-    \end{align*}
-    a relation which corresponds to a power law with exponent $\zeta = 1 + \frac{\gamma}{\tilde{\sigma}}$. 
-    Explicitly calculating this moment requires computing the moments $\rho_0$, $\rho_1$, and $\rho_{01}$, which can be done computationally from the stationary joint distribution $p(k_0, k_1)$. 
-
+    In the expression for $\rho_{ij}$, the expectation is taken with respect to the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$.
     \begin{figure}[t]
         \centering
         \includegraphics[width=0.5\textwidth]{../fig/degree_distribution.png}
-        \caption{Degree distribution from simulation (points) and theoretical power law (line) with exponent computed from model parameters and joint label distribution moments. \phil{Put three series on this plot and give slopes for each. Also, fairly sure the calculation is bugged in either math or code.}}
+        \caption{
+            Degree distribution from simulation (points) and theoretical power law (line) with exponent computed from model parameters and joint label distribution moments. 
+            The parameters in this experiment are $\eta_+ = 0.7, \eta_- = 0.3, \lambda_+ = 0.5, \lambda_- = 0.3, \gamma_+ = 0.2, \gamma_- = 0.1$.
+            }
         \label{fig:degrees}
     \end{figure}
-
-
-
 
 \section{Model Inference}
 
@@ -322,6 +273,92 @@ How did we do on real and synthetic data?
 
 \bibliographystyle{apsrev4-2}
 \bibliography{refs} 
+
+\appendix
+
+\section{Appendix}
+
+    \subsection{Derivation of the Stationary Joint Distribution of Labels in Edges}
+
+    \subsection{Derivation of the Degree Distribution Power Law Exponent}
+
+
+    
+
+
+
+
+    The mean degree $\brackets{d}$ of a node satisfies 
+    \begin{align}
+        \brackets{d} = \frac{m}{n}\brackets{k} \;,
+    \end{align}
+    where $\brackets{k}$ is the mean edge size (computable from the stationary distribution $\jointdist \paren{k_1,k_2}$), $m$ is the number of edges, and $n$ is the number of nodes.
+    In expectation, there are $\gamma \triangleq \gamma_- + \gamma_+$ new nodes added per new edge, which means that $\frac{m}{n} \to \frac{1}{\gamma}$ as $m, n \to \infty$ in expectation.
+    So, we have 
+    \begin{align}
+        \brackets{d} = \frac{\brackets{k}}{\gamma} \;. \label{eq:average-degree}
+    \end{align}
+
+
+    
+
+
+
+    Under the mean-field assumption that the degree of a node is independent of the ratio $\frac{k_0}{k}$ of the edge it is contained in, we can write down an argument to show that the degree distribution follows a power law and give a formula for the exponent. 
+    Define the moments 
+    \begin{align}
+        \rho_{00} &= \brackets{\frac{k_0^2}{k}} \quad \text{,} \quad \rho_{11} &= \brackets{\frac{k_1^2}{k}} \quad \text{and} \quad \rho_{01} = \brackets{\frac{k_0 k_1}{k}} \;.
+    \end{align}
+    We'll first calculate the expected number of nodes of label 0 sampled in the edge-sampling step.
+    Suppose that an edge $f$ is sampled with $K_0$ nodes of label 0 and $K_1$ nodes of label 1, and $K_0 + K_1 = K$ total nodes. 
+    Conditional on this event, the probability that a node of label 0 is selected as the seed node $u$ is $\frac{K_0}{K}$, and when this occurs, the expected number of nodes of label 0 in $e$ is $1 + \eta_+ (K_0 - 1)$. 
+    If, on the other hand, a node of label 1 is selected as the seed node $u$, which occurs with probability $\frac{K_1}{K}$, then the expected number of nodes of label 0 in $e$ is $\eta_- K_0$. 
+    So, the expected number of nodes of label 0 copied into the new edge $e$ from $f$ is 
+    \begin{align}
+        \sigma_0 \triangleq \brackets{\frac{k_0}{k}\paren{1 + \eta_+(k_0 - 1)} + \frac{k_1}{k} \eta_- k_0} = 1 + \eta_+ \squarebrackets{\rho_{00} + \rho_{11} - 1} + \eta_- \rho_{01}\;. 
+    \end{align}
+    Similarly, the expected number of nodes of label 1 copied into the new edge $e$ from $f$ is 
+    \begin{align}
+        \sigma_1 \triangleq \brackets{\frac{k_1}{k}\paren{1 + \eta_+(k_1 - 1)} + \frac{k_0}{k} \eta_- k_1} = 1 + \eta_+ \squarebrackets{\rho_{00} + \rho_{11} - 1} + \eta_- \rho_{01}\;. 
+    \end{align}
+    We let 
+    \begin{align}
+        \sigma \triangleq \sigma_0 + \sigma_1 = 1 + \eta_+(\rho_{00} + \rho_{11} - 1) + 2\eta_- \rho_{01}\;.
+    \end{align}
+    Importantly, $\sigma$ depends only on the parameters and the moments of the joint distribution $\jointdist \paren{k_1,k_2}$, which can be computed via linear algebra as described in \Cref{sec:joint-distribution}.
+    Let $\tilde{\sigma} = \frac{\sigma}{\brackets{d}}$, where $\brackets{d}$ is the average degree of a node in the hypergraph given by \Cref{eq:average-degree}. 
+    
+    We make a mean-field assumption in which the degree $d$ of a node is independent from the counts $k_0$ and $k_1$ of labels in an edge containing that node. 
+    Under this assumption, the probability that a single node selected in the sampling step has degree $d$ is $dp_d^{(t)}$, where $p_d^{(t)}$ is the fraction of nodes with degree $d$ at time $t$, since that node participates in $d$ edges.
+    The expected number of nodes of degree $d$ sampled in the edge-sampling step is therefore $\tilde{\sigma} d p_d^{(t)}$, and the expected \emph{change} in the count of degree $d$ nodes through the edge-sampling step is 
+    \begin{align}
+        \tilde{\sigma} ((d-1)p_{d-1}^{(t)} - d p_d^{(t)})
+    \end{align}
+    Similarly, the expected number of nodes which are sampled in the extant node addition step is $\lambda \triangleq \lambda_+ + \lambda_-$. 
+    Since this step does not involve any selection proportional to degree, the expected change in the count of degree $d$ nodes through this step is
+    \begin{widetext}
+        \begin{align}
+            n^{(t+1)}p_{d}^{(t+1)} - n^{(t)}p_{d}^{(t)} = \tilde{\sigma} \squarebrackets{(d-1)p_{d-1}^{(t)} - d p_d^{(t)}} + \lambda (p_{d-1}^{(t)} - p_d^{(t)}) \;.
+        \end{align}
+    \end{widetext}
+    We know that at stationarity, $n^{(t+1)} - n^{(t)}$ is in expectation equal to $\gamma \triangleq \gamma_+ + \gamma_-$, the expected number of novel nodes, while at stationarity $p_d^{(t+1)} = p_d^{(t)} = p_d$ independent of $t$. 
+    Thus, we obtain 
+    \begin{widetext}
+        \begin{align*}
+            p_d \gamma  = \tilde{\sigma} \squarebrackets{(d-1)p_{d-1} - d p_d} + \lambda (p_{d-1} - p_d) \;.
+        \end{align*}
+    \end{widetext}
+    Rearranging, we obtain 
+    \begin{align*}
+        \frac{p_d}{p_{d-1}} &= \frac{\tilde{\sigma}(d-1) + \lambda}{\tilde{\sigma} d + \gamma + \lambda} \\ 
+        &= 1 - \frac{\tilde{\sigma} + \gamma + \lambda}{\tilde{\sigma} d + \gamma + \lambda}
+    \end{align*}
+    Allowing $d$ to become large (which describes the tail of the degree distribution), we have
+    \begin{align*}
+        \frac{p_d}{p_{d-1}} &\approx 1 - \frac{\tilde{\sigma} + \gamma + \lambda}{\tilde{\sigma} d} \;,
+    \end{align*}
+    a relation which corresponds to a power law with exponent $\zeta = 1 + \frac{\gamma}{\tilde{\sigma}}$. 
+    Explicitly calculating this moment requires computing the moments $\rho_{00}$, $\rho_{11}$, and $\rho_{01}$, which can be done computationally from the stationary joint distribution $\jointdist \paren{k_1,k_2}$. 
 
 \end{document}
 
