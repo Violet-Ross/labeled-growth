@@ -120,7 +120,10 @@ if __name__ == "__main__":
     # SECOND: simulation with the same parameters
     
     n_steps = int(1e7)
-    project_every = 1000
+    num_projections = 20
+    logspace = np.logspace(0, np.log10(n_steps+1), num_projections, dtype = int)
+
+    # project_every = 1000
     window = 1000
     
     TS = ToySimulator(edge_list = [[5,5]], theta = theta, force_label = None)
@@ -131,10 +134,10 @@ if __name__ == "__main__":
     # print(Cz)
     # print((eigvecs[0]**2).sum())
     
-    for j in range(1, n_steps): 
+    for j in range(1, n_steps+1): 
         TS.simulate(n_samples = 1)
             
-        if j % project_every == 0:
+        if j in logspace:
             C = get_dist(TS, window, k_max)
             
             # experimental results here are a bit weird since the 
@@ -172,7 +175,7 @@ if __name__ == "__main__":
     
     # fig, ax = plt.subplots(1, 4, figsize = (18, 6))
     
-    colors = ["steelblue", "darkgrey", "lightgrey"]
+    colors = ["#055775", "darkgrey", "lightgrey"]
     letter_labels = ["(b)", "(c)"]
     
     for i in range(2):
@@ -184,7 +187,8 @@ if __name__ == "__main__":
         
         ax = axes[i+1]
         im = ax.imshow(P, cmap = "BrBG", interpolation = "none", vmin = v_min, vmax = vmax, origin = "lower")
-        ax.set_title(rf"{letter_labels[i]}: $v_{i+1}$ ($\lambda_{i+1} = {val:.2f}$)")
+        ax.grid(False)
+        ax.set_title(rf"{letter_labels[i]}: $\mathbf{{v}}_{{{i+1}}}$ ($\lambda_{{{i+1}}} = {val:.2f}$)")
         ax.set_xlabel(r"$k_0$")
         if i == 0: 
             ax.set_ylabel(r"$k_1$")
@@ -193,7 +197,7 @@ if __name__ == "__main__":
         ax.set_yticks(range(0, k_max + 1, 3))
         
         ax = axes[3]
-        ax.plot(projection_timesteps, projections[i], label = fr"$v_{i+1}$", color = colors[i])
+        ax.plot(projection_timesteps, projections[i], label = fr"$\mathbf{{v}}_{{{i+1}}}$", color = colors[i])
         ax.legend()
         ax.semilogx()
         ax.set_title("(d): Projection of simulation state onto eigenvectors")
@@ -202,7 +206,7 @@ if __name__ == "__main__":
     
     
     ax = axes[3]
-    ax.plot([min(projection_timesteps), n_steps], [0, 0], "k--", alpha = 0.5)
+    # ax.plot([min(projection_timesteps), n_steps], [0, 0], "k--", alpha = 0.5)
     ax.set_xlabel("Timestep")
     ax.set_ylabel("Cosine similarity")
     # axes[3].set_xlim(window, None)
@@ -221,6 +225,7 @@ if __name__ == "__main__":
     
     ax.set_xticks(range(0, k_max + 1, 3))
     ax.set_yticks(range(0, k_max + 1, 3))
+    ax.grid(False)
     
     fig.colorbar(im)
     fig.colorbar(final)
@@ -235,6 +240,7 @@ if __name__ == "__main__":
     ax.set_xticklabels([f"{x:.1f}" for x in np.linspace(0.1, 0.9, grid_resolution)])
     ax.set_yticks(range(grid_resolution))
     ax.set_yticklabels([f"{x:.1f}" for x in np.linspace(0.1, 0.9, grid_resolution)])
+    ax.grid(False)
     
     fig.colorbar(im, ax = ax, format = "%.2f")
     
