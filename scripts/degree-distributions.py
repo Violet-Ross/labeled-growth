@@ -104,4 +104,4 @@ ax.set_ylabel("Density")
 # ax.set_title(title)
 
 plt.tight_layout()
-plt.savefig("fig/degree_distribution.png")
+plt.savefig("fig/degree_distribution.png", dpi = 300)
