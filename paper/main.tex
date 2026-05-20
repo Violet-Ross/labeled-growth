@@ -1,7 +1,8 @@
 % /Users/philchodrow/.../main.tex
 % RevTeX 4.2 minimal starter document
 
-\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+% \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,draft]{revtex4-2}
 
 
 \usepackage{amsmath,amssymb,bm}
@@ -41,6 +42,42 @@
 
 \section{Introduction}
 
+    Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions.
+    % MORE HIGHER ORDER HERE
+    Much attention in the theory of (hyper)graph mining has focused on developing novel techniques for community detection (also often called \emph{clustering} or \emph{partitioning}). 
+    Many but not all of these methods can be viewed as exact or approximate inference algorithms for stochastic generative models. 
+    A stochastic generative model is a parametrized probability distribution defined over hypergraphs. 
+    In one standard framework, a set $\nodes$ of $n$ nodes is initialized along with a vector $\vz \in [k]^n$ that assigns to each node one of $k$ community labels. 
+    One then forms the edge set $\edges$ iteratively by visiting each subset $R \subseteq \nodes$ and independently assigning $a_R$ (possibly repeated) edges to $R$ according to a distribution $p(a_R | \vz_R, \theta)$, where $\vz_R$ is the vector of labels of the nodes in $R$ and $\theta$ is a set of model parameters.
+    This results in a probability distribution over hypergraphs which can be factorized into a product of edge probabilities conditioned on the node labels and model parameters: 
+    \begin{align}
+        p(\hypergraph | \vz, \theta) = \prod_{R \subseteq \nodes} p(a_R | \vz_R, \theta) \;. \label{eq:edge-independence}
+    \end{align}
+    Many generative models for community detection fall into this category, including all stochastic blockmodels known the authors. 
+    The conditional independence property \cref{eq:edge-independence} is extremely useful for computation, as factorizability of the likelihood enables many efficiencies in various inference algorithms. 
+
+    Edge independence, however, is a strong and often unrealistic assumption for modeling hypergraph data. 
+    A parallel line of work has found that polyadic data sets often contain significant edge correlations \cite{bensonSimplicialClosureHigherorder2018}, typically in the form of \emph{similarity between interactions}.
+    When an interaction occurs on a set $R \subseteq \nodes$, this increases the likelihood of observing a new interaction on a set $S \subseteq \nodes$ correlated with $R$ in the sense that $R\cap S$ is larger than would be expected by chance. 
+    Several generative models for the growth of hypergraphs with edge-dependence have been proposed \cite{bensonSequencesSets2018,avinRandomPreferentialAttachment2019,heEdgeCorrelationsLink2025,leeTHyMeTemporalHypergraph2021,leeTemporalHypergraphMotifs2023}. 
+    Several of these models express dependence through a copying or recombination mechanism, in which nodes collected from one or more existing hyperedges are gathered and noisily copied into a new edge as a block.  
+
+
+
+
+    In this article, we propose a simple generative model of hypergraph growth with community structure. 
+    Our model builds on the Hyperedge Copy Model (HCM) of \cite{heEdgeCorrelationsLink2025}. 
+    
+
+
+    
+    
+    
+
+
+
+
+
     The use of a network to model a complex system is often carried out with one of two aims: modeling dynamics \textit{on} a network or modeling the dynamics \textit{of} a network. This work falls into the latter category — we model the growth of a complex system via the growth of its network representation. Specifically we focus on a type of complex system called a higher-order network and a type of network representation called a hypergraph.
 
     Higher-order networks (HONs) are complex systems composed of entities and the multi-way relationships between them. Many real-world systems are composed of higher-order interactions. Social interaction (both in-person \cite{chodrowGenerativeHypergraphClustering2021} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship \cite{wu2022hypergraph}, and ecological systems \cite{levine2017beyond} all contain interactions consisting of more than two entities.
@@ -48,6 +85,17 @@
     It is often useful to represent an HON using a data structure that models its interactions. Hypergraphs, bipartite graphs, and simplicial complexes can all be used to model HONs \cite{battistonNetworksPairwiseInteractions2020}. Dyadic networks, or graphs, can be used to model dynamics on HONs when the equations of the dynamics properly account for multiway interaction \cite{peixoto2026graphs}. However, when multiway interactions are not incorporated into the model specification, down-the-line analyses suffer \cite{bensonSimplicialClosureHigherorder2018, klamt2009hypergraphs}.
 
     A hypergraph $\mathcal{H}$ is composed of a set of nodes $\mathcal{N}$ and a set of hyperedges between them $\mathcal{E}$. A hyperedge is an edge that can contain any number of nodes. We propose a model of HON growth using hypergraphs. The primary mechanism of our model is noisy copying of group interactions, or hyperedges. We therefore choose to formulate the approach as a hypergraph growth model in the interest of clear model description and analysis. Note, however, that this model could be equivalently formulated as a bipartite graph, simplicial complex, or annotated dyadic network growth model.
+
+\subsection{Generative Models for Community Detection}
+
+    Many algorithms for hypergraph community detection extend well-known algorithms for graphs like modularity maximization \cite{chodrowGenerativeHypergraphClustering2021}, 
+    expectation-maximization \cite{ruggeriCommunityDetectionLarge2023}, and message-passing \cite{ruggeri2024message} 
+    spectral clustering \cite{chodrowNonbacktrackingSpectralClustering2023,fernandez2026achieving,li2026higher}, and information-theoretic optimization methods \cite{kritschgauCommunityDetectionHypergraphs2024}. 
+    
+
+\subsection{Mechanistic Models of Hypergraph Formation}
+
+\subsection{The Role of Edge-Independence}
 
 \subsection{Higher order!!!}
 
@@ -208,7 +256,6 @@
 \subsubsection{Degree Distribution} \label{sec:degree-distribution}
 
     \begin{figure}[t]
-        \centering
         \includegraphics[width=0.5\textwidth]{../fig/degree_distribution.png}
         \caption{
             Degree distribution from model simulation of $10^4$ edges (points) and theoretical power law (line) with exponent given by \Cref{eq:power-law-exponent}. 
