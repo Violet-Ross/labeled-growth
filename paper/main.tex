@@ -39,10 +39,11 @@
 
 % \def\thefootnote{*}\footnotetext{These authors contributed equally to this work}\def\thefootnote{\arabic{footnote}}
 
-
 \section{Introduction}
 
-    Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions.
+    Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions, such as social interactions (both in-person \cite{mastrandrea2015contact} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship \cite{wu2022hypergraph}, and ecological systems \cite{levine2017beyond}. 
+    Much recent work has emphasized the importance of faithfully representing polyadic structure rather than reducing it to dyadic interactions \cite{battistonNetworksPairwiseInteractions2020,bick2023higher}, though recent work has shown that some purportedly higher-order dynamics can be faithfully represented on dyadic networks under appropriate models \cite{peixoto2026graphs}.
+
     % MORE HIGHER ORDER HERE
     Much attention in the theory of (hyper)graph mining has focused on developing novel techniques for community detection (also often called \emph{clustering} or \emph{partitioning}). 
     Many but not all of these methods can be viewed as exact or approximate inference algorithms for stochastic generative models. 
@@ -53,96 +54,21 @@
     \begin{align}
         p(\hypergraph | \vz, \theta) = \prod_{R \subseteq \nodes} p(a_R | \vz_R, \theta) \;. \label{eq:edge-independence}
     \end{align}
-    Many generative models for community detection fall into this category, including all stochastic blockmodels known the authors. 
-    The conditional independence property \cref{eq:edge-independence} is extremely useful for computation, as factorizability of the likelihood enables many efficiencies in various inference algorithms. 
-
+    Many generative models for community detection fall into this category, including hypergraph stochastic blockmodels \cite{chodrowGenerativeHypergraphClustering2021,ruggeriCommunityDetectionLarge2023,kim2018stochastic} and some generalizations \cite{hood2026broad}.
+    The conditional independence property \cref{eq:edge-independence} is extremely useful for computation, as factorizability of the likelihood enables many efficiencies in various inference algorithms, including approximate maximum-likelihood estimation via direct optimization \cite{chodrowGenerativeHypergraphClustering2021} or expectation-maximization \cite{ruggeriCommunityDetectionLarge2023}; spectral methods \cite{chodrowNonbacktrackingSpectralClustering2023,fernandez2026achieving,li2026higher}; and message passing \cite{ruggeri2024message}. 
+    Another recent optimization-based approach \cite{kritschgauCommunityDetectionHypergraphs2024} is equivalent to a microcanonical version of the stochastic blockmodel, which satisfies an asymptotic form of edge-independence in the large sparse limit.
+    Even a recent latent-space model \cite{yuModelingHypergraphsDiversity2025} treats edges as independent samples, albeit from a very differently stochastic generating process. 
+    
     Edge independence, however, is a strong and often unrealistic assumption for modeling hypergraph data. 
-    A parallel line of work has found that polyadic data sets often contain significant edge correlations \cite{bensonSimplicialClosureHigherorder2018}, typically in the form of \emph{similarity between interactions}.
+    A parallel line of work has found that polyadic data sets often contain significant edge correlations \cite{bensonSimplicialClosureHigherorder2018,landrySimplicialityHigherorderNetworks2024,leeHowHyperedgesOverlap2021}, typically in the form of \emph{similarity between interactions}.
     When an interaction occurs on a set $R \subseteq \nodes$, this increases the likelihood of observing a new interaction on a set $S \subseteq \nodes$ correlated with $R$ in the sense that $R\cap S$ is larger than would be expected by chance. 
+    These overlaps can be shown to effect the kinds of dynamics which can unfold on the hypergraph \cite{maliziaHyperedgeOverlapDrives2025,lamata2025hyperedge}. 
     Several generative models for the growth of hypergraphs with edge-dependence have been proposed \cite{bensonSequencesSets2018,avinRandomPreferentialAttachment2019,heEdgeCorrelationsLink2025,leeTHyMeTemporalHypergraph2021,leeTemporalHypergraphMotifs2023}. 
     Several of these models express dependence through a copying or recombination mechanism, in which nodes collected from one or more existing hyperedges are gathered and noisily copied into a new edge as a block.  
 
+    % Phil prewriting got down to here.
 
-
-
-    In this article, we propose a simple generative model of hypergraph growth with community structure. 
-    Our model builds on the Hyperedge Copy Model (HCM) of \cite{heEdgeCorrelationsLink2025}. 
-    
-
-
-    
-    
-    
-
-
-
-
-
-    The use of a network to model a complex system is often carried out with one of two aims: modeling dynamics \textit{on} a network or modeling the dynamics \textit{of} a network. This work falls into the latter category — we model the growth of a complex system via the growth of its network representation. Specifically we focus on a type of complex system called a higher-order network and a type of network representation called a hypergraph.
-
-    Higher-order networks (HONs) are complex systems composed of entities and the multi-way relationships between them. Many real-world systems are composed of higher-order interactions. Social interaction (both in-person \cite{chodrowGenerativeHypergraphClustering2021} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship \cite{wu2022hypergraph}, and ecological systems \cite{levine2017beyond} all contain interactions consisting of more than two entities.
-
-    It is often useful to represent an HON using a data structure that models its interactions. Hypergraphs, bipartite graphs, and simplicial complexes can all be used to model HONs \cite{battistonNetworksPairwiseInteractions2020}. Dyadic networks, or graphs, can be used to model dynamics on HONs when the equations of the dynamics properly account for multiway interaction \cite{peixoto2026graphs}. However, when multiway interactions are not incorporated into the model specification, down-the-line analyses suffer \cite{bensonSimplicialClosureHigherorder2018, klamt2009hypergraphs}.
-
-    A hypergraph $\mathcal{H}$ is composed of a set of nodes $\mathcal{N}$ and a set of hyperedges between them $\mathcal{E}$. A hyperedge is an edge that can contain any number of nodes. We propose a model of HON growth using hypergraphs. The primary mechanism of our model is noisy copying of group interactions, or hyperedges. We therefore choose to formulate the approach as a hypergraph growth model in the interest of clear model description and analysis. Note, however, that this model could be equivalently formulated as a bipartite graph, simplicial complex, or annotated dyadic network growth model.
-
-\subsection{Generative Models for Community Detection}
-
-    Many algorithms for hypergraph community detection extend well-known algorithms for graphs like modularity maximization \cite{chodrowGenerativeHypergraphClustering2021}, 
-    expectation-maximization \cite{ruggeriCommunityDetectionLarge2023}, and message-passing \cite{ruggeri2024message} 
-    spectral clustering \cite{chodrowNonbacktrackingSpectralClustering2023,fernandez2026achieving,li2026higher}, and information-theoretic optimization methods \cite{kritschgauCommunityDetectionHypergraphs2024}. 
-    
-
-\subsection{Mechanistic Models of Hypergraph Formation}
-
-\subsection{The Role of Edge-Independence}
-
-\subsection{Higher order!!!}
-
-    \cite{torresWhyHowWhen2021,battiston2021physics,battistonNetworksPairwiseInteractions2020}. 
-
-    General hypergraph data mining: 
-
-    \cite{leeSurveyHypergraphMining2025}
-
-
-\subsection{Structural Properties of Higher-Order Network Data}
-
-    \cite{landrySimplicialityHigherorderNetworks2024}
-
-
-    \cite{leeHowHyperedgesOverlap2021}
-
-    Impact of overlap on dynamics: \cite{maliziaHyperedgeOverlapDrives2025}
-
-
-\subsection{Generative Hypergraph Models}
-
-    Higher-order intersections: \cite{bensonSimplicialClosureHigherorder2018}
-
-    CRU: \cite{bensonSequencesSets2018}
-
-
-    Edge-copy model: \cite{heEdgeCorrelationsLink2025}
-
-    THyME: \cite{leeTHyMeTemporalHypergraph2021}
-
-    A model based on diversity: \cite{yuModelingHypergraphsDiversity2025}
-
-
-
-\subsection{Generative Models for Inference and Community Detection}
-
-    Graph generative model for community detection: \cite{newmanStochasticBlockmodel} 
-
-    \cite{ruggeriCommunityDetectionLarge2023}
-    \cite{kritschgauCommunityDetectionHypergraphs2024,chodrowGenerativeHypergraphClustering2021,chodrowNonbacktrackingSpectralClustering2023}
-
-    Work by Yizhe Zhu, Schaub et al. on nonbacktracking methods. 
-
-    \cite{hoodBroadSpectrumStructure2025}
-
-    Emphasize here that all of these models have the property that edges are independent conditioned on the parameters and node labels, which is arguably unrealistic for interaction data and contrasts to our setting. 
+    In this paper, we ....
 
 
 
@@ -169,8 +95,6 @@
         \caption{PLACEHOLDER: schematic of the model here, or alternatively a sample from the model.}
     \end{figure}
 
-
-
     Our model builds on the Hyperedge Copy Model (HCM) of He et al. \cite{heEdgeCorrelationsLink2025}. 
     In their model, edges form through a combination of three distinct steps: a copy step, in which a previous edge is sampled and imperfectly copied; an extant node addition step, in which new nodes are added to the new edge from the existing node set; and a new node addition step, in which new nodes are added to the new edge from outside the existing node set.
     Our model replicates these mechanisms but adds label-aware parameters to regulate each. 
@@ -192,10 +116,9 @@
     \end{itemize}
     In our simulations we initialize $\at{\hypergraph}{0}$ with a single edge containing one node of each label, but any combination of hypergraph and node labels can be used as an initial condition.
 
-\subsection{Asymptotics} \label{sec:asymptotics}
+\subsection{Dynamical Properties} \label{sec:asymptotics}
 
     \subsubsection{Joint Distribution of Labels in Edges} \label{sec:joint-distribution}
-
 
     \begin{figure*}[t]
         \centering
@@ -276,6 +199,12 @@
     In the expression for $\rho_{ij}$ (and for $\brackets{k}$) the expectation is taken with respect to the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$.
     Here, $\gamma$ can be interpreted as the expected number of novel nodes added per new edge, while $\sigma$ can be interpreted as the expected number of nodes copied into a new edge from the sampled edge, normalized by the average degree of a node in the hypergraph.
     
+
+    \subsubsection{Community Structure}
+
+        \emph{Show a plot describing how the modularity of the clique projection varies by parameter, and perhaps some sample hypergraphs with associated partitions. }
+
+        
 
 \section{Model Inference}
 
