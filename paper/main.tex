@@ -95,6 +95,17 @@
         \caption{PLACEHOLDER: schematic of the model here, or alternatively a sample from the model.}
     \end{figure}
 
+    \begin{figure}
+        \centering 
+        \includegraphics{../fig/hypergraph_viz.png}
+        \caption{Two samples from our model. 
+        Node color corresponds to community label.
+        Label-homogeneous edges are shown in green, while label-heterogeneous edges are shown in pink.
+        In each case, $\gamma_+ = 0.5$, $\gamma_- = 0.25$, and the remaining parameters are as given. 
+        The model begins with two disjoint label-homogeneous edges and is run for 25 timesteps.
+        } \label{fig:examples}
+    \end{figure}
+
     Our model builds on the Hyperedge Copy Model (HCM) of He et al. \cite{heEdgeCorrelationsLink2025}. 
     In their model, edges form through a combination of three distinct steps: a copy step, in which a previous edge is sampled and imperfectly copied; an extant node addition step, in which new nodes are added to the new edge from the existing node set; and a new node addition step, in which new nodes are added to the new edge from outside the existing node set.
     Our model replicates these mechanisms but adds label-aware parameters to regulate each. 
