@@ -75,8 +75,12 @@ axs[1].set_yscale('log')
 plt.savefig('fig/senate_degree_and_edge_distribution.png', dpi=300, bbox_inches="tight")
 
 ## SEM on senate data
+initial_rate = 0.01
+constant = 0.001
+iteration_limit = 8000
+
 sem = sem_functions()
 s_intial = np.array([1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5])
-estimates = sem.SEM_without_likelihood(growing_hypergraph, s_intial, 3000, 0.01, 0.001)
+estimates = sem.SEM_without_likelihood(growing_hypergraph, s_intial, iteration_limit, initial_rate, constant)
 
 SEM_viz(np.array(estimates))

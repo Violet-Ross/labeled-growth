@@ -46,7 +46,7 @@ def SEM_viz(estimates1):
     axs[1].set_xlabel("iterations")
     axs[2].set_xlabel("iterations")
 
-    fig.savefig('fig/high_school_class_SEM.png', dpi=300, bbox_inches="tight")
+    fig.savefig('fig/high_school_class_SEM_timecombo.png', dpi=300, bbox_inches="tight")
 
 ## Degree distribution of senate data
 centers, heights = xgi.degree_histogram(H)
@@ -75,7 +75,7 @@ axs[1].set_ylabel("P(s)")
 axs[1].set_xlabel("s")
 axs[1].set_yscale('log')
 
-plt.savefig('fig/high_school_class_degree_and_edge_distribution.png', dpi=300, bbox_inches="tight")
+plt.savefig('fig/high_school_class_degree_and_edge_distribution_timecombo.png', dpi=300, bbox_inches="tight")
 
 ## SEM on senate data
 sem = sem_functions()

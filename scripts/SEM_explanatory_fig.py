@@ -1,6 +1,7 @@
 import numpy as np
 import xgi
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 from matplotlib import colormaps as cm
 import csv
 import seaborn as sns
@@ -75,10 +76,29 @@ def make_plot(grain, lik_values_pq, p_max, q_max, lik_values_ext, geu_max, ger_m
     ax4[2].set_title(r"$\hat{\gamma}_{n, z_u} = $" + f"{GNU[gnu_max]:.2f}" + "  |  " r"$\hat{\gamma}_{n, \bar{z}_u} = $" + f"{GNR[gnr_max]:.2f}")
 
     cbar_ax = fig4.add_axes([0.22, 0.10, 0.56, 0.05])
-    fig4.colorbar(im1, cax=cbar_ax, orientation='horizontal', label = "Log marginal likelihood")
+    cbar = fig4.colorbar(
+        im1,
+        cax=cbar_ax,
+        orientation='horizontal',
+        label="Log marginal likelihood"
+    )
 
+    # Undefined patch
+    undefined_patch = Patch(
+        facecolor='black',
+        edgecolor='black',
+        label='Undefined'
+    )
 
-    fig4.savefig('fig/sem_explanatory.png', dpi=300,  bbox_inches="tight")
+    # Place legend beside colorbar
+    cbar_ax.legend(
+        handles=[undefined_patch],
+        loc='center left',
+        bbox_to_anchor=(1.02, 0.5),
+        frameon=True
+    )
+
+    fig4.savefig('fig/sem_explanatory.png', dpi=400,  bbox_inches="tight")
 
 lik_values_pq = []
 with open('throughput/SEM_explanatory_pq.csv', 'r') as file:
