@@ -68,10 +68,17 @@
 
     % Phil prewriting got down to here.
 
-    In this paper, we ....
-
-
-
+    In this paper, we introduce a model of binary node-labeled hypergraphs in which edges form via a noisy copying interaction which depends the labels. 
+    Our work is organized as follows. 
+    In \Cref{sec:model-description}, we describe our model and derive limiting descriptions of the joint distribution of node labels within a given edge, as well as the degree distribution of the hypergraph.
+    Evaluating the likelihood of our model requires marginalizing over a set of latent variables governing the noisy copy mechanism, which is computationally expensive. 
+    To estimate our model's parameters when node labels are known, we therefore describe a stochastic expectation-maximization algorithm in which each iteration has sublinear cost in the number of edges for sparse hypergraphs.
+    We also describe a community detection algorithm for estimating node labels via simulated annealing. 
+    In \Cref{sec:results} we demonstrate our algorithms on synthetic and empirical data. 
+    We show that, on synthetic data sampled from our model, our stochastic expectation maximization algorithm is both consistent and scalable, and that our simulated annealing algorithm for community detection, though computationally expensive, outperforms other standard methods. 
+    On empirical data, our parameter estimatates yield insight into the mechanisms governing edge formation
+    Our community detection achieves competitive recovery of observed metadata labels on some data sets known to be challenging to other community detection methods.
+    We conclude with some discussion of future directions for models of node-labeled hypergraphs with edge-dependence. 
 
 \subsection{Need to categorize}
 
@@ -88,7 +95,7 @@
     XGI!! \cite{landryXGIPythonPackage2023}
 
 
-\section{Model Description}
+\section{Model Description} \label{sec:model-description}
 
     \begin{figure}
         \centering 
@@ -236,7 +243,7 @@
     Batch expectation-maximization \cite{dempster1977maximum}  is an alternative approach which maximizes the likelihood without explicitly computing \cref{eq:likelihood}, but even this approach requires forming a belief distribution over the values of all latent variables at each timestep, which again incurs quadratic cost. 
     
     We therefore use a stochastic expectation-maximization (SEM) algorithm \cite{cappeOnLineExpectationMaximization2009} to estimate the parameters $\paramvector$.
-    
+
     
 Each iteration of the SEM algorithm consists of two steps: the E-step, in which the expected values of the sufficient statistics are calculated using the current parameter estimates, and the M-step, in which the parameter estimates are updated using the expected sufficient statistics. 
 
@@ -271,7 +278,7 @@ Each iteration of our SEM algorithm for hypergraphs then proceeds following the 
 \phil{Frannie, this is your spot! Descriptions of methods/algorithms should go here, results are for later.}
 
 
-\section{Inference Results}
+\section{Results} \label{sec:results}
 
 How did we do on real and synthetic data? 
 
