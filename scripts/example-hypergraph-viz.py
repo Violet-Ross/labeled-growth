@@ -76,3 +76,29 @@ for i, theta in enumerate(params.keys()):
 
 
 plt.savefig("fig/hypergraph_viz.png", dpi=300, bbox_inches="tight")
+
+
+# UNLABELED VERSION
+
+n_steps = int(10)
+
+theta_1 = [0.9, 0.9, 0.5, 0.5, 0.5, 0.5]
+eta_plus, eta_minus, lambda_plus, lambda_minus, gamma_plus, gamma_minus = params[theta]
+
+H = xgi.Hypergraph([[0, 1, 2, 3]])
+H.set_node_attributes({0 : 0, 1 : 0, 2 : 0, 3 : 0}, name = "label")
+growing_hypergraph = GH(H, [0, 1], eta_plus, eta_minus)
+growing_hypergraph.add_hyperedge(n_steps, gamma_plus, gamma_minus, lambda_plus, lambda_minus)
+H = growing_hypergraph.H.copy()
+H = H.cleanup(isolates = True)
+
+
+fig, ax = plt.subplots(1, 1, figsize=(6, 5))
+xgi.draw(H,
+         node_fc="white",
+        #  node_size = 100,
+         ax=ax,
+         node_fc_cmap=plt.cm.gray_r, 
+         hull = True,
+         edge_fc_cmap = plt.cm.plasma)
+plt.savefig("fig/hypergraph_viz_unlabeled.png", dpi=300, bbox_inches="tight")
