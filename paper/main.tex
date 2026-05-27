@@ -1,8 +1,8 @@
 % /Users/philchodrow/.../main.tex
 % RevTeX 4.2 minimal starter document
 
-% \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
-\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,draft]{revtex4-2}
+\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+% \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,draft]{revtex4-2}
 
 
 \usepackage{amsmath,amssymb,bm}
@@ -97,7 +97,7 @@
 
     \begin{figure}
         \centering 
-        \includegraphics{../fig/hypergraph_viz.png}
+        \includegraphics[width=0.48\textwidth]{../fig/hypergraph_viz.png}
         \caption{Two samples from our model. 
         Node color corresponds to community label.
         Label-homogeneous edges are shown in green, while label-heterogeneous edges are shown in pink.
@@ -224,8 +224,19 @@
 \subsection{Parameter Estimation via Stochastic EM}
 
 \phil{Violet, this is your spot! Descriptions of methods/algorithms should go here, results are for later. }
+
+    We first consider the problem of learning the parameter vector $\paramvector = (\eta_+, \eta_-, \lambda_+, \lambda_-, \gamma_+, \gamma_-)$ given an observed hypergraph $\hypergraph$ with sequential edge indices and known node labels $\vz$.
+    We aim to do this via maximum-likelihood estimation. 
+    Computing the complete data likelihood requires marginalizing over the model latent variables, which in this case are the edge $f$ and node $u$ selected at each timestep of the growth model to form the new edge $e$: 
+    \begin{align}
+        \prob(\hypergraph, \vz | \paramvector) = \prod_{t=1}^T \sum_{f \in \edges_{t - 1}} \sum_{u \in f} p(e | f, u, \vz, \paramvector) p(f,u| \edges_{t - 1}, \vz, \paramvector) \;. \label{eq:likelihood}
+    \end{align}
+    For notational simplicity, we have repressed the additional entries of $\vz$ introduced by the novel node addition step. 
+    The requirement to sum over the latent variables at each timestep implies a computational cost to evaluate $\prob(\hypergraph, \vz | \paramvector)$ (or its derivatives) which is quadratic in the number of edges, making direct optimization of the likelihood expensive for data sets of even modest size. 
+    Batch expectation-maximization \cite{dempster1977maximum}  is an alternative approach which maximizes the likelihood without explicitly computing \cref{eq:likelihood}, but even this approach requires forming a belief distribution over the values of all latent variables at each timestep, which again incurs quadratic cost. 
     
-We introduce a Stochastic Expectation Maximization (SEM) algorithm for inferring the [INSERT MODEL NAME HERE] model parameters from a hypergraph. A traditional inference approach, maximum likelihood estimation (MLE), infers parameter values by selecting the set of parameters that are most likely to have generated the observed data. The probability that our data, the hypergraph $\mathcal{H}$, was generated using a given set of parameters $\theta$ depends not only on observable data (the hypergraph itself) but also on latent variables (the edge $e'$ and node $u$ selected at each timestep of the growth model). Therefore, to compute the log marginal likelihood, which MLE seeks to maximize over, we must marginalize over the latent variables, making this approach computationally expensive. Expectation Maximization (EM) algorithms also maximize over the log marginal likelihood, but avoid expensive marginalization. However, the original EM algorithm \cite{dempster1977maximum} computes the expected value of a sufficient statistic using all observations at each time step, which introduces another computational cost. Stochastic Expectation Maximization \cite{cappeOnLineExpectationMaximization2009} resolves this issue by, at each timestep, computing the expectation using only one randomly selected data point.
+    We therefore use a stochastic expectation-maximization (SEM) algorithm \cite{cappeOnLineExpectationMaximization2009} to estimate the parameters $\paramvector$.
+    
     
 Each iteration of the SEM algorithm consists of two steps: the E-step, in which the expected values of the sufficient statistics are calculated using the current parameter estimates, and the M-step, in which the parameter estimates are updated using the expected sufficient statistics. 
 
