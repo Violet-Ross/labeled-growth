@@ -7,7 +7,7 @@ import seaborn as sns
 from collections import Counter
 from itertools import combinations
 
-H = xgi.read_json("throughput/gender_coauth_shrunk.json", nodetype=int)
+H = xgi.read_json("throughput/gender_coauth_sorted.json", nodetype=int)
 
 growing_hypergraph = GH(H, [0, 1], 0, 0)
 
@@ -75,9 +75,13 @@ axs[1].set_yscale('log')
 
 plt.savefig('fig/coauth_degree_and_edge_distribution.png', dpi=300, bbox_inches="tight")
 
-## SEM on senate data
+## SEM on author data
+initial_rate = 0.01
+constant = 0.001
+iteration_limit = 8000
+
 sem = sem_functions()
 s_intial = np.array([1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5])
-estimates = sem.SEM_without_likelihood(growing_hypergraph, s_intial, 3000, 0.01, 0.001)
+estimates = sem.SEM_without_likelihood(growing_hypergraph, s_intial, iteration_limit, initial_rate, constant)
 
 SEM_viz(np.array(estimates))
