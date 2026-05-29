@@ -15,25 +15,30 @@ import statistics
 
 
 class SimulatedAnnealingApprox:
-    def __init__(self, g, theta):
+    def __init__(self, g, theta, approx=None, novel=False):
         self.g = g
         self.theta = theta
+        self.novel = novel # boolean of whether novel nodes are computed
 
         self.steps_taken = 0
 
         # random initialization of node labels
         self.labels = list(np.random.choice([0,1], size=len(g.nodes)))
+        # self.labels = g.get_labels()
 
         self.likelihoods_per_step = []
         self.nmis_per_step = []
         self.aris_per_step = []
 
-        self.f_e_pairs = self.initialize_f_e_pairs()
-        # self.f_e_pairs = self.initalize_f_e_pairs_adjustable_approx_bound(100)
+        if approx == None:
+            self.f_e_pairs = self.initialize_f_e_pairs()
+        else:
+            self.f_e_pairs = self.initalize_f_e_pairs_adjustable_approx_bound(approx)
 
         # TODO add initial, random likelihood
         self.likelihoods_per_step.append(self.calculate_likelihood_with_f_e_pairs(self.labels))
         self.aris_per_step.append(adjusted_rand_score(self.labels, self.g.get_labels()))
+
 
         # with open('likelihood_of_good_labels.csv', 'a', newline="") as file:
         #     writer = csv.writer(file)
@@ -324,7 +329,7 @@ class SimulatedAnnealingApprox:
                     canidate_f_indexes = [f_index]
             if k > 0:
                 for f_index in canidate_f_indexes:
-                    f_e_pairs.append(FEPair(self.g, e_index, f_index, 1/e_index, self.labels, self.theta))
+                    f_e_pairs.append(FEPair(self.g, e_index, f_index, 1/e_index, self.labels, self.theta, self.novel))
 
         return f_e_pairs
 
@@ -343,7 +348,7 @@ class SimulatedAnnealingApprox:
             
             canidate_f_indexes = sorted(canidate_f_indexes, key=lambda x: x[1])
             for f_pair in canidate_f_indexes[-min(bound, len(canidate_f_indexes)):]:
-                f_e_pairs.append(FEPair(self.g, e_index, f_pair[0], 1/len(canidate_f_indexes), self.labels, self.theta))
+                f_e_pairs.append(FEPair(self.g, e_index, f_pair[0], 1/len(canidate_f_indexes), self.labels, self.theta, self.novel))
 
         return f_e_pairs
         

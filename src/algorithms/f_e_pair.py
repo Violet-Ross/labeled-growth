@@ -3,7 +3,8 @@ import numpy as np
 import math
 
 class FEPair:
-    def __init__(self, g, e_index, f_index, weight, node_labels, theta):
+    def __init__(self, g, e_index, f_index, weight, node_labels, theta, novel):
+        self.novel = novel
         self.g = g
         self.e_index = e_index
         self.f_index = f_index
@@ -61,13 +62,14 @@ class FEPair:
         f = self.g.get_edges()[self.f_index]
 
         # DEPRACATED
-        # prev_nodes = list(range(self.g.last_added[self.e_index - 1] + 1))
+        prev_nodes = list(range(self.g.last_added[self.e_index - 1] + 1))
 
-        prev_nodes = []
+        if self.novel:
+            prev_nodes = []
 
-        for node in range(len(self.g.get_labels())):
-            if (self.g.first_seen[node] < self.e_index):
-                prev_nodes.append(node)
+            for node in range(len(self.g.get_labels())):
+                if (self.g.first_seen[node] < self.e_index):
+                    prev_nodes.append(node)
 
 
         # novel nodes counting
