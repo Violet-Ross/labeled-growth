@@ -323,6 +323,7 @@ How did we do on real and synthetic data?
 
 \begin{acknowledgments}
     PSC acknowledges support from the National Science Foundation under DMS-2407058.
+    Compute was provided by Middlebury College through support from the National Science Foundation under award 1827373.
 \end{acknowledgments}
 
 
@@ -414,7 +415,7 @@ How did we do on real and synthetic data?
 
     \section{Sufficient Statistics for Stochastic Expectation-Maximization} \label{sec:sufficient-statistics}
 
-        We describe the function $\sigma$ which computes the conditional sufficient statistics for the parameters $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed edge $e$, a candidate parent edge $f$, a candidate seed node $u$, and the node labels $\vz$. 
+        We describe the function $\sigma$ from \Cref{sec:sem} which computes the conditional sufficient statistics for the parameters $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed edge $e$, a candidate parent edge $f$, a candidate seed node $u$, and the node labels $\vz$. 
         Let $z = z_u$ be the label of the seed node $u$. 
         Let $e_z$ be the set of nodes in $e$ with label $z$, and let $f_z$ be the set of nodes in $f$ with label $z$. 
         Then, the sufficient statistics for the parameters $\paramvector$ are given by
@@ -434,7 +435,7 @@ How did we do on real and synthetic data?
         Then, the function $g$ which computes the maximum likelihood estimates of the parameters $\paramvector$ from $\sufficientstatsvec$ is given by
         \begin{align*}
             g(\sufficientstatsvec) = \paren{
-                \frac{s_1}{s_2}, 
+                \frac{s_1-1}{s_2-1}, 
                 \frac{s_3}{s_4}, 
                 s_5, 
                 s_6, 
@@ -443,5 +444,6 @@ How did we do on real and synthetic data?
             }
              \;.
         \end{align*}
+        \phil{\@Violet, I added the $-1$ here to what you had previously written but please check.}
 \end{document}
 
