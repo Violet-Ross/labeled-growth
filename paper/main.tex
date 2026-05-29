@@ -1,8 +1,8 @@
 % /Users/philchodrow/.../main.tex
 % RevTeX 4.2 minimal starter document
 
-% \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
-\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,draft]{revtex4-2}
+\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+% \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,draft]{revtex4-2}
 
 
 \usepackage{amsmath,amssymb,bm}
@@ -17,13 +17,16 @@
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 
 \input{macros}
+\input{community-detection-learning-progress.tex}
 
 \begin{document}
 
 \title{Growing Hypergraphs with Node Labels}
 \author{Francis Cataldo$^*$}
+\thanks{Equal author contributions}
 \affiliation{Department of Computer Science, Middlebury College, Middlebury, VT, USA}
 \author{Violet Ross$^*$}
+\thanks{Equal author contributions}
 \affiliation{Department of Computer Science, University of Colorado at Boulder, Boulder, CO, USA}
 \author{Philip S. Chodrow}
 \affiliation{Department of Computer Science, Middlebury College, Middlebury, VT, USA}
@@ -31,10 +34,12 @@
 
 \date{\today}
 \begin{abstract}
-    We study a generative mechanistic model of hypergraph growth in which nodes possess binary labels which generalizes prior work on edge-copying growing hypergraphs.  
-    Edges form in this model as noisy copies of previous edges, where the transmission of nodes from one edge to the next depends on the labels. 
+    We study a mechanistic model of growing hypergraphs in which edge formation is tuned by homophily between binary node attributes. 
+    Edges form in this model as noisy copies of previous edges, where the transmission of nodes from one edge to the next depends on the labels.
     We derive a power law for the degree distribution in this model and describe the long-term dynamics of the joint distribution of labels contained in edges. 
-    We then demonstrate that this model can be learned from data: we can both estimate the parameters of the model via (stochastic) expectation maximzation and perform community detection of the node labels via maximum-likelihood estimation. 
+    This model defines a likelihood over a labeled hypergraph, allowing us to use standard maximum-likelihood techniques to motivate algorithms. 
+    We estimate the model parameters on synthetic and real data via (stochastic) expectation maximization, allowing us to statistically quantify the signature of homophily in empirical polyadic systems. 
+    We also demonstrate an approach to community detection via simulated annealing which, though computationally expensive, achieves competitive results on certain data sets known to be challenging to standard community detection techniques.
 \end{abstract}
 
 \maketitle
@@ -279,10 +284,12 @@ Our version of the algorithm uses an online computation of $\sufficientstatsvec'
     \State $a \gets \vzero$
     \State $b \gets \vzero$
     \For{$f \in \edges$}
-        \For{$u \in f$}
-            \State $a \gets a + p(f, u | e, \at{\hat{\paramvector}}{\ell}) \sigma(e, f, u, \vz)$
-            \State $b \gets b + p(f, u | e, \at{\hat{\paramvector}}{\ell})$
-        \EndFor
+        \If{$f\prec e$}
+            \For{$u \in e\cap f$}
+                \State $a \gets a + p(f, u | e, \at{\hat{\paramvector}}{\ell}) \sigma(e, f, u, \vz)$
+                \State $b \gets b + p(f, u | e, \at{\hat{\paramvector}}{\ell})$
+            \EndFor
+        \EndIf
     \EndFor
     \State $\sufficientstatsvec' \gets a / b$
     \State $\at{\sufficientstatsvec}{\ell+1} \gets (1 - \lr^{(\ell)}) \at{\sufficientstatsvec}{\ell} + \lr^{(\ell)} \sufficientstatsvec'$
@@ -445,5 +452,40 @@ How did we do on real and synthetic data?
              \;.
         \end{align*}
         \phil{\@Violet, I added the $-1$ here to what you had previously written but please check.}
+
+    \section{Simulated Annealing Illustration}
+
+        \begin{figure*}
+            \includegraphics[width=1.0\textwidth]{../fig/community-detection-learning-progress.png}
+            \caption{
+                Simulated annealing for community detection in a hypergraph generated from our model.
+            }
+        \end{figure*}
+
+        In this simulation, we generated a simple hypergraph according to our model with \simannviznumnodes{} nodes and \simannviznumedges{} edges.
+        Running simulated annealing for \simannviznumsteps{} steps, we obtained a maximum log-likelihood of \simannvizmaxll{} nats per edge with an Adjusted Rand Index (ARI) against ground-truth of \simannvizmaxllari{}. 
+        Greedy modularity maximization as implemented in the Python package \texttt{networkx} \cite{networkx} obtained an ARI of \simannvizmodularityari{}.
+        The parameters for the model used to generate the hypergraph are 
+        \begin{align*}
+            \same{\copyrate{}} &= \simannvizsamecopyrate{} \\ 
+            \opp{\copyrate{}} &= \simannvizoppcopyrate{} \\ 
+            \same{\extantrate{}} &= \simannvizsameextantrate{} \\ 
+            \opp{\extantrate{}} &= \simannvizoppextantrate{} \\ 
+            \same{\novelrate{}} &= \simannvizsamenovelrate{} \\ 
+            \opp{\novelrate{}} &= \simannvizoppnovelrate{}\;. 
+        \end{align*}
+        The guessed parameters used to compute the likelihood during simulated annealing are 
+        \begin{align*}
+            \same{\hat\copyrate{}} &= \simannvizsamecopyrateguess{} \\ 
+            \opp{\hat\copyrate{}} &= \simannvizoppcopyrateguess{} \\ 
+            \same{\hat\extantrate{}} &= \simannvizsameextantrateguess{} \\ 
+            \opp{\hat\extantrate{}} &= \simannvizoppextantrateguess{} \\ 
+            \same{\hat\novelrate{}} &= \simannvizsamenovelrateguess{} \\ 
+            \opp{\hat\novelrate{}} &= \simannvizoppnovelrateguess{}\;. 
+        \end{align*}
+
+
+
+
 \end{document}
 

@@ -6,7 +6,7 @@
 %Control: page (0) single
 %Control: year (1) truncated
 %Control: production of eprint (0) enabled
-\begin{thebibliography}{33}%
+\begin{thebibliography}{34}%
 \makeatletter
 \providecommand \@ifxundefined [1]{%
  \@ifx{#1\undefined}
@@ -148,4 +148,7 @@
 \bibitem [{\citenamefont {Kirkpatrick}\ \emph {et~al.}(1983)\citenamefont {Kirkpatrick}, \citenamefont {Gelatt~Jr},\ and\ \citenamefont {Vecchi}}]{kirkpatrickOptimizationSimulatedAnnealing1983}%
   \BibitemOpen
   \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Kirkpatrick}}, \bibinfo {author} {\bibfnamefont {C.~D.}\ \bibnamefont {Gelatt~Jr}},\ and\ \bibinfo {author} {\bibfnamefont {M.~P.}\ \bibnamefont {Vecchi}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Science}\ }\textbf {\bibinfo {volume} {220}},\ \bibinfo {pages} {671} (\bibinfo {year} {1983})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hagberg}\ \emph {et~al.}(2008)\citenamefont {Hagberg}, \citenamefont {Schult},\ and\ \citenamefont {Swart}}]{networkx}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~A.}\ \bibnamefont {Hagberg}}, \bibinfo {author} {\bibfnamefont {D.~A.}\ \bibnamefont {Schult}},\ and\ \bibinfo {author} {\bibfnamefont {P.~J.}\ \bibnamefont {Swart}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 7th Python in Science Conference}}},\ \bibinfo {editor} {edited by\ \bibinfo {editor} {\bibfnamefont {G.}~\bibnamefont {Varoquaux}}, \bibinfo {editor} {\bibfnamefont {T.}~\bibnamefont {Vaught}},\ and\ \bibinfo {editor} {\bibfnamefont {J.}~\bibnamefont {Millman}}}\ (\bibinfo {address} {Pasadena, CA USA},\ \bibinfo {year} {2008})\ pp.\ \bibinfo {pages} {11--15}\BibitemShut {NoStop}%
 \end{thebibliography}%
