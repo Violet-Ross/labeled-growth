@@ -1,5 +1,6 @@
 
 \newcommand{\paren}[1]{\left( #1 \right)}
+\newcommand{\braces}[1]{\left\{ #1 \right\}}
 \newcommand{\brackets}[1]{\left\langle #1 \right\rangle}
 \newcommand{\squarebrackets}[1]{\left[ #1 \right]}
 \newcommand{\prob}{\mathbb{P}}
@@ -25,10 +26,19 @@
 
 \newcommand{\paramvector}{\boldsymbol{\theta}}
 
-\newcommand{\samelabelcopyrate}{p}
-\newcommand{\opplabelcopyrate}{q}
-\newcommand{\samelabelextantrate}{r}
-\newcommand{\opplabelextantrate}{s}
-\newcommand{\samelabelnovelrate}{\alpha}
-\newcommand{\opplabelnovelrate}{\beta}
-\newcommand{\totalnovelrate}{\gamma}
+\newcommand{\expectedcopiednodes}{\sigma}
+
+
+\newcommand{\copyrate}{p}
+\newcommand{\extantrate}{r}
+\newcommand{\novelrate}{\alpha}
+\newcommand{\same}[1]{#1_+}
+\newcommand{\opp}[1]{#1_-}
+
+\newcommand{\abs}[1]{\left| #1 \right|}
+
+\newcommand{\Model}{Binary Hypergraph Copy Model}
+\newcommand{\model}{\textsc{BHCM}}
+\newcommand{\sufficientstatsvec}{\mathbf{s}}
+\newcommand{\lr}{\alpha} % learning rate
+\newcommand{\vzero}{\mathbf{0}}

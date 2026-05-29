@@ -1,14 +1,19 @@
 % /Users/philchodrow/.../main.tex
 % RevTeX 4.2 minimal starter document
 
-\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
-% \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,draft]{revtex4-2}
+% \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,draft]{revtex4-2}
 
 
 \usepackage{amsmath,amssymb,bm}
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{cleveref}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\newcommand{\algorithmautorefname}{Algorithm}
+
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 
 \input{macros}
@@ -84,16 +89,11 @@
 
     \begin{figure}
         \centering 
-        \caption{PLACEHOLDER: schematic of the model here, or alternatively a sample from the model.}
-    \end{figure}
-
-    \begin{figure}
-        \centering 
         \includegraphics[width=0.48\textwidth]{../fig/hypergraph_viz.png}
         \caption{Two samples from our model. 
         Node color corresponds to community label.
         Label-homogeneous edges are shown in green, while label-heterogeneous edges are shown in pink.
-        In each case, $\samelabelnovelrate{} = 0.5$, $\opplabelnovelrate{} = 0.25$, and the remaining parameters are as given. 
+        In each case, $\same{\novelrate{}} = 0.5$, $\opp{\novelrate{}} = 0.25$, and the remaining parameters are as given. 
         The model begins with two disjoint label-homogeneous edges and is run for 25 timesteps.
         } \label{fig:examples}
     \end{figure}
@@ -109,12 +109,12 @@
     \begin{itemize}
         \item 
             \textbf{Edge-Copying}: An edge $\seededge$ is sampled uniformly at random from $\at{\edges}{t - 1}$, and a node $\focalnode$ is sampled uniformly at random from $\seededge$. 
-            Then, each node $\node$ in $\seededge$ is included in $\newedge$ with probability $\samelabelcopyrate{}$ if $z_{\node} = z_{\focalnode}$ and with probability $\opplabelcopyrate{}$ if $z_{\node} \neq z_{\focalnode}$.
+            Then, each node $\node$ in $\seededge$ is included in $\newedge$ with probability $\same{\copyrate{}}$ if $z_{\node} = z_{\focalnode}$ and with probability $\opp{\copyrate{}}$ if $z_{\node} \neq z_{\focalnode}$.
         \item 
-            \textbf{Extant Node Addition}: We sample $\extantnodesinedge_{z_\focalnode}$ nodes from $\nodes \setminus \seededge$ with label $z_\focalnode$ and add them to $\newedge$, where $\extantnodesinedge_z$ is a Poisson random variable with mean $\samelabelextantrate{}$. 
-            We similarly sample $\extantnodesinedge_{\bar{z}_\focalnode}$ nodes from $\nodes \setminus \seededge$ with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\extantnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\opplabelextantrate{}$.
-        \item \textbf{Novel Node Addition}: We sample $\novelnodesinedge_{z_\focalnode}$ new nodes with label $z_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_z$ is a Poisson random variable with mean $\samelabelnovelrate{}$.
-            We similarly sample $\novelnodesinedge_{\bar{z}_\focalnode}$ new nodes with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\opplabelnovelrate{}$.   
+            \textbf{Extant Node Addition}: We sample $\extantnodesinedge_{z_\focalnode}$ nodes from $\nodes \setminus \seededge$ with label $z_\focalnode$ and add them to $\newedge$, where $\extantnodesinedge_z$ is a Poisson random variable with mean $\same{\extantrate{}}$. 
+            We similarly sample $\extantnodesinedge_{\bar{z}_\focalnode}$ nodes from $\nodes \setminus \seededge$ with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\extantnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\opp{\extantrate{}}$.
+        \item \textbf{Novel Node Addition}: We sample $\novelnodesinedge_{z_\focalnode}$ new nodes with label $z_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_z$ is a Poisson random variable with mean $\same{\novelrate{}}$.
+            We similarly sample $\novelnodesinedge_{\bar{z}_\focalnode}$ new nodes with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\opp{\novelrate{}}$.   
     \end{itemize}
     In our simulations we initialize $\at{\hypergraph}{0}$ with a single edge containing one node of each label, but any combination of hypergraph and node labels can be used as an initial condition. 
     Both our simulations and our statistical inference techniques (described below) were carried using the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
@@ -130,8 +130,8 @@
         \includegraphics[width=1\textwidth]{../fig/linear_map_eigenvectors.png}
         \caption{
             Visualization of the long-run dynamics of our model, for parameters. 
-            (a): Spectral gap $1 - \lambda_2$ of the linear map $T$ as a function of $\samelabelcopyrate{}$ and $\opplabelcopyrate{}$ for fixed parameter values $\samelabelextantrate{} = 0.5$, $\opplabelextantrate{} = \opplabelnovelrate{}3$, $\samelabelnovelrate{} = 0.4$ and $\opplabelnovelrate{} = 0.2$. 
-            The highlighted values $\samelabelcopyrate{} = 0.8$ and $\opplabelcopyrate{} = 0.1$ are used in the remainder of the visualization. 
+            (a): Spectral gap $1 - \lambda_2$ of the linear map $T$ as a function of $\same{\copyrate{}}$ and $\opp{\copyrate{}}$ for fixed parameter values $\same{\extantrate{}} = 0.5$, $\opp{\extantrate{}} = \opp{\novelrate{}}3$, $\same{\novelrate{}} = 0.4$ and $\opp{\novelrate{}} = 0.2$. 
+            The highlighted values $\same{\copyrate{}} = 0.8$ and $\opp{\copyrate{}} = 0.1$ are used in the remainder of the visualization. 
             (b): Leading eigenvector $\mathbf{v}_1$ of $T$, describing the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ of label counts in edges.
             (c): Second eigenvector $\mathbf{v}_2$ of $T$. 
             The transients of the model dynamics are dominated by the subspace spanned by $\mathbf{v}_1$ and $\mathbf{v}_2$. 
@@ -144,13 +144,13 @@
 
     The asymptotics of this model can be described in terms of the joint distribution $p_{K_0, K_1}(k_0, k_1)$ of nodes of labels 0 and 1 in a uniformly random edge. 
     This joint distribution can be obtained as the leading eigenvector of a linear map. 
-    Let $p^{(t)}(k_0, k_1)$ be the joint distribution of label counts in a uniformly random edge after $t$ timesteps. 
+    Let $\at{\jointdist}{t}(k_0, k_1)$ be the joint distribution of label counts in a uniformly random edge after $t$ timesteps. 
     Then, the probability $q(k_0', k_1')$ of realizing an edge with $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 at time $t+1$ is given by 
     \begin{align*}
-        q(k_0', k_1') = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)p^{(t)}(k_0, k_1)  \;,
+        q(k_0', k_1') = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)\at{\jointdist}{t}(k_0, k_1)  \;,
     \end{align*}
     where $T(k_0', k_1' | k_0, k_1)$ gives the probability that the edge $e$ realized in step $t+1$ has $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 given that the edge $f$ sampled to form $e$ has $k_0$ nodes of label 0 and $k_1$ nodes of label 1.
-    At stationarity, we must have $q(k_0', k_1') = p^{(t)}(k_0', k_1') = p^{(t+1)}(k_0', k_1')$, so the stationarity condition can be obtained by solving the linear system 
+    At stationarity, we must have $q(k_0', k_1') = \at{\jointdist}{t}(k_0', k_1') = \at{\jointdist}{t+1} \paren{k_0', k_1'}$, so the stationarity condition can be obtained by solving the linear system 
     \begin{align*}
         \at{\jointdist}{t+1} \paren{k_0', k_1'} = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)\at{\jointdist}{t} \paren{k_0, k_1}  \;.
     \end{align*}
@@ -159,16 +159,16 @@
     Conditional on choosing an edge $f$ with $k_0$ nodes of label 0 and $k_1$ nodes of label 1, a node of label $z$ is selected as the seed node $u$ with probability $\frac{k_z}{k_0 + k_1}$.
     Then, the number of nodes of labels $z$ and $\bar{z}$ in $e$ have distributions
     \begin{align*}
-        k_z' &\sim 1 + \text{Binom}\paren{k_z - 1, \samelabelcopyrate{}} + \text{Poisson}(\samelabelextantrate{} + \samelabelnovelrate{}) \;, \\
-        k_{\bar{z}}' &\sim \text{Binom}\paren{k_{\bar{z}}, \opplabelcopyrate{}} + \text{Poisson}(\opplabelextantrate{} + \opplabelnovelrate{}) \;.
+        k_z' &\sim 1 + \text{Binom}\paren{k_z - 1, \same{\copyrate{}}} + \text{Poisson}(\same{\extantrate{}} + \same{\novelrate{}}) \;, \\
+        k_{\bar{z}}' &\sim \text{Binom}\paren{k_{\bar{z}}, \opp{\copyrate{}}} + \text{Poisson}(\opp{\extantrate{}} + \opp{\novelrate{}}) \;.
     \end{align*}
     The probability of obtaining $k_0'$ nodes of label 0, conditioning on $k_0$ and $k_1$, is 
     \begin{widetext}
         \begin{align*}
-            t(k_0' | k_0, k_1) =& \frac{k_0}{k_0 + k_1} \sum_{i=0}^{k_0' - 1} \binom{k_0 - 1}{i} \samelabelcopyrate{}^i (1 - \samelabelcopyrate{})^{k_0 - 1 - i} 
-            e^{-(\samelabelextantrate{} + \samelabelnovelrate{})} \frac{(\samelabelextantrate{} + \samelabelnovelrate{})^{k_0' - 1 - i}}{(k_0' - 1 - i)!}  + \\ 
-            & \frac{k_1}{k_0 + k_1} \sum_{i=0}^{k_0'} \binom{k_0}{i} \opplabelcopyrate{}^i (1 - \opplabelcopyrate{})^{k_0 - i} 
-            e^{-(\opplabelextantrate{} + \opplabelnovelrate{})} \frac{(\opplabelextantrate{} + \opplabelnovelrate{})^{k_0' - i}}{(k_0' - i)!}\;.
+            t(k_0' | k_0, k_1) =& \frac{k_0}{k_0 + k_1} \sum_{i=0}^{k_0' - 1} \binom{k_0 - 1}{i} \same{\copyrate{}}^i (1 - \same{\copyrate{}})^{k_0 - 1 - i} 
+            e^{-(\same{\extantrate{}} + \same{\novelrate{}})} \frac{(\same{\extantrate{}} + \same{\novelrate{}})^{k_0' - 1 - i}}{(k_0' - 1 - i)!}  + \\ 
+            & \frac{k_1}{k_0 + k_1} \sum_{i=0}^{k_0'} \binom{k_0}{i} \opp{\copyrate{}}^i (1 - \opp{\copyrate{}})^{k_0 - i} 
+            e^{-(\opp{\extantrate{}} + \opp{\novelrate{}})} \frac{(\opp{\extantrate{}} + \opp{\novelrate{}})^{k_0' - i}}{(k_0' - i)!}\;.
         \end{align*}
     \end{widetext}
     A parallel expression describes $t(k_1' | k_0, k_1)$, and the transition matrix entries are given by the product 
@@ -187,7 +187,7 @@
         \includegraphics[width=0.5\textwidth]{../fig/degree_distribution.png}
         \caption{
             Degree distribution from model simulation of $10^4$ edges (points) and theoretical power law (line) with exponent given by \Cref{eq:power-law-exponent}. 
-            The parameters in this experiment are $\samelabelcopyrate{} = 0.7, \opplabelcopyrate{} = 0.3, \samelabelextantrate{} = 0.5, \opplabelextantrate{} = \opplabelnovelrate{}3, \samelabelnovelrate{} = 0.2, \opplabelnovelrate{} = 0.1$.
+            The parameters in this experiment are $\same{\copyrate{}} = 0.7, \opp{\copyrate{}} = 0.3, \same{\extantrate{}} = 0.5, \opp{\extantrate{}} = \opp{\novelrate{}}3, \same{\novelrate{}} = 0.2, \opp{\novelrate{}} = 0.1$.
             }
         \label{fig:degrees}
     \end{figure}
@@ -198,11 +198,11 @@
     
     Under this assumption, it is possible to show that the degree distribution follows a power law with exponent
     \begin{align}
-        \zeta &= 1 + \frac{\brackets{k}}{1 + \samelabelcopyrate{}(\rho_{00} + \rho_{11} - 1) + 2\opplabelcopyrate{} \rho_{01}} \label{eq:power-law-exponent}\\ 
+        \zeta &= 1 + \frac{\brackets{k}}{1 + \same{\copyrate{}}(\rho_{00} + \rho_{11} - 1) + 2\opp{\copyrate{}} \rho_{01}} \label{eq:power-law-exponent}\\ 
         \rho_{ij} &= \brackets{\frac{k_i k_j}{k}} \;. \nonumber
     \end{align}
     In the expression for $\rho_{ij}$ (and for $\brackets{k}$) the expectation is taken with respect to the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$.
-    Here, $\totalnovelrate{}$ can be interpreted as the expected number of novel nodes added per new edge, while $\sigma$ can be interpreted as the expected number of nodes copied into a new edge from the sampled edge, normalized by the average degree of a node in the hypergraph.
+    Here, $\novelrate{}$ can be interpreted as the expected number of novel nodes added per new edge, while $\expectedcopiednodes{}$ can be interpreted as the expected number of nodes copied into a new edge from the sampled edge, normalized by the average degree of a node in the hypergraph.
     
 
     \subsubsection{Community Structure}
@@ -213,13 +213,9 @@
 
 \section{Model Inference}
 
-\phil{Phil needs to establish standardized notation in this section.}
+\subsection{Parameter Estimation via Stochastic EM} \label{sec:sem}
 
-\subsection{Parameter Estimation via Stochastic EM}
-
-\phil{Violet, this is your spot! Descriptions of methods/algorithms should go here, results are for later. }
-
-    We first consider the problem of learning the parameter vector $\paramvector = (\samelabelcopyrate{}, \opplabelcopyrate{}, \samelabelextantrate{}, \opplabelextantrate{}, \opplabelnovelrate{}, \opplabelnovelrate{})$ given an observed hypergraph $\hypergraph$ with sequential edge indices and known node labels $\vz$.
+    We first consider the problem of learning the parameter vector $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed hypergraph $\hypergraph$ with sequential edge indices and known node labels $\vz$.
     We aim to do this via maximum-likelihood estimation. 
     Computing the complete data likelihood requires marginalizing over the model latent variables, which in this case are the edge $f$ and node $u$ selected at each timestep of the growth model to form the new edge $e$: 
     \begin{align}
@@ -233,32 +229,72 @@
     Each iteration of the SEM algorithm consists of two steps: the E-step, in which exponentially-weighted moving averages of
     the sufficient statistics are calculated using the current parameter estimates, and the M-step, in which the parameter estimates are updated using the expected sufficient statistics. 
 
-Suppose we have an observed variable $x$ and a hidden variable $h$. Let $f(x_i, h_i)$ be a function which computes a sufficient statistic for each of the parameters in $\theta$ and let $F_i(\hat{\theta}) = \mathbb{E}[f(x_i, h_i) | x_i]$ be the function which computes the expected sufficient statistic values given an observed $x_i$. Let $g$ be a function which computes the maximum likelihood estimate of $\theta$ from the sufficient statistics. Fix a sequence of learning rates $\ell^{(1)}, \ldots, \ell^{(t)}$. Each iteration, $t$, of SEM proceeds as follows.
+% Suppose we have an observed variable $x$ and a hidden variable $h$. Let $f(x_i, h_i)$ be a function which computes a sufficient statistic for each of the parameters in $\theta$ and let $F_i(\hat{\theta}) = \mathbb{E}[f(x_i, h_i) | x_i]$ be the function which computes the expected sufficient statistic values given an observed $x_i$. Let $g$ be a function which computes the maximum likelihood estimate of $\theta$ from the sufficient statistics. Fix a sequence of learning rates $\ell^{(1)}, \ldots, \ell^{(t)}$. Each iteration, $t$, of SEM proceeds as follows.
     
-\textbf{E step:} Sample an observation $x_i$ from the data uniformly at random. Compute the expected sufficient statistics $F_i(\hat{\theta}^{(t - 1)})$ using the randomly selected data point $x_i$ and the parameter estimates $\hat{\theta}^{(t - 1)}$ from the previous timestep. Generate an new estimate of sufficient statistics $s^{(t)}$ according to the update rule: $s^{(t)} = (1 - \ell^{(t)}) s^{(t - 1)} + \ell^{(t)}F_i(\hat{\theta}^{(t - 1)})$.
+% \textbf{E step:} Sample an observation $x_i$ from the data uniformly at random. Compute the expected sufficient statistics $F_i(\hat{\theta}^{(t - 1)})$ using the randomly selected data point $x_i$ and the parameter estimates $\hat{\theta}^{(t - 1)}$ from the previous timestep. Generate an new estimate of sufficient statistics $s^{(t)}$ according to the update rule: $s^{(t)} = (1 - \ell^{(t)}) s^{(t - 1)} + \ell^{(t)}F_i(\hat{\theta}^{(t - 1)})$.
     
-\textbf{M step:} Compute the new parameter estimates $\hat{\theta}^{(t)}$ from the updated sufficient statistics:
-$\hat{\theta}^{(t)} = g(s^{(t)})$.
+% \textbf{M step:} Compute the new parameter estimates $\hat{\theta}^{(t)}$ from the updated sufficient statistics:
+% $\hat{\theta}^{(t)} = g(s^{(t)})$.
     
-\subsubsection{Description of SEM on hypergraphs}
-We use an SEM algorithm to estimate the parameters $\theta = (p, q, \totalnovelrate{}_{e, z_u}, \totalnovelrate{}_{e, \bar{z_u}}, \totalnovelrate{}_{e, z_n}, \totalnovelrate{}_{e, \bar{z_n}})$ used to generate a hypergraph $\mathcal{H}$ via the [MODEL NAME] model. At each timestep, we have an observed variable $e'$ (a hyperedge) and two hidden variables $u$ and $e$ (the node and the hyperedge that generated $e'$). Let $f$ be a function which computes a sufficient statistic for each of the parameters in $\theta$. Specifically, let
-\begin{equation*}
-    f(e, u, e') = (t_{z_u}, w_{z_u}, t_{\bar{z}_u}, w_{\bar{z}_u}, n_{e, z_u}, n_{e, \bar{z}_u}, n_{n, z_u}, n_{n, \bar{z}_u})
-\end{equation*}
-where $w_{z_u}$ is the number of nodes with label  $z_u$ in $e$, $w_{\bar{z}_u}$ is the number of nodes with the label $\bar{z}_r$ in $e$, $t_{z_u}$ and $t_{\bar{z}_u}$ are the numbers of nodes with label $z_u$ and $\bar{z}_r$, respectively, copied from $e$ to $e'$, $n_{e, z_u}$ and ${n_{e, \bar{z}_u}}$ are the numbers of external nodes with labels $z_u$ and $\bar{z}_r$ in $e'$, and $n_{n, z_u}$ and ${n_{n, \bar{z}_u}}$ are the numbers of new nodes with labels $z_u$ and $\bar{z}_r$ in $e'$. 
-% The sufficiency of these statistics follows from standard results \cite{rice2007mathematical}. 
-Then the function 
-\begin{equation*}
-    \begin{split}
-        F_{e'}(\hat{\theta}^{(t - 1)}) &= \mathbb{E}[f(e, u, e') | e', \hat{\theta}^{(t - 1)}] \\
-        &= \frac{\sum_{e \in \mathcal{E}_{\text{prev}}} \sum_{u \in e \cap e'} p(e, u, e' | \hat{\theta}^{(t - 1)}) f(e, u, e')}{\sum_{e \in \mathcal{E}_{\text{prev}}} \sum_{u \in e \cap e'} p(e, u, e' | \hat{\theta}^{(t - 1)}) } 
-    \end{split}
-\end{equation*}
-computes the expected values of the sufficient statistics at time $t$ given edge $e'$. Finally, the maximum likelihood estimate of $\theta$ is given by
-\begin{equation*}
-    g(s^{(t)}) = \left( \frac{t_u}{w_{z_u}}, \frac{t_{\bar{z}_u}}{w_{\bar{z}_u}}, n_{e, z_u}, n_{e, \bar{z}_u}, n_{n, z_u}, n_{n, \bar{z}_u} \right).
-\end{equation*}
-Each iteration of our SEM algorithm for hypergraphs then proceeds following the E- and M-steps detailed above.
+% \subsubsection{Description of SEM on hypergraphs}
+% We use an SEM algorithm to estimate the parameters $\theta = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ used to generate a hypergraph $\mathcal{H}$ via the [MODEL NAME] model. 
+
+To initialize the SEM algorithm, we initialize a vector $\at{\sufficientstatsvec}{0}$ of sufficient statistics to arbitrary values; in our model there is a sufficient statistic for each parameter. 
+We then update a moving average of $\sufficientstatsvec$ as follows. 
+In each algorithmic step $\ell$, we pick an edge $e$ uniformly at random from $\hypergraph$. 
+Then, given current estimates $\at{\hat{\paramvector}}{\ell}$, we form a belief distribution over the latent identities of $f \in \edges$ and $u \in f$ which could have been selected in the edge-copying step to form $e$. 
+For notational convenience, let $f \prec e$ denote that edge $f$ was formed in a previous timestep. 
+Given $e$, the probability that $f$ and $u$ were selected can be computed in closed form. 
+We have 
+\begin{align*}
+    p(f, u | \at{\edges}{t-1}, \vz, \at{\hat{\paramvector}}{\ell}) = \frac{1}{\abs{f}\at{m}{t-1}} \triangleq r_{t-1}(f) \;,
+\end{align*}
+so Bayes' rule gives 
+\begin{align}
+    p(f,u | e, \at{\hat{\paramvector}}{\ell}) = \frac{p(e | f, u, \vz, \at{\hat{\paramvector}}{\ell}) r_{t-1}(f)}{\sum_{f' \prec e} \sum_{u' \in f'} p(e | f', u', \vz, \at{\hat{\paramvector}}{\ell}) r_{t-1}(f') } \;. \label{eq:bayes}
+\end{align}
+A helpful note for computation is that $p(e|f, u, \vz, \at{\hat{\paramvector}}{\ell}) = 0$ if either $u \notin e\cap f$ or $f\not\prec e$. 
+We then form the vector of expected sufficient statistics 
+\begin{align}
+    s' = \sum_{f \prec e} \sum_{u \in f\cap e} p(f, u | e, \at{\hat{\paramvector}}{\ell}) \sigma(e, f, u, \vz) \;, \label{eq:sufficient-stats-update}
+\end{align}
+where $\sigma(e, f, u, \vz)$ is the vector of sufficient statistics for the parameters $\paramvector$ given $e$, $f$, $u$, and $\vz$.
+The entries of $\sigma(e, f, u, \vz)$ can be computed as functions of the node labels in $e$ and $f$; we supply explicit formulae in \Cref{sec:sufficient-statistics}. 
+We then perform the update 
+\begin{align*}
+    \at{\sufficientstatsvec}{\ell+1} = (1 - \lr^{(\ell)}) \at{\sufficientstatsvec}{\ell} + \lr^{(\ell)} \sufficientstatsvec' \;,
+\end{align*}
+where $\lr^{(\ell)}$ is the learning rate at step $\ell$; we use an exponentially decaying learning rate in our experiments.
+Our estimate of the parameter vector $\paramvector$ is then given by a function $\at{\hat{\paramvector}}{\ell+1} = g(\at{\sufficientstatsvec}{\ell+1})$ of the sufficient statistics, which we also supply in \Cref{sec:sufficient-statistics}.
+\Cref{alg:sem} summarizes the steps of this algorithm. 
+Our version of the algorithm uses an online computation of $\sufficientstatsvec'$, which allows us to perform the double-sum appearing in \cref{eq:sufficient-stats-update,eq:bayes} only once, and without explicitly storing the resulting belief distribution at any point.  
+
+
+
+\begin{algorithm}[H]
+    \caption{SEM Update Step}\label{alg:sem}
+    \begin{algorithmic}
+    \Require $\hypergraph = \paren{\nodes, \edges}$, $\vz$, $\at{\hat{\paramvector}}{\ell}$, $\at{\sufficientstatsvec}{\ell}$
+    \State $e \gets \text{Uniform}(\edges)$
+    \State $a \gets \vzero$
+    \State $b \gets \vzero$
+    \For{$f \in \edges$}
+        \For{$u \in f$}
+            \State $a \gets a + p(f, u | e, \at{\hat{\paramvector}}{\ell}) \sigma(e, f, u, \vz)$
+            \State $b \gets b + p(f, u | e, \at{\hat{\paramvector}}{\ell})$
+        \EndFor
+    \EndFor
+    \State $\sufficientstatsvec' \gets a / b$
+    \State $\at{\sufficientstatsvec}{\ell+1} \gets (1 - \lr^{(\ell)}) \at{\sufficientstatsvec}{\ell} + \lr^{(\ell)} \sufficientstatsvec'$
+    \State $\at{\hat{\paramvector}}{\ell+1} \gets g(\at{\sufficientstatsvec}{\ell+1})$
+    \State \Return $\at{\hat{\paramvector}}{\ell+1}$, $\at{\sufficientstatsvec}{\ell+1}$
+    \end{algorithmic}
+\end{algorithm}
+
+\phil{Violet, can you say something about stopping criteria in here?}
+
+\phil{Need to settle on $p$ vs. $\prob$}
+
 
 
 
@@ -310,10 +346,10 @@ How did we do on real and synthetic data?
         \brackets{d} = \frac{m}{n}\brackets{k} \;,
     \end{align}
     where $\brackets{k}$ is the mean edge size (computable from the stationary distribution $\jointdist \paren{k_1,k_2}$), $m$ is the number of edges, and $n$ is the number of nodes.
-    In expectation, there are $\totalnovelrate{} \triangleq \opplabelnovelrate{} + \samelabelnovelrate{}$ new nodes added per new edge, which means that $\frac{m}{n} \to \frac{1}{\totalnovelrate{}}$ as $m, n \to \infty$ in expectation.
+    In expectation, there are $\novelrate{} \triangleq \opp{\novelrate{}} + \same{\novelrate{}}$ new nodes added per new edge, which means that $\frac{m}{n} \to \frac{1}{\novelrate{}}$ as $m, n \to \infty$ in expectation.
     So, we have 
     \begin{align}
-        \brackets{d} = \frac{\brackets{k}}{\totalnovelrate{}} \;. \label{eq:average-degree}
+        \brackets{d} = \frac{\brackets{k}}{\novelrate{}} \;. \label{eq:average-degree}
     \end{align}
 
     To proceed, we make a mean-field assumption that the degree $d$ of a node is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
@@ -323,56 +359,89 @@ How did we do on real and synthetic data?
     \end{align}
     We'll first calculate the expected number of nodes of label 0 sampled in the edge-sampling step.
     Suppose that an edge $f$ is sampled with $K_0$ nodes of label 0 and $K_1$ nodes of label 1, and $K_0 + K_1 = K$ total nodes. 
-    Conditional on this event, the probability that a node of label 0 is selected as the seed node $u$ is $\frac{K_0}{K}$, and when this occurs, the expected number of nodes of label 0 in $e$ is $1 + \samelabelcopyrate{} (K_0 - 1)$. 
-    If, on the other hand, a node of label 1 is selected as the seed node $u$, which occurs with probability $\frac{K_1}{K}$, then the expected number of nodes of label 0 in $e$ is $\opplabelcopyrate{} K_0$. 
+    Conditional on this event, the probability that a node of label 0 is selected as the seed node $u$ is $\frac{K_0}{K}$, and when this occurs, the expected number of nodes of label 0 in $e$ is $1 + \same{\copyrate{}} (K_0 - 1)$. 
+    If, on the other hand, a node of label 1 is selected as the seed node $u$, which occurs with probability $\frac{K_1}{K}$, then the expected number of nodes of label 0 in $e$ is $\opp{\copyrate{}} K_0$. 
     So, the expected number of nodes of label 0 copied into the new edge $e$ from $f$ is 
     \begin{align}
-        \sigma_0 &\triangleq \brackets{\frac{k_0}{k}\paren{1 + \samelabelcopyrate{}(k_0 - 1)} + \frac{k_1}{k} \opplabelcopyrate{} k_0} \\ 
-        &= 1 + \samelabelcopyrate{} \squarebrackets{\rho_{00} + \rho_{11} - 1} + \opplabelcopyrate{} \rho_{01}\;. 
+        \expectedcopiednodes{}_0 &\triangleq \brackets{\frac{k_0}{k}\paren{1 + \same{\copyrate{}}(k_0 - 1)} + \frac{k_1}{k} \opp{\copyrate{}} k_0} \\ 
+        &= 1 + \same{\copyrate{}} \squarebrackets{\rho_{00} + \rho_{11} - 1} + \opp{\copyrate{}} \rho_{01}\;. 
     \end{align}
     Similarly, the expected number of nodes of label 1 copied into the new edge $e$ from $f$ is 
     \begin{align}
-        \sigma_1 &\triangleq \brackets{\frac{k_1}{k}\paren{1 + \samelabelcopyrate{}(k_1 - 1)} + \frac{k_0}{k} \opplabelcopyrate{} k_1} \\ 
-        &= 1 + \samelabelcopyrate{} \squarebrackets{\rho_{00} + \rho_{11} - 1} + \opplabelcopyrate{} \rho_{01}\;. 
+        \expectedcopiednodes{}_1 &\triangleq \brackets{\frac{k_1}{k}\paren{1 + \same{\copyrate{}}(k_1 - 1)} + \frac{k_0}{k} \opp{\copyrate{}} k_1} \\ 
+        &= 1 + \same{\copyrate{}} \squarebrackets{\rho_{00} + \rho_{11} - 1} + \opp{\copyrate{}} \rho_{01}\;. 
     \end{align}
     We let 
     \begin{align}
-        \sigma \triangleq \sigma_0 + \sigma_1 = 1 + \samelabelcopyrate{}(\rho_{00} + \rho_{11} - 1) + 2\opplabelcopyrate{} \rho_{01}\;.
+        \expectedcopiednodes{} \triangleq \expectedcopiednodes{}_0 + \expectedcopiednodes{}_1 = 1 + \same{\copyrate{}}(\rho_{00} + \rho_{11} - 1) + 2\opp{\copyrate{}} \rho_{01}\;.
     \end{align}
-    Importantly, $\sigma$ depends only on the parameters and the moments of the joint distribution $\jointdist \paren{k_1,k_2}$, which can be computed via linear algebra as described in \Cref{sec:joint-distribution}.
+    Importantly, $\expectedcopiednodes{}$ depends only on the parameters and the moments of the joint distribution $\jointdist \paren{k_1,k_2}$, which can be computed via linear algebra as described in \Cref{sec:joint-distribution}.
     
     We now invoke the mean-field assumption. 
     Under this assumption, the probability that a single node selected in the sampling step has degree $d$ is $dp_d^{(t)}$, where $p_d^{(t)}$ is the fraction of nodes with degree $d$ at time $t$, since that node participates in $d$ edges, independently of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
-    The expected number of nodes of degree $d$ sampled in the edge-sampling step is then $\sigma \frac{d p_d^{(t)}}{\brackets{d}}$, and the expected \emph{change} in the count of degree $d$ nodes through the edge-sampling step is 
+    The expected number of nodes of degree $d$ sampled in the edge-sampling step is then $\expectedcopiednodes{} \frac{d p_d^{(t)}}{\brackets{d}}$, and the expected \emph{change} in the count of degree $d$ nodes through the edge-sampling step is 
     \begin{align}
-        \frac{\sigma}{\brackets{d}} ((d-1)p_{d-1}^{(t)} - d p_d^{(t)})
+        \frac{\expectedcopiednodes{}}{\brackets{d}} ((d-1)p_{d-1}^{(t)} - d p_d^{(t)})
     \end{align}
-    Similarly, the expected number of nodes which are sampled in the extant node addition step is $\lambda \triangleq \samelabelextantrate{} + \opplabelextantrate{}$. 
+    Similarly, the expected number of nodes which are sampled in the extant node addition step is $\extantrate{} \triangleq \same{\extantrate{}} + \opp{\extantrate{}}$. 
     Since this step does not involve any selection proportional to degree, the expected change in the count of degree $d$ nodes through this step is
     \begin{widetext}
         \begin{align}
-            n^{(t+1)}p_{d}^{(t+1)} - n^{(t)}p_{d}^{(t)} = \frac{\sigma}{\brackets{d}} \squarebrackets{(d-1)p_{d-1}^{(t)} - d p_d^{(t)}} + \lambda (p_{d-1}^{(t)} - p_d^{(t)}) \;.
+            n^{(t+1)}p_{d}^{(t+1)} - n^{(t)}p_{d}^{(t)} = \frac{\expectedcopiednodes{}}{\brackets{d}} \squarebrackets{(d-1)p_{d-1}^{(t)} - d p_d^{(t)}} + \extantrate{} (p_{d-1}^{(t)} - p_d^{(t)}) \;.
         \end{align}
     \end{widetext}
-    We know that at stationarity, $n^{(t+1)} - n^{(t)}$ is in expectation equal to $\totalnovelrate{} \triangleq \samelabelnovelrate{} + \opplabelnovelrate{}$, the expected number of novel nodes, while at stationarity $p_d^{(t+1)} = p_d^{(t)} = p_d$ independent of $t$. 
+    We know that at stationarity, $n^{(t+1)} - n^{(t)}$ is in expectation equal to $\novelrate{} \triangleq \same{\novelrate{}} + \opp{\novelrate{}}$, the expected number of novel nodes, while at stationarity $p_d^{(t+1)} = p_d^{(t)} = p_d$ independent of $t$. 
     Thus, we obtain 
     % \begin{widetext}
         \begin{align*}
-            p_d \totalnovelrate{}  = \frac{\sigma}{\brackets{d}} \squarebrackets{(d-1)p_{d-1} - d p_d} + \lambda (p_{d-1} - p_d) \;.
+            p_d \novelrate{}  = \frac{\expectedcopiednodes{}}{\brackets{d}} \squarebrackets{(d-1)p_{d-1} - d p_d} + \extantrate{} (p_{d-1} - p_d) \;.
         \end{align*}
     % \end{widetext}
     Rearranging, we obtain 
     \begin{align*}
-        \frac{p_d}{p_{d-1}} &=  \frac{\frac{\sigma}{\brackets{d}}(d-1) + \lambda}{\frac{\sigma}{\brackets{d}} d + \totalnovelrate{} + \lambda} \\ 
-        &= 1 - \frac{\frac{\sigma}{\brackets{d}} + \totalnovelrate{}}{\frac{\sigma}{\brackets{d}} d + \totalnovelrate{} + \lambda} \;.
+        \frac{p_d}{p_{d-1}} &=  \frac{\frac{\expectedcopiednodes{}}{\brackets{d}}(d-1) + \extantrate{}}{\frac{\expectedcopiednodes{}}{\brackets{d}} d + \novelrate{} + \extantrate{}} \\ 
+        &= 1 - \frac{\frac{\expectedcopiednodes{}}{\brackets{d}} + \novelrate{}}{\frac{\expectedcopiednodes{}}{\brackets{d}} d + \novelrate{} + \extantrate{}} \;.
     \end{align*}
     Allowing $d$ to become large (which describes the tail of the degree distribution), we have
     \begin{align*}
-        \frac{p_d}{p_{d-1}} &\approx 1 - \frac{1}{d} \frac{\frac{\sigma}{\brackets{d}} + \totalnovelrate{}}{\frac{\sigma}{\brackets{d}}} \\ 
-        &= 1 - \frac{1}{d} \paren{1 + \frac{\totalnovelrate{}}{\sigma / \brackets{d}}}  \\ 
-        &= 1 - \frac{1}{d} \paren{1 + \frac{\brackets{k}}{\sigma }}\;. 
+        \frac{p_d}{p_{d-1}} &\approx 1 - \frac{1}{d} \frac{\frac{\expectedcopiednodes{}}{\brackets{d}} + \novelrate{}}{\frac{\expectedcopiednodes{}}{\brackets{d}}} \\ 
+        &= 1 - \frac{1}{d} \paren{1 + \frac{\novelrate{}}{\expectedcopiednodes{} / \brackets{d}}}  \\ 
+        &= 1 - \frac{1}{d} \paren{1 + \frac{\brackets{k}}{\expectedcopiednodes{} }}\;. 
     \end{align*}
-    a relation which corresponds to a power law with exponent $\zeta = 1 + \frac{\brackets{k}}{\sigma}$. 
+    a relation which corresponds to a power law with exponent $\zeta = 1 + \frac{\brackets{k}}{\expectedcopiednodes{}}$. 
     Explicitly calculating this exponent requires the moments $\brackets{k}$, $\rho_{00}$, $\rho_{11}$, and $\rho_{01}$, which can be computed from the stationary joint distribution $\jointdist \paren{k_1,k_2}$. 
+
+
+    \section{Sufficient Statistics for Stochastic Expectation-Maximization} \label{sec:sufficient-statistics}
+
+        We describe the function $\sigma$ which computes the conditional sufficient statistics for the parameters $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed edge $e$, a candidate parent edge $f$, a candidate seed node $u$, and the node labels $\vz$. 
+        Let $z = z_u$ be the label of the seed node $u$. 
+        Let $e_z$ be the set of nodes in $e$ with label $z$, and let $f_z$ be the set of nodes in $f$ with label $z$. 
+        Then, the sufficient statistics for the parameters $\paramvector$ are given by
+        \begin{align*}
+            \sigma(e, f, u, \vz) = \begin{pmatrix}
+                \abs{e_z \cap f_z} \\ 
+                \abs{f_z} \\ 
+                \abs{e_{\bar{z}} \cap f_{\bar{z}}} \\
+                \abs{f_{\bar{z}}}  \\ 
+                \abs{(e_z \setminus f_z) \cap \at{\nodes}{t}} \\ 
+                \abs{(e_{\bar{z}} \setminus f_{\bar{z}})\cap \at{\nodes}{t}} \\
+                \abs{e_z \setminus \at{\nodes}{t}} \\
+                \abs{e_{\bar{z}} \setminus \at{\nodes}{t}}
+            \end{pmatrix}^\top \;.
+        \end{align*}
+        As descrbed in \Cref{sec:sem}, the vector $\sufficientstatsvec$ of expected sufficient statistics is computed as a weighted average of $\sigma(e, f, u, \vz)$ over the belief distribution $p(f, u | e, \at{\hat{\paramvector}}{\ell})$ over the latent variables $f$ and $u$.
+        Then, the function $g$ which computes the maximum likelihood estimates of the parameters $\paramvector$ from $\sufficientstatsvec$ is given by
+        \begin{align*}
+            g(\sufficientstatsvec) = \paren{
+                \frac{s_1}{s_2}, 
+                \frac{s_3}{s_4}, 
+                s_5, 
+                s_6, 
+                s_7, 
+                s_8
+            }
+             \;.
+        \end{align*}
 \end{document}
 
