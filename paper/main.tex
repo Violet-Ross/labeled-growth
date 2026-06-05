@@ -250,6 +250,8 @@ In each algorithmic step $\ell$, we pick an edge $e$ uniformly at random from $\
 Then, given current estimates $\at{\hat{\paramvector}}{\ell}$, we form a belief distribution over the latent identities of $f \in \edges$ and $u \in f$ which could have been selected in the edge-copying step to form $e$. 
 For notational convenience, let $f \prec e$ denote that edge $f$ was formed in a previous timestep. 
 Given $e$, the probability that $f$ and $u$ were selected can be computed in closed form. 
+Let $\at{m}{t-1}$ denote the size of the edge set at time $t - 1$.
+
 We have 
 \begin{align*}
     p(f, u | \at{\edges}{t-1}, \vz, \at{\hat{\paramvector}}{\ell}) = \frac{1}{\abs{f}\at{m}{t-1}} \triangleq r_{t-1}(f) \;,
@@ -298,9 +300,7 @@ Our version of the algorithm uses an online computation of $\sufficientstatsvec'
     \end{algorithmic}
 \end{algorithm}
 
-\phil{Violet, can you say something about stopping criteria in here?}
-
-\phil{Need to settle on $p$ vs. $\prob$}
+The SEM algorithm continues iterating until the stopping criterion is met. In our experiments, the stopping criterion is met when each of the current parameter estimates $\at{\hat{\paramvector}}{\ell}$ is within [THRESH] of the [LENGTH] preceding estimates of the corresponding parameter.
 
 
 
@@ -318,7 +318,28 @@ We also did simulated annealing! \cite{kirkpatrickOptimizationSimulatedAnnealing
 
 How did we do on real and synthetic data? 
 
+\subsection{Parameter Estimation}
 
+Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
+
+\begin{table}
+  \caption{SEM on empirical data}
+  \label{tab:sem-empirical}
+  \centering
+  \begin{tabular*}{0.9\columnwidth}{@{\extracolsep{\fill}}||c c c c c c c||} 
+    \hline
+     & $\same{\hat{\copyrate{}}}$ & $\opp{\hat{\copyrate{}}}$ & $\same{\hat{\extantrate{}}}$ & $\opp{\hat{\extantrate{}}}$ &  $\same{\hat{\novelrate{}}}$ & $\opp{\hat{\novelrate{}}}$ \\ [0.5ex] 
+   \hline\hline
+   senate-bills & & & & & & \\ 
+   \hline
+   coauthorship & & & & & & \\
+   \hline
+   primary-school & & & & & & \\
+   \hline
+   high-school & & & & & & \\ [1ex] 
+   \hline
+  \end{tabular*}
+\end{table}
 
 
 \section{Conclusion}
