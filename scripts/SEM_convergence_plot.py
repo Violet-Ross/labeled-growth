@@ -293,5 +293,5 @@ g2_true_theta = [0.6, 0.4, 0.75, 0.25, 0.75, 0.25]
 g3_true_theta = [0.1, 0.9, 0.9, 0.1, 0.9, 0.1]
 g4_true_theta = [0.6, 0.4, 0.9, 0.1, 0.9, 0.1]
 
-viz_with_likelihood(g1_true_theta, estimates1, liks1, g2_true_theta, estimates2, liks2, g3_true_theta, estimates3, liks3, g4_true_theta, estimates4, liks4)
 viz_without_likelihood(g1_true_theta, estimates1_extended, g2_true_theta, estimates2_extended, g3_true_theta, estimates3_extended, g4_true_theta, estimates4_extended)
+
