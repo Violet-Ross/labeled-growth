@@ -65,6 +65,27 @@ def clique_projection_modularity_maximization_algo(g):
 
     return z
 
+def spectral_clustering_comparison(g): 
+    H = g.H
+    G = nx.Graph()
+    G.add_nodes_from(H.nodes)
+
+    # Clique projection
+    for edge in H.edges.members():
+        for u, v in combinations(edge, 2):
+            if G.has_edge(u, v):
+                G[u][v]["weight"] += 1
+            else:
+                G.add_edge(u, v, weight=1)
+
+    from sklearn.cluster import SpectralClustering
+
+    adjacency_matrix = nx.to_numpy_array(G, weight="weight")
+    spectral = SpectralClustering(n_clusters=2, affinity='precomputed', random_state=0)
+    labels = spectral.fit_predict(adjacency_matrix)
+
+    return labels
+
 if __name__ == "__main__":
 
     # np.random.seed(12345)
@@ -121,14 +142,20 @@ if __name__ == "__main__":
     axarr[1].plot(sa.aris_per_step, color = "steelblue")
     axarr[1].set_ylabel("Adjusted Rand Index (ARI)")
     axarr[1].set_xlabel("Step")
-    axarr[1].scatter(max_ll_index, sa.aris_per_step[max_ll_index], color='black', label='Max LL ARI', zorder = 10)
+    axarr[1].scatter(max_ll_index, sa.aris_per_step[max_ll_index], color='black', label='Max LL', zorder = 10)
     axarr[1].legend()
 
     modularity_labels = clique_projection_modularity_maximization_algo(g)
     mod_ari = adjusted_rand_score(g.get_labels(), modularity_labels)
+    
+    spectral_labels = spectral_clustering_comparison(g)
+    spectral_ari = adjusted_rand_score(g.get_labels(), spectral_labels)
 
-    axarr[1].plot([0, algo_timesteps], [mod_ari, mod_ari], color='black', label='Modularity ARI', linestyle='--', zorder = -10)
+    # axarr[1].plot([0, algo_timesteps], [mod_ari, mod_ari], color='black', label='Modularity ARI', linestyle='--', zorder = -10)
+    # axarr[1].legend()
+    axarr[1].plot([0, algo_timesteps], [spectral_ari, spectral_ari], color='black', label='Spectral Clustering', linestyle='--', zorder = -10)
     axarr[1].legend()
+    
     
     plt.tight_layout()
 

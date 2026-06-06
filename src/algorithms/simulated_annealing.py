@@ -15,7 +15,7 @@ import statistics
 
 
 class SimulatedAnnealingApprox:
-    def __init__(self, g, theta, approx=None, novel=False):
+    def __init__(self, g, theta, approx=None, novel=False, initial_labels=None):
         self.g = g
         self.theta = theta
         self.novel = novel # boolean of whether novel nodes are computed
@@ -23,7 +23,10 @@ class SimulatedAnnealingApprox:
         self.steps_taken = 0
 
         # random initialization of node labels
-        self.labels = list(np.random.choice([0,1], size=len(g.nodes)))
+        if initial_labels is None:
+            self.labels = list(np.random.choice([0,1], size=len(g.nodes)))
+        else:
+            self.labels = initial_labels
         # self.labels = g.get_labels()
 
         self.likelihoods_per_step = []
