@@ -22,12 +22,10 @@
 \begin{document}
 
 \title{Growing Hypergraphs with Node Labels}
-\author{Francis Cataldo$^*$}
-\thanks{Equal author contributions}
-\affiliation{Department of Computer Science, Middlebury College, Middlebury, VT, USA}
-\author{Violet Ross$^*$}
-\thanks{Equal author contributions}
+\author{Violet Ross}
 \affiliation{Department of Computer Science, University of Colorado at Boulder, Boulder, CO, USA}
+\author{Francis Cataldo}
+\affiliation{Department of Computer Science, Middlebury College, Middlebury, VT, USA}
 \author{Philip S. Chodrow}
 \affiliation{Department of Computer Science, Middlebury College, Middlebury, VT, USA}
 
@@ -44,7 +42,7 @@
 
 \maketitle
 
-\def\thefootnote{*}\footnotetext{Equal author contributions}\def\thefootnote{\arabic{footnote}}
+
 
 
 % \def\thefootnote{*}\footnotetext{These authors contributed equally to this work}\def\thefootnote{\arabic{footnote}}
@@ -302,18 +300,27 @@ Our version of the algorithm uses an online computation of $\sufficientstatsvec'
 
 The SEM algorithm continues iterating until the stopping criterion is met. In our experiments, the stopping criterion is met when each of the current parameter estimates $\at{\hat{\paramvector}}{\ell}$ is within [THRESH] of the [LENGTH] preceding estimates of the corresponding parameter.
 
-
-
-
 \subsection{Community Detection via MLE}
 
-\phil{Frannie, this is your spot! Descriptions of methods/algorithms should go here, results are for later.}
+\Cref{eq:likelihood} defines a likelihood function over both the parameter vector $\paramvector$ and the node labels $\vz$.
+    This allows us to attempt to also learn $\vz$ via maximum-likelihood estimation.
+    Unlike in stochastic blockmodel variants in which there are several heuristics with favorable computational properties \cite{newman2016equivalence,chodrowGenerativeHypergraphClustering2021,chodrowNonbacktrackingSpectralClustering2023,ruggeriCommunityDetectionLarge2023,kritschgauCommunityDetectionHypergraphs2024,hood2026broad,li2026higher}, the dependence structure encoded by our model makes it difficult to apply standard efficient heuristics; the development of such heuristics would be an important direction of future work. 
+    In this study, we therefore attempt to learn $\vz$ via simulated annealing \cite{kirkpatrickOptimizationSimulatedAnnealing1983}, which is a general-purpose optimization algorithm that can be used to approximately maximize the likelihood over $\vz$.
+    Our primary aim is to demonstrate that likelihood maximization in this model can detect label structure in at least some circumstances where more standard community detections may fail, thereby motivating the development of more efficient optimization heuristics in future work. 
+    
+    A simple computation of \Cref{eq:likelihood} requires $O(m^2)$ terms, making it expensive to evaluate even for data sets of modest size. 
+    We therefore use an intersection-based approximation to the likelihood of forming edge $e$ in which we only sum over candidate copied edges $f$ such that $f = \argmax_{f' \in \edges} \abs{f' \cap e}$.
+    To justify this approximation, we start by observing that, if $f$ is the edge sampled to form $e$, then the number of extant nodes required to form $e$ is $x = \abs{e} - \abs{e\cap f} - \abs{e \setminus \nodes}$. 
+    We'll argue that, when the number of nodes $n$ is large, $p(e|f, u, \vz, \paramvector) \in O(n^{-x})$, which implies that edges $f$ which do not maximize $\abs{f \cap e}$ will have negligible contributions to the likelihood.
+    The essence of the argument is that forming $x$ extant nodes requires $x$ independent samples from the sets $\nodes_0\setminus f$ and $\nodes_1\setminus f$, each of which have size scaling linearly with $n$. 
+    So, each independent sample has probability $O(n^{-1})$, and the probability of forming a given set of $x$ extant nodes is $O(n^{-x})$.
+    We detail this argument in \Cref{sec:simulated-annealing-approximation}.
 
-We also used gradient descent with a continuous relaxation of the parameter labels \cite{pytorch}. 
-
-We also did simulated annealing! \cite{kirkpatrickOptimizationSimulatedAnnealing1983}. 
 
 
+    \phil{Need to give formulae for the change in likelihood under a proposed change to $\vz$ in the simulated annealing procedure, talk about the novel approach to acceptance probability and describe algorithm.}
+    
+    
 \section{Results} \label{sec:results}
 
 How did we do on real and synthetic data? 
@@ -480,6 +487,10 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
              \;.
         \end{align*}
         \phil{\@Violet, I added the $-1$ here to what you had previously written but please check.}
+    
+    \section{Approximation Argument for Simulated Anealing}\label{sec:simulated-annealing-approximation}
+
+        TODO 
 
     \section{Simulated Annealing Illustration}
 
