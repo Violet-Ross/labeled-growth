@@ -184,6 +184,13 @@
     The second eigenvector $v_2$ with eigenvalue $\lambda_2 < 1$ corresponds to the slowest-decaying transient in the dynamics of $\at{\jointdist}{t} \paren{k_0, k_1}$.
     The spectral gap $1 - \lambda_2$ is relatively small, indicating slow transients in the subspace spanned by $v_1$ and $v_2$.
 
+    \Cref{fig:dynamics-eigenvectors} shows that, when $\eta_+$ is sufficiently large, the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ is concentrated on edges in which typical edges have large majorities of nodes with the same label (panel b), thus displaying a form of higher-order homophily \cite{laber2026guide}. 
+    The stationary distribution is symmetric, implying that neither node label is favored in the long-run. 
+    The second eigenvector $v_2$ (panel c), however,  is antisymmetric, describing a transient in which one a single label tends to dominate most edges. 
+    When $\eta_+$ is sufficiently large, the spectral gap $1 - \lambda_2$ is small (panel a), indicating that this transient decays slowly and that the system may be dominated by edges with a single majority label for relatively long periods of time before equilibrating to the leading eigenvector (panels d and e).
+
+    
+
 \subsubsection{Degree Distribution} \label{sec:degree-distribution}
 
     \begin{figure}[t]
@@ -309,7 +316,10 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
     Our primary aim is to demonstrate that likelihood maximization in this model can detect label structure in at least some circumstances where more standard community detections may fail, thereby motivating the development of more efficient optimization heuristics in future work. 
     
     A simple computation of \Cref{eq:likelihood} requires $O(m^2)$ terms, making it expensive to evaluate even for data sets of modest size. 
-    We therefore use an intersection-based approximation to the likelihood of forming edge $e$ in which we only sum over candidate copied edges $f$ such that $f = \argmax_{f' \in \edges} \abs{f' \cap e}$.
+    An important computational limitation of simulated annealing in this context is that the label $z_i$ of node $i$ appears in \emph{all} terms of the likelihood \cref{eq:likelihood} corresponding to edges after which node $i$ arrives. 
+    This includes edges in which node $i$ does not participate, implying that we must perform $O(m^2)$ computations even to evaluate the change in likelihood under a proposed change to $z_i$.
+    
+    To mitigate the comptuational burden, we use an intersection-based approximation to the likelihood of forming edge $e$ in which we only sum over candidate copied edges $f$ such that $f = \argmax_{f' \in \edges} \abs{f' \cap e}$.
     To justify this approximation, we start by observing that, if $f$ is the edge sampled to form $e$, then the number of extant nodes required to form $e$ is $x = \abs{e} - \abs{e\cap f} - \abs{e \setminus \nodes}$. 
     We'll argue that, when the number of nodes $n$ is large, $p(e|f, u, \vz, \paramvector) \in O(n^{-x})$, which implies that edges $f$ which do not maximize $\abs{f \cap e}$ will have negligible contributions to the likelihood.
     The essence of the argument is that forming $x$ extant nodes requires $x$ independent samples from the sets $\nodes_0\setminus f$ and $\nodes_1\setminus f$, each of which have size scaling linearly with $n$. 
@@ -318,7 +328,6 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
 
 
 
-    \phil{Need to give formulae for the change in likelihood under a proposed change to $\vz$ in the simulated annealing procedure, talk about the novel approach to acceptance probability and describe algorithm.}
     
     
 \section{Results} \label{sec:results}
@@ -351,17 +360,27 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
 
 \begin{figure*}
     \includegraphics[width=\textwidth]{../fig/community-synthetic-data-viz.png}
-    \caption{Community detection results on synthetic data. 
-    This figure will make more sense and will hopefully tell a story once we get some compute.} \label{fig:community-synthetic}
+    \caption{Community detection results on synthetic data under the Nishimori condition \cite{decelle2011asymptotic} of exactly known parameters.} \label{fig:community-synthetic}
 \end{figure*}
 
 
 \section{Conclusion}
 
-    Future directions: 
+    We have proposed a simple model of binary-labeled hypergraph formation in which edges are formed through noisy copies of previous edges, combined with the addition of extant and novel nodes. 
+    Our model incorporates label homophily through each of the three edge formation mechanisms. 
+    
+    \phil{More discussion}
 
-    Edge relevance-decay. Background interaction events. Work on scalability of community detection and parameter estimation. 
-    Models with multiple edge labels, e.g. planted partition (symmetric) models. 
+    There are several directions for future work. 
+    Most obviously, although our results show that maximum-likelihood inference is a reasonable approach for community detection in this model, the simulated annealing method we have used is impractically expensive on data sets of even relatively modest size. 
+    Developing more efficient heuristics for maximizing the likelihood over $\vz$ will be an important direction for scalable application of our proposed model. 
+
+    There are also opportunities to extend the model to more realistic settings and more diverse data sets. 
+    One obvious extension is to nonbinary node-labels, which would enable multiway community detection algorithms. 
+    Another approach is to relax the assumption in our model that \emph{every} edge is formed through the edge-copying mechanism; one could instead allow some edges to form spontaneously without copying an earlier edge. 
+    A final obvious extension is to incorporate recency-bias \cite{bensonSequencesSets2018} into the copy mechanism, so that more recent edges are more likely to be copied while edges which are sufficiently old may cease to be copied at all. 
+     
+
 
 \begin{acknowledgments}
     PSC acknowledges support from the National Science Foundation under DMS-2407058.
@@ -375,11 +394,11 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
 
 \appendix
 
-\section{Appendix}
+
 
     
 
-    \subsection{Power-Law Degree Distribution}
+    \section{Power-Law Degree Distribution}
 
 
     Our derivation follows that of He et al. \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by Mitzenmacher \cite{mitzenmacherBriefHistoryGenerative2004}.
@@ -453,7 +472,6 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
     \end{align*}
     a relation which corresponds to a power law with exponent $\zeta = 1 + \frac{\brackets{k}}{\expectedcopiednodes{}}$. 
     Explicitly calculating this exponent requires the moments $\brackets{k}$, $\rho_{00}$, $\rho_{11}$, and $\rho_{01}$, which can be computed from the stationary joint distribution $\jointdist \paren{k_1,k_2}$. 
-
 
     \section{Sufficient Statistics for Stochastic Expectation-Maximization} \label{sec:sufficient-statistics}
 
