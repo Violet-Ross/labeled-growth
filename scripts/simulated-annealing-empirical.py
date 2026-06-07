@@ -37,7 +37,11 @@ if __name__ == "__main__":
     data_set = args.data_set
     job_id = args.job_id
     
-    os.makedirs(f'throughput/simulated_annealing_{data_sets[data_set]}', exist_ok=True)
+    
+    path = f"throughput/simulated_annealing/{data_sets[data_set]}"
+    os.makedirs(path, exist_ok=True)
+    os.makedirs(path + "/labels", exist_ok=True)
+    os.makedirs(path + "/metrics", exist_ok=True)
     
     # initialize 
     H = pkl.load(open(f"throughput/{data_sets[data_set]}.pkl", "rb"))
@@ -56,7 +60,11 @@ if __name__ == "__main__":
     mode = "w"
     header = True
     print("running simulated annealing...")
-    for step_num in tqdm(range(len(g.nodes)*20)):
+    
+    num_steps = len(g.nodes)*20
+    
+    
+    for step_num in tqdm(range(num_steps)):
         print("step num: " + str(step_num))
         sa.step()
         
@@ -67,12 +75,19 @@ if __name__ == "__main__":
             best_labels = sa.labels
             
             df = pd.DataFrame({
-                "labels" : best_labels,
-                "likelihood" : best_likelihood,
-                "ari" : best_ari,
-                "step_num" : step_num
+                "labels"   : [best_labels],
+                "step_num" : [step_num]
             })
                         
-            df.to_csv(f'throughput/simulated_annealing_{data_sets[data_set]}/{job_id}.csv', index=False, mode = mode, header = header)
+            df.to_csv(f'{path}/labels/{job_id}.csv', index=False, mode = mode, header = header)
+            
+            df = pd.DataFrame({
+                "likelihood" : [best_likelihood],
+                "ari"        : [best_ari] ,
+                "step_num"   : [step_num]
+            })
+            
+            df.to_csv(f'{path}/metrics/{job_id}.csv', index=False, mode = mode, header = header)
+            
             mode = "a"
             header = False  

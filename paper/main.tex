@@ -18,6 +18,7 @@
 
 \input{macros}
 \input{community-detection-learning-progress.tex}
+\input{synthetic-community-heatmaps.tex}
 
 \begin{document}
 
@@ -343,7 +344,8 @@ Coauthorship: ??? \phil{Violet can you supply the reference here}
 
 We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic}. 
 Under the Nishimori condition \cite{decelle2011asymptotic}, we generate a synthetic hypergraph according to a parameter vector $\paramvector$ and then attempt to learn $\vz$ via simulated annealing using the same parameter vector $\paramvector$. 
-Under the ``guess'' condition, we always use the same parameter vector $\paramvector'$ to learn $\vz$ via simulated annealing, regardless of the true parameter vector $\paramvector$ used to generate the synthetic data.
+Under the ``fixed'' condition, which simulates a more realistic data analysis scenario, we always use the same parameter vector $\paramvector'$ to learn $\vz$ via simulated annealing, regardless of the true parameter vector $\paramvector$ used to generate the synthetic data. 
+In this condition, we use $\paramvector' = \thetaguess$, which is the same parameter vector used in \Cref{fig:dynamics-eigenvectors} and which we found to be a reasonable default for learning $\vz$ across a range of synthetic data sets generated with different parameters.
 We compare these methods against each other and against a baseline spectral clustering method applied to the clique projection of the hypergraph.
 
 
@@ -375,7 +377,12 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
 
 \begin{figure*}
     \includegraphics[width=\textwidth]{../fig/community-synthetic-data-viz.png}
-    \caption{Community detection results on synthetic data under the Nishimori condition \cite{decelle2011asymptotic} of exactly known parameters.} \label{fig:community-synthetic}
+    \caption{
+        Community detection results on synthetic data under the Nishimori condition \cite{decelle2011asymptotic} of exactly known parameters.
+        Each pixel represents \synthrepetitions{} independent hypergraphs generated from our model with \synthtimesteps{} timesteps. 
+        The default parameters are $(\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}}) =
+        (\synthfixedetaplus, \synthfixedetaminus, \synthfixedlambdaplus, \synthfixedlambdaminus, \synthfixedgammaplus, \synthfixedgammaminus)$; in each panel, two of these parameters instead vary across the range shown on the axes.
+    } \label{fig:community-synthetic}
 \end{figure*}
 
 

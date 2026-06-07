@@ -21,6 +21,9 @@ from itertools import combinations
 from matplotlib import pyplot as plt
 import seaborn as sns
 from sklearn.cluster import SpectralClustering
+
+import random
+
 sns.set_style("whitegrid")
 
 def initial_condition_GH(theta, timesteps):
@@ -66,13 +69,16 @@ def simulated_annealing(g, guessed_theta):
             
     return labels_at_max_ll
 
-def run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, fpath, guessed_theta = None, **kwargs):
+def run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath, guessed_theta = None, **kwargs):
     
-    THETA = itertools.product(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS)
+    if guessed_theta is None: 
+        condition = "nishimori"
+    else:
+        condition = "guess"
+        
+    THETA = list(itertools.product(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS))
+    random.shuffle(THETA)
     
-    fpath_exists = os.path.exists(fpath)
-    mode = "a" if fpath_exists else "w"
-    header = not fpath_exists
     
     
     for theta in THETA:
@@ -82,29 +88,34 @@ def run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, G
         spectral_labels = spectral_clustering_comparison(g)
         spectral_ari    = adjusted_rand_score(g.get_labels(), spectral_labels)
         
-        if guessed_theta is None:
+        if condition == "nishimori":
             guessed_theta = theta
+
+            
         simulated_annealing_labels = simulated_annealing(g, guessed_theta)
-        
         
         simulated_annealing_ari = adjusted_rand_score(g.get_labels(), simulated_annealing_labels)
         
         df = pd.DataFrame(
             {
-                "eta_plus" : theta[0],
-                "eta_minus" : theta[1],
-                "lambda_plus" : theta[2],
-                "lambda_minus" : theta[3],
-                "gamma_plus" : theta[4],
-                "gamma_minus" : theta[5],
-                "spectral_ari" : spectral_ari, 
-                "simulated_annealing_ari" : simulated_annealing_ari
+                "eta_plus"                : theta[0],
+                "eta_minus"               : theta[1],
+                "gamma_plus"              : theta[2],
+                "gamma_minus"             : theta[3],
+                "lambda_plus"             : theta[4],
+                "lambda_minus"            : theta[5],
+                "spectral_ari"            : spectral_ari, 
+                "simulated_annealing_ari" : simulated_annealing_ari, 
+                "condition"               : condition
             }, index = [0]
         )
         
         for key, value in kwargs.items():
             df[key] = value
         
+        fpath_exists = os.path.exists(fpath)
+        mode = "a" if fpath_exists else "w"
+        header = not fpath_exists
         df.to_csv(fpath, index=False, mode = mode, header = header)
     
 if __name__ == "__main__":
@@ -122,49 +133,85 @@ if __name__ == "__main__":
     
     # create directory throughput/community/synthetic if it doesn't exist
     # first, delete it even if it is not empty
-    path = "throughput/community/synthetic"
-    if os.path.exists(path):
-        for filename in os.listdir(path):
-            os.remove(os.path.join(path, filename))
-        # os.rmdir(path)
-    os.makedirs(path, exist_ok=True)
+    f = f"throughput/community/synthetic/{job}.csv"
+    if os.path.exists(f):
+        os.remove(f)
+    os.makedirs(os.path.dirname(f), exist_ok=True)
     
     # first suite: vary eta_plus and eta_minus, hold lambda_plus and lambda_minus fixed
+    
+    # order is copy, novel, extant
+    theta_guess = (0.9, 0.1, 0.2, 0.1, 2.0, 0.3)
+    
+  
+    
+    FIXED_PARAMETERS = {
+        "ETA_PLUS" : [0.9],
+        "ETA_MINUS" : [0.1],
+        "GAMMA_PLUS" : [0.2],
+        "GAMMA_MINUS" : [0.1],
+        "LAMBDA_PLUS" : [2.0],
+        "LAMBDA_MINUS" : [0.3]
+    }
+    
+    tex_dict = {
+        "\\thetaguess" : f"{theta_guess}", 
+        "\synthtimesteps" : f"{timesteps}",
+        "\synthrepetitions" : f"{runs*10}", 
+        "\synthfixedetaplus" : f"{FIXED_PARAMETERS['ETA_PLUS'][0]}",
+        "\synthfixedetaminus" : f"{FIXED_PARAMETERS['ETA_MINUS'][0]}",
+        "\synthfixedgammaplus" : f"{FIXED_PARAMETERS['GAMMA_PLUS'][0]}",
+        "\synthfixedgammaminus" : f"{FIXED_PARAMETERS['GAMMA_MINUS'][0]}",
+        "\synthfixedlambdaplus" : f"{FIXED_PARAMETERS['LAMBDA_PLUS'][0]}",
+        "\synthfixedlambdaminus" : f"{FIXED_PARAMETERS['LAMBDA_MINUS'][0]}"
+    }
+    
+    with open("paper/synthetic-community-heatmaps.tex", "w") as f:
+        for key, value in tex_dict.items():
+            f.write(f"\\newcommand{{{key}}}{{{value}}}\n")
+    
+    
     
     
     for run in range(runs):
         
         # vary copy parameter eta
-        ETA_PLUS = np.linspace(0.5, .95, resolution)
-        ETA_MINUS = np.linspace(0.05, 0.5, resolution)
+        ETA_PLUS     = np.linspace(0.5, .95, resolution)
+        ETA_MINUS    = np.linspace(0.05, 0.5, resolution)
+        GAMMA_PLUS   = FIXED_PARAMETERS["GAMMA_PLUS"]
+        GAMMA_MINUS  = FIXED_PARAMETERS["GAMMA_MINUS"]
+        LAMBDA_PLUS  = FIXED_PARAMETERS["LAMBDA_PLUS"]
+        LAMBDA_MINUS = FIXED_PARAMETERS["LAMBDA_MINUS"]
         
-        LAMBDA_PLUS = [1.5]
-        LAMBDA_MINUS = [0.5]
         
-        GAMMA_PLUS = [0.1]
-        GAMMA_MINUS = [0.1]
+        # nishimori condition
+        run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath = f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "eta")
         
-        run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "eta")
+        # guess condition
+        run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath = f"throughput/community/synthetic/{job}.csv", guessed_theta = theta_guess, run = run, vary = "eta")
         
         # vary external parameter lambda
-        ETA_PLUS = [0.9]
-        ETA_MINUS = [0.1]
-        LAMBDA_PLUS = np.linspace(1, 2, resolution+1)
-        LAMBDA_MINUS = np.linspace(0.01, 1, resolution+1)
-        GAMMA_PLUS = [0.1]
-        GAMMA_MINUS = [0.1]
+        ETA_PLUS     = FIXED_PARAMETERS["ETA_PLUS"]
+        ETA_MINUS    = FIXED_PARAMETERS["ETA_MINUS"]
+        GAMMA_PLUS   = FIXED_PARAMETERS["GAMMA_PLUS"]
+        GAMMA_MINUS  = FIXED_PARAMETERS["GAMMA_MINUS"]
+        LAMBDA_PLUS  = np.linspace(1.1, 2, resolution)
+        LAMBDA_MINUS = np.linspace(0.1, 1, resolution)
         
-        run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "lambda")
+        run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath = f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "lambda")
+        
+        run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath = f"throughput/community/synthetic/{job}.csv", guessed_theta = theta_guess, run = run, vary = "lambda")
         
         # vary novel parameter gamma
-        ETA_PLUS = [0.9]
-        ETA_MINUS = [0.1]
-        LAMBDA_PLUS = [1.5]
-        LAMBDA_MINUS = [0.5]
-        GAMMA_PLUS = np.linspace(0.05, 0.5, resolution)
-        GAMMA_MINUS = np.linspace(0.05, 0.5, resolution)
-        run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "gamma")
+        ETA_PLUS     = FIXED_PARAMETERS["ETA_PLUS"]
+        ETA_MINUS    = FIXED_PARAMETERS["ETA_MINUS"]
+        GAMMA_PLUS   = np.linspace(0.05, 0.5, resolution)
+        GAMMA_MINUS  = np.linspace(0.05, 0.5, resolution)
+        LAMBDA_PLUS  = FIXED_PARAMETERS["LAMBDA_PLUS"]
+        LAMBDA_MINUS = FIXED_PARAMETERS["LAMBDA_MINUS"]
         
-    
+        run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath = f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "gamma")
+        
+        run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath = f"throughput/community/synthetic/{job}.csv", guessed_theta = theta_guess, run = run, vary = "gamma")
     
     
