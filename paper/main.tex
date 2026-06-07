@@ -315,7 +315,7 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
     In this study, we therefore attempt to learn $\vz$ via simulated annealing \cite{kirkpatrickOptimizationSimulatedAnnealing1983}, which is a general-purpose optimization algorithm that can be used to approximately maximize the likelihood over $\vz$.
     Our primary aim is to demonstrate that likelihood maximization in this model can detect label structure in at least some circumstances where more standard community detections may fail, thereby motivating the development of more efficient optimization heuristics in future work. 
     
-    A simple computation of \Cref{eq:likelihood} requires $O(m^2)$ terms, making it expensive to evaluate even for data sets of modest size. 
+    A direct evaluation of \cref{eq:likelihood} requires $O(m^2)$ terms, making it expensive to evaluate even for data sets of modest size. 
     An important computational limitation of simulated annealing in this context is that the label $z_i$ of node $i$ appears in \emph{all} terms of the likelihood \cref{eq:likelihood} corresponding to edges after which node $i$ arrives. 
     This includes edges in which node $i$ does not participate, implying that we must perform $O(m^2)$ computations even to evaluate the change in likelihood under a proposed change to $z_i$.
     
@@ -326,13 +326,28 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
     So, each independent sample has probability $O(n^{-1})$, and the probability of forming a given set of $x$ extant nodes is $O(n^{-x})$.
     We detail this argument in \Cref{sec:simulated-annealing-approximation}.
 
-
-
     
     
+
+
 \section{Results} \label{sec:results}
 
 How did we do on real and synthetic data? 
+
+We evaluate our methods on several data sets. 
+
+Contact high school: \cite{mastrandrea2015contact,bensonSimplicialClosureHigherorder2018}
+Contact primary school: \cite{stehle2011high,gemmetto2014mitigation,bensonSimplicialClosureHigherorder2018}
+Senate bills: \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialClosureHigherorder2018}
+Coauthorship: ??? \phil{Violet can you supply the reference here}
+
+We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic}. 
+Under the Nishimori condition \cite{decelle2011asymptotic}, we generate a synthetic hypergraph according to a parameter vector $\paramvector$ and then attempt to learn $\vz$ via simulated annealing using the same parameter vector $\paramvector$. 
+Under the ``guess'' condition, we always use the same parameter vector $\paramvector'$ to learn $\vz$ via simulated annealing, regardless of the true parameter vector $\paramvector$ used to generate the synthetic data.
+We compare these methods against each other and against a baseline spectral clustering method applied to the clique projection of the hypergraph.
+
+
+
 
 \subsection{Parameter Estimation}
 
