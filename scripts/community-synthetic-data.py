@@ -66,17 +66,21 @@ def simulated_annealing(g, guessed_theta):
             
     return labels_at_max_ll
 
-def run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, guessed_theta = None):
+def run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, fpath, guessed_theta = None, **kwargs):
     
     THETA = itertools.product(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS)
     
-    DF = pd.DataFrame()
+    fpath_exists = os.path.exists(fpath)
+    mode = "a" if fpath_exists else "w"
+    header = not fpath_exists
+    
+    
     for theta in THETA:
         g = initial_condition_GH(theta, timesteps)
     
     # spectral clustering comparison
         spectral_labels = spectral_clustering_comparison(g)
-        spectral_ari = adjusted_rand_score(g.get_labels(), spectral_labels)
+        spectral_ari    = adjusted_rand_score(g.get_labels(), spectral_labels)
         
         if guessed_theta is None:
             guessed_theta = theta
@@ -97,10 +101,12 @@ def run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, G
                 "simulated_annealing_ari" : simulated_annealing_ari
             }, index = [0]
         )
-        DF = pd.concat([DF, df], ignore_index=True)
+        
+        for key, value in kwargs.items():
+            df[key] = value
+        
+        df.to_csv(fpath, index=False, mode = mode, header = header)
     
-    return DF
-
 if __name__ == "__main__":
     
     args = argparse.ArgumentParser()
@@ -114,16 +120,23 @@ if __name__ == "__main__":
     runs = args.runs
     job = args.job
     
+    # create directory throughput/community/synthetic if it doesn't exist
+    # first, delete it even if it is not empty
+    path = "throughput/community/synthetic"
+    if os.path.exists(path):
+        for filename in os.listdir(path):
+            os.remove(os.path.join(path, filename))
+        # os.rmdir(path)
+    os.makedirs(path, exist_ok=True)
+    
     # first suite: vary eta_plus and eta_minus, hold lambda_plus and lambda_minus fixed
     
-    mode = "w"
-    header = True
     
     for run in range(runs):
         
         # vary copy parameter eta
-        ETA_PLUS = np.linspace(0.5, .99, resolution)
-        ETA_MINUS = np.linspace(0.01, 0.5, resolution)
+        ETA_PLUS = np.linspace(0.5, .95, resolution)
+        ETA_MINUS = np.linspace(0.05, 0.5, resolution)
         
         LAMBDA_PLUS = [1.5]
         LAMBDA_MINUS = [0.5]
@@ -131,41 +144,27 @@ if __name__ == "__main__":
         GAMMA_PLUS = [0.1]
         GAMMA_MINUS = [0.1]
         
-        df = run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps)
-        df["vary"] = f"eta"
-        df["run"] = run
-        
-        
-        df.to_csv(f"throughput/community/synthetic/{job}.csv", index=False, mode = mode, header = header)
-        
-        mode = "a"
-        header = False
+        run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "eta")
         
         # vary external parameter lambda
         ETA_PLUS = [0.9]
         ETA_MINUS = [0.1]
-        LAMBDA_PLUS = np.linspace(1, 2, resolution)
-        LAMBDA_MINUS = np.linspace(0.01, 1, resolution)
+        LAMBDA_PLUS = np.linspace(1, 2, resolution+1)
+        LAMBDA_MINUS = np.linspace(0.01, 1, resolution+1)
         GAMMA_PLUS = [0.1]
         GAMMA_MINUS = [0.1]
         
-        df = run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps)
-        df["vary"] = f"lambda"
-        df["run"] = run
-        df.to_csv(f"throughput/community/synthetic/{job}.csv", index=False, mode = mode, header = header)
+        run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "lambda")
         
         # vary novel parameter gamma
         ETA_PLUS = [0.9]
         ETA_MINUS = [0.1]
         LAMBDA_PLUS = [1.5]
         LAMBDA_MINUS = [0.5]
-        GAMMA_PLUS = np.linspace(0.01, 0.5, resolution)
-        GAMMA_MINUS = np.linspace(0.01, 0.5, resolution)
-        df = run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps)
-        df["vary"] = f"gamma"
-        df["run"] = run
-        df.to_csv(f"throughput/community/synthetic/{job}.csv", index=False, mode = mode, header = header)
-
+        GAMMA_PLUS = np.linspace(0.05, 0.5, resolution)
+        GAMMA_MINUS = np.linspace(0.05, 0.5, resolution)
+        run_experiment(ETA_PLUS, ETA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, GAMMA_PLUS, GAMMA_MINUS, timesteps, f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "gamma")
+        
     
     
     

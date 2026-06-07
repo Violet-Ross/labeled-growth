@@ -12,6 +12,8 @@ for file in os.listdir('./throughput/community/synthetic'):
         df = pd.concat([df, df_temp], ignore_index=True)
         
 
+vmax = max(df["simulated_annealing_ari"].max(), df["spectral_ari"].max())
+
 sns.set_style("whitegrid")
 fig, axarr = plt.subplots(2, 3, figsize=(11, 6))
 
@@ -22,7 +24,7 @@ for i, vary in enumerate(["eta", "lambda", "gamma"]):
         matrix = sub_df.pivot(index=f"{vary}_plus", columns=f"{vary}_minus", values=metric)
         
         ax = axarr[j, i]
-        sns.heatmap(matrix, ax=ax, annot=False, fmt=".2f", cmap="YlGnBu", xticklabels=2, yticklabels=2)
+        sns.heatmap(matrix, ax=ax, annot=False, fmt=".2f", cmap="YlGnBu", xticklabels=2, yticklabels=2, vmax=0.5, vmin = 0)
         ax.set_title(f"{metric} vs {vary}")
         ax.set_xlabel(fr"$\{vary}_-$")
         ax.set_ylabel(fr"$\{vary}_+$")
