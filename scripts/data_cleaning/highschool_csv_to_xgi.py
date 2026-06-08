@@ -54,11 +54,34 @@ H.cleanup(singletons=False, multiedges=True, relabel=False, isolates=True)
 
 
 # make 9 classes into binary labeled
+# for node, class_label in class_labels.items():
+#     if class_label == "2BIO1" or class_label == "2BIO2" or class_label == "2BIO3":
+#         class_labels[node] = 1
+#     else:
+#         class_labels[node] = 0
 for node, class_label in class_labels.items():
-    if class_label == "2BIO1" or class_label == "2BIO2" or class_label == "2BIO3":
-        class_labels[node] = 1
-    else:
+    if class_label == "2BIO1":
         class_labels[node] = 0
+    elif class_label == "2BIO2":
+        class_labels[node] = 1
+    elif class_label == "2BIO3":
+        class_labels[node] = 2
+    elif class_label == "MP":
+        class_labels[node] = 3
+    elif class_label == "MP*1":
+        class_labels[node] = 4
+    elif class_label == "MP*2":
+        class_labels[node] = 5
+    elif class_label == "PC":
+        class_labels[node] = 6
+    elif class_label == "PC*":
+        class_labels[node] = 7
+    elif class_label == "PSI*":
+        class_labels[node] = 8
+    else:
+        print("ERROR")
+
+# remake to retain orginal labels!
 
 # set the node labels
 H.set_node_attributes(class_labels, name = "label")
