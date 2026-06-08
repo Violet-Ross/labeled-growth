@@ -179,16 +179,17 @@
     \begin{align*}
         T(k_0', k_1' | k_0, k_1) = t(k_0' | k_0, k_1) t(k_1' | k_0, k_1) \;.
     \end{align*}
-    In \Cref{fig:dynamics-eigenvectors}, we show projections of the joint distribution $\at{\jointdist}{t} \paren{k_0, k_1}$ onto the top two eigenvectors of the matrix $T$ during a simulation run. 
-    These eigenvectors are computed numerically. 
-    The Perron eigenvector $v_1$ with eigenvalue $1$ corresponds to the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$. 
-    The second eigenvector $v_2$ with eigenvalue $\lambda_2 < 1$ corresponds to the slowest-decaying transient in the dynamics of $\at{\jointdist}{t} \paren{k_0, k_1}$.
-    The spectral gap $1 - \lambda_2$ is relatively small, indicating slow transients in the subspace spanned by $v_1$ and $v_2$.
+    In \Cref{fig:dynamics-eigenvectors}, we study the dynamics of our model through the matrix $T$. 
+    For fixed values of the parameters $\same{\extantrate{}}$, $\opp{\extantrate{}}$, $\same{\novelrate{}}$ and $\opp{\novelrate{}}$, the spectral gap $1 - \lambda_2$ of $T$ is highest when $\opp{\copyrate}$ is large and $\same{\copyrate}$ is small. 
+    High values of the spectral gap correspond to fast convergence to the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ given by the Perron eigenvector $\mathbf{v}_1$ of $T$ with eigenvalue $1$ (panel (b)). 
+    We instead illustrate an alternative regime of relatively slow convergence in which $\same{\copyrate}$ is large and $\opp{\copyrate}$ is small.
+    In this regime, the simulation may maintain transient dynamics in the direction of the second eigenvector $\mathbf{v}_2$ of $T$ with eigenvalue $\lambda_2 < 1$ (panel (c)) for relatively long periods of time before converging to the stationary distribution.
+    We illustrate this behavior in panel (d), where the system converges relatively slowly to the leading eigenvector $\mathbf{v}_1$, resulting in a final simulation that matches it closely (panel (e)).
 
-    \Cref{fig:dynamics-eigenvectors} shows that, when $\eta_+$ is sufficiently large, the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ is concentrated on edges in which typical edges have large majorities of nodes with the same label (panel b), thus displaying a form of higher-order homophily \cite{laber2026guide}. 
+    \Cref{fig:dynamics-eigenvectors} shows that, when $\same{\copyrate{}}$ is sufficiently large, the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ is concentrated on edges in which typical edges have large majorities of nodes with the same label (panel b), thus displaying a form of higher-order homophily \cite{laber2026guide}. 
     The stationary distribution is symmetric, implying that neither node label is favored in the long-run. 
     The second eigenvector $v_2$ (panel c), however,  is antisymmetric, describing a transient in which one a single label tends to dominate most edges. 
-    When $\eta_+$ is sufficiently large, the spectral gap $1 - \lambda_2$ is small (panel a), indicating that this transient decays slowly and that the system may be dominated by edges with a single majority label for relatively long periods of time before equilibrating to the leading eigenvector (panels d and e).
+    When $\same{\copyrate{}}$ is sufficiently large, the spectral gap $1 - \lambda_2$ is small (panel a), indicating that this transient decays slowly and that the system may be dominated by edges with a single majority label for relatively long periods of time before equilibrating to the leading eigenvector (panels d and e).
 
     
 
@@ -342,11 +343,17 @@ Contact primary school: \cite{stehle2011high,gemmetto2014mitigation,bensonSimpli
 Senate bills: \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialClosureHigherorder2018}
 Coauthorship: ??? \phil{Violet can you supply the reference here}
 
+
+\subsection{Simulated Annealing for Community Detection}
+
 We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic}. 
 Under the Nishimori condition \cite{decelle2011asymptotic}, we generate a synthetic hypergraph according to a parameter vector $\paramvector$ and then attempt to learn $\vz$ via simulated annealing using the same parameter vector $\paramvector$. 
 Under the ``fixed'' condition, which simulates a more realistic data analysis scenario, we always use the same parameter vector $\paramvector'$ to learn $\vz$ via simulated annealing, regardless of the true parameter vector $\paramvector$ used to generate the synthetic data. 
 In this condition, we use $\paramvector' = \thetaguess$, which is the same parameter vector used in \Cref{fig:dynamics-eigenvectors} and which we found to be a reasonable default for learning $\vz$ across a range of synthetic data sets generated with different parameters.
-We compare these methods against each other and against a baseline spectral clustering method applied to the clique projection of the hypergraph.
+We compare these methods against each other and against a baseline of Laplacian spectral clustering applied to the weighted clique projection of the hypergraph.
+
+Comparing the first and second rows of \Cref{fig:community-synthetic}, we find that in these examples the penalty for using the ``wrong'' parameter vector $\paramvector'$ is relatively small. 
+Furthermore, maximum-likelihood estimation under both the Nishimori and fixed conditions tends to outperform clique-projection spectral clustering in most of the areas of parameter space explored by this experiment. 
 
 
 
@@ -381,7 +388,8 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
         Community detection results on synthetic data under the Nishimori condition \cite{decelle2011asymptotic} of exactly known parameters.
         Each pixel represents \synthrepetitions{} independent hypergraphs generated from our model with \synthtimesteps{} timesteps. 
         The default parameters are $(\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}}) =
-        (\synthfixedetaplus, \synthfixedetaminus, \synthfixedlambdaplus, \synthfixedlambdaminus, \synthfixedgammaplus, \synthfixedgammaminus)$; in each panel, two of these parameters instead vary across the range shown on the axes.
+        (\synthfixedetaplus, \synthfixedetaminus, \synthfixedlambdaplus, \synthfixedlambdaminus, \synthfixedgammaplus, \synthfixedgammaminus)$; in each panel, two of these parameters instead vary across the range shown on the axes. 
+        \phil{This figure is probably a bit too bulky in comparison to the value it adds, consider ways to edit, compactify, or move part of it to supplementary.}
     } \label{fig:community-synthetic}
 \end{figure*}
 
@@ -531,13 +539,17 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
     \section{Approximation Argument for Simulated Anealing}\label{sec:simulated-annealing-approximation}
 
         TODO 
+    
+    \section{Algorithmic specification for simulated annealing}
 
+        TODO
+    
     \section{Simulated Annealing Illustration}
 
         \begin{figure*}
             \includegraphics[width=1.0\textwidth]{../fig/community-detection-learning-progress.png}
             \caption{
-                Simulated annealing for community detection in a hypergraph generated from our model.
+                Illustrative run of simulated annealing for community detection in a hypergraph generated from our model.
             }
         \end{figure*}
 
