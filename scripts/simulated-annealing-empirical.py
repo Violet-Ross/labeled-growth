@@ -37,7 +37,6 @@ if __name__ == "__main__":
     data_set = args.data_set
     job_id = args.job_id
     
-    
     path = f"throughput/simulated_annealing/{data_sets[data_set]}"
     os.makedirs(path, exist_ok=True)
     os.makedirs(path + "/labels", exist_ok=True)
@@ -62,7 +61,6 @@ if __name__ == "__main__":
     print("running simulated annealing...")
     
     num_steps = len(g.nodes)*20
-    
     
     for step_num in tqdm(range(num_steps)):
         print("step num: " + str(step_num))

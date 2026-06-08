@@ -55,7 +55,7 @@ for i, vary in enumerate(["eta", "lambda", "gamma"]):
         matrix = sub.pivot(index=f"{vary}_plus", columns=f"{vary}_minus", values="value")
         
         ax = axarr[j, i]
-        sns.heatmap(matrix, ax=ax, annot=False, fmt=".2f", cmap="inferno", xticklabels=2, yticklabels=2, vmax=1, vmin = 0)
+        sns.heatmap(matrix, ax=ax, annot=False, fmt=".2f", cmap="inferno", xticklabels=2, yticklabels=2, vmax=0.8, vmin = 0)
         ax.set_title(titles[metric])
         ax.set_xlabel(fr"$\{vary}_-$")
         ax.set_ylabel(fr"$\{vary}_+$")

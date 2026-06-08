@@ -98,7 +98,10 @@
         Node color corresponds to community label.
         Label-homogeneous edges are shown in green, while label-heterogeneous edges are shown in pink.
         In each case, $\same{\novelrate{}} = 0.5$, $\opp{\novelrate{}} = 0.25$, and the remaining parameters are as given. 
-        The model begins with two disjoint label-homogeneous edges and is run for 25 timesteps.
+        The model begins with two disjoint label-homogeneous edges and is run for 25 timesteps. \phil{
+            this fig is ok but small and a bit hard to read. It might make sense to take just a single one of these and make it larger, and combine with a plot that shows something like modularity as a function of parameters. 
+            However, stacking them vertically would also be a possibility. 
+        }
         } \label{fig:examples}
     \end{figure}
 
@@ -394,7 +397,7 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
 \end{figure*}
 
 
-\section{Conclusion}
+\section{Discussion}
 
     We have proposed a simple model of binary-labeled hypergraph formation in which edges are formed through noisy copies of previous edges, combined with the addition of extant and novel nodes. 
     Our model incorporates label homophily through each of the three edge formation mechanisms. 
