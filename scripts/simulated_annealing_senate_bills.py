@@ -7,41 +7,54 @@ import sys
 import csv
 from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
 
-H = xgi.read_json("throughput/senate_bills.json")
+# TODO: Old way of getting senate bills from xgi
+# H = xgi.read_json("throughput/senate_bills.json")
 
-# Violet's Code Congress Sem
-party_affs = H.nodes.attrs('affiliation').asdict()
-new_nodes = sorted([int(node) - 1 for node in H.nodes])
-new_edges = [{int(node) - 1 for node in edge} for edge in H.edges.members()]
+# # Violet's Code Congress Sem
+# party_affs = H.nodes.attrs('affiliation').asdict()
+# new_nodes = sorted([int(node) - 1 for node in H.nodes])
+# new_edges = [{int(node) - 1 for node in edge} for edge in H.edges.members()]
 
-# record dem as 0 and rep as 1 for all nodes
-labels = []
-for party in list(party_affs.values()):
-    if party == 'Democrat':
-        labels.append(0)
-    if party == 'Republican':
-        labels.append(1)
+# # record dem as 0 and rep as 1 for all nodes
+# labels = []
+# for party in list(party_affs.values()):
+#     if party == 'Democrat':
+#         labels.append(0)
+#     if party == 'Republican':
+#         labels.append(1)
 
-# create new dict using our binary labels
-label_dict = dict(zip(new_nodes, labels))
-sorted_label_dict = dict(sorted(label_dict.items()))
+# # create new dict using our binary labels
+# label_dict = dict(zip(new_nodes, labels))
+# sorted_label_dict = dict(sorted(label_dict.items()))
 
-# make new hypergraph
-new_H = xgi.Hypergraph(new_edges)
-new_H.set_node_attributes(sorted_label_dict, name = "label")
+# # make new hypergraph
+# new_H = xgi.Hypergraph(new_edges)
+# new_H.set_node_attributes(sorted_label_dict, name = "label")
 
-# turn the data set into an object of the GH class (so we can perform SEM on it)
-g = GH(new_H, [0, 1], 0, 0)
+# # turn the data set into an object of the GH class (so we can perform SEM on it)
+# g = GH(new_H, [0, 1], 0, 0)
+
+H = xgi.read_json("throughput/senate_bills.json", nodetype=int)
+g = GH(H, [0, 1], 0, 0)
 
 # # true_theta = [.43, .37, 0.001, .001, .91, .65] # Violet's approx
-# true_thetas = [[.9, .1, .001, .001, 1, .25],
-# [.8, .2, .5, .25, 1, .25],
-# [.7, .3, .5, .25, 1, .25],
-# [.99, .01, .5, .25, 1, .25],
-# [.85, .15, 0.5, .25, .91, .65]]
+true_thetas = [[.9, .1, .001, .001, 1, .25],
+[.8, .2, .001, .001, 1, .25],
+[.7, .3, .001, .001, 1, .25],
+[.6, .4, .001, .001, 1, .25],
+[.9, .1, .3, .1, 1, .25],
+[.8, .2, .3, .1, 1, .25],
+[.7, .3, .3, .1, 1, .25],
+[.6, .4, .3, .1, 1, .25]]
 
-true_theta = [.9, .1, .001, .001, 1, .25]
-    
+
+
+# true_theta = true_thetas[int(sys.argv[1])]
+# true_theta = [.43, .37, .001, .001, .91, .65] Does not work
+true_theta = true_thetas[0]
+# true_theta = [.43, .37, .001, .001, .91, .65] # Violet's approx
+
+
 from itertools import combinations
 def clique_projection_modularity_maximization_algo(g):
     H = g.H
@@ -64,26 +77,28 @@ def clique_projection_modularity_maximization_algo(g):
 
 
 # Simulated annealing run
+num_reps = 1
+for _ in range(num_reps):
 
-sa = SimulatedAnnealingApprox(g, true_theta)
+    sa = SimulatedAnnealingApprox(g, true_theta, 100)
 
-for step_num in range(len(g.nodes)*20):
-    print("step num: " + str(step_num))
+    for step_num in range(len(g.nodes)*20):
+        print("step num: " + str(step_num))
 
-    sa.step()
+        sa.step()
 
-    # with open('senate_bills_diff_params' + str(theta_index) + '.csv', 'a', newline="") as file:
-    with open('./throughput/simulated_annealing_senate_bills.csv', 'a', newline="") as file:
+        # with open('senate_bills_diff_params' + str(theta_index) + '.csv', 'a', newline="") as file:
+        with open('./throughput/simulated_annealing_senate_bills_all_external.csv', 'a', newline="") as file:
+            writer = csv.writer(file)
+            writer.writerows([[int(sys.argv[1]), step_num, sa.likelihoods_per_step[-1], sa.aris_per_step[-1]]])
+
+
+    # save labels
+    with open('./throughput/simulated_annealing_senate_bills_all_external_max.csv', 'a', newline="") as file:
         writer = csv.writer(file)
-        writer.writerows([[step_num, sa.likelihoods_per_step[-1], sa.aris_per_step[-1]]])
+        # writer.writerows([sa.labels])
 
-
-# save labels
-with open('./throughput/senate_bills_simulated_annealing.csv', 'a', newline="") as file:
-    writer = csv.writer(file)
-    writer.writerows([sa.labels])
-
-    writer.writerows([[sa.max_LL, sa.max_LL_corresponding_ari]])
-    writer.writerows([sa.max_LL_labels])
+        writer.writerows([[int(sys.argv[1]), sa.max_LL, sa.max_LL_corresponding_ari]])
+        # writer.writerows([sa.max_LL_labels])
 
 
