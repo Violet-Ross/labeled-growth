@@ -53,12 +53,7 @@ H = xgi.Hypergraph(hyperedges)
 H.cleanup(singletons=False, multiedges=True, relabel=False, isolates=True)
 
 
-# make 9 classes into binary labeled
-# for node, class_label in class_labels.items():
-#     if class_label == "2BIO1" or class_label == "2BIO2" or class_label == "2BIO3":
-#         class_labels[node] = 1
-#     else:
-#         class_labels[node] = 0
+# assign numeric labels
 for node, class_label in class_labels.items():
     if class_label == "2BIO1":
         class_labels[node] = 0
@@ -78,8 +73,6 @@ for node, class_label in class_labels.items():
         class_labels[node] = 7
     elif class_label == "PSI*":
         class_labels[node] = 8
-    else:
-        print("ERROR")
 
 # remake to retain orginal labels!
 
