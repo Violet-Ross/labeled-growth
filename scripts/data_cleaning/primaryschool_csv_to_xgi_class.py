@@ -7,19 +7,10 @@ import networkx as nx
 contacts = np.array(pd.read_csv('data/primaryschool/primaryschool.csv', header=None, sep="\t"))
 genders = np.array(pd.read_csv('data/primaryschool/metadata.txt', header=None, sep="\t"))
 
-# print(contacts)
-
 hyperedges = []
 class_labels = {}
 g = nx.Graph()
 prev_added_hyperedges = set()
-
-gender_dict = {}
-
-for gender in genders:
-    if gender[2] != "Unknown":
-        gender_dict[(gender[0])] = gender[2]
-
 
 prev_timestep = None
 for contact in contacts:
@@ -51,8 +42,8 @@ for contact in contacts:
         # clear graph
         g = nx.Graph()
     
-    # don't add teacher edge
-    if index0 in gender_dict and index1 in gender_dict:
+    # don't add teacher edge, which all have unknown gender
+    if class0 != "Teachers" and class1 != "Teachers":
         g.add_edge(index0, index1)
 
 
@@ -64,20 +55,36 @@ H = xgi.Hypergraph(hyperedges)
 H.cleanup(singletons=False, multiedges=True, relabel=False, isolates=True)
 
 
-# make 9 classes into binary labeled
-for node, gender_label in gender_dict.items():
-    if gender_label == "M":
-        gender_dict[node] = 1
-    elif gender_label == "F":
-        gender_dict[node] = 0
+# assign numeric labels
+for node, class_label in class_labels.items():
+    if class_label == "1A":
+        class_labels[node] = 0
+    elif class_label == "1B":
+        class_labels[node] = 1
+    elif class_label == "2A":
+        class_labels[node] = 2
+    elif class_label == "2B":
+        class_labels[node] = 3
+    elif class_label == "3A":
+        class_labels[node] = 4
+    elif class_label == "3B":
+        class_labels[node] = 5
+    elif class_label == "4A":
+        class_labels[node] = 6
+    elif class_label == "4B":
+        class_labels[node] = 7
+    elif class_label == "5A":
+        class_labels[node] = 8
+    elif class_label == "5B":
+        class_labels[node] = 9
     else:
-        print(node)
-        H.remove_node(node)
+        pass # must be a teacher, which will not be added in the next step
+
 
 
 
 # set the node labels
-H.set_node_attributes(gender_dict, name = "label")
+H.set_node_attributes(class_labels, name = "label")
 
 # save old labels
 old_labels = {n: n for n in H.nodes}
@@ -98,5 +105,5 @@ for edge in H.edges:
     H2.add_edge(new_edge, **H.edges[edge])
 
 # save the hypergraph locally
-xgi.write_json(H2, "throughput/primaryschool_gender.json")
+xgi.write_json(H2, "throughput/primaryschool.json")
 
