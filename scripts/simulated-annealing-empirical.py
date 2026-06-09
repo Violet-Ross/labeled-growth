@@ -25,7 +25,8 @@ data_sets = {
     "highschool_class": "highschool",
     "highschool_gender": "highschool_gender",
     "primaryschool_gender": "primaryschool_gender",
-    "primaryschool_class": "primaryschool"
+    "primaryschool_class": "primaryschool",
+    "gender_coauth": "gender_coauth_shrunk"
 }
 
 if __name__ == "__main__":
@@ -48,11 +49,11 @@ if __name__ == "__main__":
         results_folder = args.results_folder # override if provided
 
     # order is copy, novel, extant
-    true_theta = [.95, .05, .001, .001, 1, .01]
+    true_theta = [.95, .05, .001, .001, 1, .01] # default params
     if params != None: # override default params if user-specified
         true_theta = params
     
-    path = f"throughput/simulated_annealing/{data_sets[data_set]}"
+    path = f"throughput/simulated_annealing/{results_folder}"
     os.makedirs(path, exist_ok=True)
     os.makedirs(path + "/labels", exist_ok=True)
     os.makedirs(path + "/metrics", exist_ok=True)

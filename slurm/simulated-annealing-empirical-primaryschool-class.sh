@@ -9,4 +9,4 @@
 #SBATCH --time=120:00:00        
 #SBATCH --output=throughput/logs/simulated-annealing-empirical/primaryschool-class_%a.out            
 
-.venv/bin/python -u -m scripts.simulated-annealing-empirical --data_set primaryschool_class --job_id $SLURM_ARRAY_TASK_ID --results_folder testing_folder --params .9 .1 .001 .001 1 .1
+.venv/bin/python -u -m scripts.simulated-annealing-empirical --data_set primaryschool_class --job_id $SLURM_ARRAY_TASK_ID
