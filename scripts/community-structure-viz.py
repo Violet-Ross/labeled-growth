@@ -47,7 +47,23 @@ for i in range(2):
 plt.savefig("fig/community-structure-sims-line.png", dpi=300, bbox_inches="tight")
 
 
+
+
 # COMBINED FIG 
+
+
+def clique_projection_modularity(GH): 
+    """
+    unweighted so possibly not that reliable, would want to use weighted graph instead but not implemented in XGI. Not a hard implementation but likely slow. 
+    """
+    
+    A = xgi.linalg.hypergraph_matrix.adjacency_matrix(GH.H, weighted = True)
+    z = np.array(GH.get_labels())
+    k = A.sum(axis=1)
+    m = A.sum() / 2
+    Delta = z[:, None] == z[None, :] 
+    return 1/(2*m)*((A - np.outer(k, k) / (2 * m))*Delta).sum()
+
 
 fig, ax = plt.subplots(1, 1, figsize=(4, 3))
 
@@ -103,60 +119,62 @@ choices_to_highlight = [
 
 for i, choice in enumerate(choices_to_highlight):
     
-    point = sub[(sub["theta_1"] == choice["theta_1"]) & (sub["theta_3"] == choice["theta_3"])]
-    # hollow square marker
-    ax.plot(point["theta_1"], point[col_to_plot], marker = "s", color = "black", markersize = 8, fillstyle = 'none', zorder = 1000)
-    
-    
-    eta_plus = choice["theta_1"]
-    eta_minus = 1 - eta_plus
-    lambda_plus = choice["theta_3"]
-    lambda_minus = 0.5
-    gamma_plus = 0.2
-    gamma_minus = 0.1 
-    
+   point = sub[(sub["theta_1"] == choice["theta_1"]) & (sub["theta_3"] == choice["theta_3"])]
+   # hollow square marker
+   ax.plot(point["theta_1"], point[col_to_plot], marker = "s", color = "black", markersize = 8, fillstyle = 'none', zorder = 1000)
+   
+   
+   eta_plus = choice["theta_1"]
+   eta_minus = 1 - eta_plus
+   lambda_plus = choice["theta_3"]
+   lambda_minus = 0.5
+   gamma_plus = 0.2
+   gamma_minus = 0.1 
+   
 
-    inset_ax = [inset_1, inset_2, inset_3, inset_4][i]
+   inset_ax = [inset_1, inset_2, inset_3, inset_4][i]
     
     
+   expected_modularity = point[col_to_plot].values[0]
+   actual_modularity = -10
+   
+   while not np.isclose(expected_modularity, actual_modularity, atol = 0.001):
     
+      H = xgi.Hypergraph([[0, 1, 2], [3, 4, 5]])
+      H.set_node_attributes({0 : 0, 1 : 0, 2 : 0, 3 : 1, 4 : 1, 5 : 1}, name = "label")
+      growing_hypergraph = GH(H, [0, 1], eta_plus, eta_minus)
+      growing_hypergraph.add_hyperedge(n_steps, gamma_plus, gamma_minus, lambda_plus, lambda_minus)
+      actual_modularity = clique_projection_modularity(growing_hypergraph)
+      print(f"Expected modularity: {expected_modularity}, actual modularity: {actual_modularity}") 
     
-    
-    H = xgi.Hypergraph([[0, 1, 2], [3, 4, 5]])
-    H.set_node_attributes({0 : 0, 1 : 0, 2 : 0, 3 : 1, 4 : 1, 5 : 1}, name = "label")
-    growing_hypergraph = GH(H, [0, 1], eta_plus, eta_minus)
-    growing_hypergraph.add_hyperedge(n_steps, gamma_plus, gamma_minus, lambda_plus, lambda_minus)
-    
-    labels = growing_hypergraph.get_labels()
-    H = growing_hypergraph.H
-    
-    
-    H.cleanup(isolates = True)
-    H.set_edge_attributes({e : H.edges.size(e) for e in H.edges}, name = "size")
-    
-    H = growing_hypergraph.H
-    pos = xgi.barycenter_spring_layout(H, seed=1)
-    pos = {i : 0.1*pos[i] for i in H.nodes}
-    
-    node_border_colors = ["black" if labels[i] == 0 else "white" for i in H.nodes]        
+   labels = growing_hypergraph.get_labels()
+   H = growing_hypergraph.H
+   
+   
+   H.cleanup(isolates = True)
+   H.set_edge_attributes({e : H.edges.size(e) for e in H.edges}, name = "size")
+   
+   H = growing_hypergraph.H
+   pos = xgi.barycenter_spring_layout(H, seed=1)
+   pos = {i : 0.1*pos[i] for i in H.nodes}
+   
+   node_border_colors = ["black" if labels[i] == 0 else "white" for i in H.nodes]        
 
-    xgi.draw(H, 
-            pos = pos,
-            node_fc=labels, 
-            ax=inset_ax,
-            node_fc_cmap=plt.cm.gray_r, 
-            edge_fc_cmap=plt.cm.inferno,
-            edge_vmin=0, edge_vmax=10,
-            edge_lw = 0,
-            node_ec = node_border_colors,
-            node_lw = .3, 
-            node_size = 5,
-            hull = True, 
-            radius = 0.005, 
-            alpha = 0.2,
-            )
-
-
+   xgi.draw(H, 
+         pos = pos,
+         node_fc=labels, 
+         ax=inset_ax,
+         node_fc_cmap=plt.cm.gray_r, 
+         edge_fc_cmap=plt.cm.inferno,
+         edge_vmin=0, edge_vmax=10,
+         edge_lw = 0,
+         node_ec = node_border_colors,
+         node_lw = .3, 
+         node_size = 5,
+         hull = True, 
+         radius = 0.005, 
+         alpha = 0.2,
+         )
 
 plt.savefig("fig/community-structure-sims-combined.png", dpi=300, bbox_inches="tight", pad_inches=0.0)
 
