@@ -4,9 +4,9 @@
 #SBATCH --array=0-9
 #SBATCH --mail-user=fcataldo@middlebury.edu    
 #SBATCH --mail-type=ALL                        
-#SBATCH --mem-per-cpu=50gb
+#SBATCH --mem-per-cpu=125gb
 #SBATCH --partition=himem-long                   
 #SBATCH --time=120:00:00        
 #SBATCH --output=throughput/logs/simulated-annealing-empirical/gender-coauth-shrunk%a.out            
 
-.venv/bin/python -u -m scripts.simulated-annealing-empirical --data_set gender_coauth_shrunk --job_id $SLURM_ARRAY_TASK_ID
+.venv/bin/python -u -m scripts.simulated-annealing-empirical --data_set gender_coauth --job_id $SLURM_ARRAY_TASK_ID

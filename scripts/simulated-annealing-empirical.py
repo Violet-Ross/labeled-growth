@@ -49,7 +49,7 @@ if __name__ == "__main__":
         results_folder = args.results_folder # override if provided
 
     # order is copy, novel, extant
-    true_theta = [.95, .05, .001, .001, 1, .01] # default params
+    true_theta = [.9, .1, .001, .001, 1, .25] # default params
     if params != None: # override default params if user-specified
         true_theta = params
     
