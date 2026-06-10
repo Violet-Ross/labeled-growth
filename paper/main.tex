@@ -93,18 +93,17 @@
 
     \begin{figure}
         \centering 
-        \includegraphics[width=0.48\textwidth]{../fig/community-structure-sims-combined.png}
-        \caption{
-            Suite of model simulations illustrating the dependence of community structure, as measured by clique-projection modularity $Q$, on the model's parameters. 
-            The parameters $\opp{\extantrate} = 0.5$ $\same{\novelrate{}} = 0.2$, and $\opp{\novelrate{}} = 0.1$ are held fixed. 
-            Each line corresponds to a different value of $\same{\extantrate{}}$ indicated by the legend.
-            Along the horizontal axis, we vary $\same{\copyrate{}}$ and set $\opp{\copyrate{}} = 1 - \same{\copyrate{}}$. 
-            Each parameter combination is simulated $10^2$ times for $10^3$ timesteps. 
-            On either side of the plot we show small hypergraphs sampled from parameter combinations indicated by the square markers. 
-            \phil{Fig is good but maybe we want to do $10^3$ reps just to reduce the noise a bit, and possibly increase the resolution of the copy parameters.}
-        }\label{fig:community-structure-illustration}
+        \includegraphics[width=0.48\textwidth]{../fig/hypergraph_viz.png}
+        \caption{Two samples from our model. 
+        Node color corresponds to community label.
+        Label-homogeneous edges are shown in green, while label-heterogeneous edges are shown in pink.
+        In each case, $\same{\novelrate{}} = 0.5$, $\opp{\novelrate{}} = 0.25$, and the remaining parameters are as given. 
+        The model begins with two disjoint label-homogeneous edges and is run for 25 timesteps. \phil{
+            this fig is ok but small and a bit hard to read. It might make sense to take just a single one of these and make it larger, and combine with a plot that shows something like modularity as a function of parameters. 
+            However, stacking them vertically would also be a possibility. 
+        }
+        } \label{fig:examples}
     \end{figure}
-
 
     Our model builds on the Hyperedge Copy Model (HCM) of He et al. \cite{heEdgeCorrelationsLink2025}. 
     In their model, edges form through a combination of three distinct steps: a copy step, in which a previous edge is sampled and imperfectly copied; an extant node addition step, in which new nodes are added to the new edge from the existing node set; and a new node addition step, in which new nodes are added to the new edge from outside the existing node set.
@@ -126,13 +125,6 @@
     \end{itemize}
     In our simulations we initialize $\at{\hypergraph}{0}$ with a single edge containing one node of each label, but any combination of hypergraph and node labels can be used as an initial condition. 
     Both our simulations and our statistical inference techniques (described below) were carried using the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
-
-    \Cref{fig:community-structure-illustration} illustrates role of the model parameters in tuning the community structure of realized hypergraphs. 
-    We measure community structure by computing Newman-Girvan modularity \cite{newman2004finding} on the clique-projection of the hypergraph. 
-    For fixed $\opp{\extantrate}$, $\same{\novelrate{}}$, and $\opp{\novelrate{}}$, increasing the difference $\same{\copyrate{}} - \opp{\copyrate{}}$ leads to higher modularity, as does increasing $\same{\extantrate{}}$.
-    Hypergraphs sampled from models with high values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have  label-homogeneous cores of densely-overlapping hyperedges, which are weakly connected to one another by edges with more heterogeneous label compositions.
-    Hypergraphs with lower values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have less-structured distributions of labels over hyperedges. 
-
 
 
 
@@ -392,39 +384,6 @@ Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
   \end{tabular*}
 \end{table}
 
-\begin{table}[ht]
-\centering
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{rrrrrrrrrrrr}
-\hline
-\multicolumn{2}{c}{$\same{\copyrate{}}$} & \multicolumn{2}{c}{$\opp{\copyrate{}}$} & \multicolumn{2}{c}{$\same{\extantrate}$} & \multicolumn{2}{c}{$\opp{\extantrate}$} & \multicolumn{2}{c}{$\same{\novelrate}$} & \multicolumn{2}{c}{$\opp{\novelrate}$} \\
-\hline
-$v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ \\
-\hline
-0.900 & +0.005 & 0.900 & -0.014 & 0.200 & +0.009 & 0.200 & -0.032 & 0.200 & +0.002 & 0.200 & -0.043 \\
-0.200 & -0.011 & 0.200 & +0.002 & 2.000 & -0.060 & 2.000 & +0.134 & 0.200 & -0.012 & 0.200 & -0.009 \\
-0.200 & -0.005 & 0.200 & +0.045 & 0.200 & +0.016 & 0.200 & -0.035 & 2.000 & -0.073 & 2.000 & -0.031 \\
-0.900 & +0.001 & 0.900 & +0.001 & 2.000 & -0.003 & 2.000 & -0.143 & 2.000 & -0.109 & 2.000 & +0.191 \\
-0.400 & -0.007 & 0.400 & -0.001 & 0.700 & -0.022 & 0.700 & -0.014 & 0.700 & -0.068 & 0.700 & -0.016 \\
-0.800 & -0.017 & 0.400 & +0.011 & 0.200 & -0.020 & 0.200 & +0.015 & 0.200 & +0.029 & 0.200 & -0.035 \\
-0.200 & +0.005 & 0.200 & +0.006 & 1.000 & +0.023 & 0.500 & -0.011 & 0.200 & -0.001 & 0.200 & +0.017 \\
-0.200 & +0.013 & 0.200 & +0.007 & 0.200 & -0.014 & 0.200 & +0.003 & 1.000 & -0.048 & 0.500 & +0.045 \\
-0.600 & +0.011 & 0.400 & +0.012 & 1.400 & +0.011 & 1.000 & -0.057 & 0.800 & -0.002 & 0.200 & -0.019 \\
-0.700 & +0.004 & 0.620 & -0.012 & 1.000 & -0.051 & 0.800 & +0.047 & 0.300 & -0.020 & 0.250 & -0.045 \\
-0.400 & -0.015 & 0.800 & -0.012 & 0.200 & +0.004 & 0.200 & +0.001 & 0.200 & -0.042 & 0.200 & -0.002 \\
-0.200 & -0.016 & 0.200 & +0.010 & 0.500 & +0.005 & 1.000 & +0.007 & 0.200 & -0.000 & 0.200 & +0.018 \\
-0.200 & -0.008 & 0.200 & -0.012 & 0.200 & -0.021 & 0.200 & +0.009 & 0.500 & +0.021 & 1.000 & +0.025 \\
-0.400 & +0.008 & 0.600 & -0.013 & 1.000 & +0.001 & 1.400 & -0.031 & 0.200 & +0.020 & 0.800 & -0.031 \\
-0.620 & +0.012 & 0.700 & -0.023 & 0.800 & +0.058 & 1.000 & -0.114 & 0.250 & -0.039 & 0.300 & -0.007 \\
-\hline
-\end{tabular}%
-}
-\caption{True parameter values and SEM estimation error ($\varepsilon = \hat{\theta} - \theta$) for each graph.}
-\label{tab:sem_estimates}
-\end{table}
-
-\violet{Hate the presentation of this (table 2). Thinking of better ways to convey this information.}
-
 
 \begin{figure*}
     \includegraphics[width=\textwidth]{../fig/community-synthetic-data-viz.png}
@@ -460,17 +419,6 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
     PSC acknowledges support from the National Science Foundation under DMS-2407058.
     Compute was provided by Middlebury College through support from the National Science Foundation under award 1827373.
 \end{acknowledgments}
-
-\section*{Data Availability}
-
-    The code used to generate the results in this paper is available at [GITHUB LINK].
-    The empirical data sets analyzed in this paper are available at the following links:
-    \begin{itemize}
-        \item Contact high school: 
-        \item Contact primary school: 
-        \item Senate bills: 
-        \item Coauthorship: 
-    \end{itemize}
 
 
 
@@ -596,8 +544,48 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
         TODO 
     
     \section{Algorithmic specification for simulated annealing}
-
-        TODO
+        \frannie{Define simulated annealing with references}
+        Define the number of epochs for the simulated annealing algorithm $A = 20$.  
+        Let $B$ be the probability that the simulated annealing algorithm accepts a change on labels that lowers the approximated likelihood
+        
+        \begin{algorithm}[H]
+            \begin{algorithmic}
+                \caption{\texttt{SimulatedAnnealing}$(\hypergraph, \theta)$}\label{algocf:small}
+                \Require{Hypergraph $\hypergraph$, parameters $\paramvector$}
+                \Ensure{Label set $\vz$, approximation of the true labels $\vz^*$}
+                \State $\vz \sim \text{Uniform}(\{0,1\})^{n}$
+                \State $\Delta \mathcal{L}$ $\gets$ $[ ]$
+                \State $\sigma_\hypergraph$ $\gets$ None
+                \For{$\text{step} = 0$ to $n*A$}
+                    \State $j$ $\sim$ Uniform($\{0,...,n-1\}$)
+                    \State $\vz^\prime$ $\gets$ $\vz$
+                    \State $\vz^\prime_j\gets1-\vz^\prime_j$
+                    \State $\Delta E \gets \log(\overset{\sim}{\prob}(\hypergraph, \vz^\prime | \paramvector)) - \log(\overset{\sim}{\prob}(\hypergraph, \vz | \paramvector))$
+                    \State epoch $\gets\lfloor \text{step}/n\rfloor$
+                    \If{epoch $ == 0$}
+                        \State $\Delta \mathcal{L}$.append($\Delta E$)
+                    \EndIf
+                    \If{$\sigma_\hypergraph == \text{None} \And \text{epoch} > 0$}
+                            \State $\sigma_\hypergraph$ $\gets$ \State $\sqrt{\frac{\sum_{i=1}^{|\Delta \mathcal{L}|} \Delta \mathcal{L}_i^2 - (\sum_{i=1}^{|\Delta \mathcal{L}|} \Delta \mathcal{L}_i)^2/|\Delta \mathcal{L}|}{|\Delta \mathcal{L}|-1}}$
+                        \EndIf
+                    \If{$\Delta E>0$}
+                        \State $\vz \gets\vz^\prime$
+                    \Else
+                        \State $B$ $\gets$ 1
+                        \State $\sigma_a$ $\gets$ $\Delta E/\sigma_\hypergraph$
+                        \If{1 $\leq$ epoch $\leq$ 4}
+                            \State $B$ $\sim $ Normal($\sigma_a|\mu = 0, \sigma=2$)
+                        \ElsIf{5 $\leq$ epoch}
+                            \State $B$ $\sim $ Normal($\sigma_a|\mu = 0, \sigma=2-2\times \text{epoch} / A$)
+                        \EndIf
+                        \If{$B$ $>$ x $\sim$ Uniform(0,1)} 
+                            \State $\vz \gets \vz^\prime$
+                        \EndIf
+                    \EndIf
+                \EndFor
+                \State \Return$\vz$
+            \end{algorithmic}
+        \end{algorithm}
     
     \section{Simulated Annealing Illustration}
 
@@ -629,7 +617,9 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
             \same{\hat\novelrate{}} &= \simannvizsamenovelrateguess{} \\ 
             \opp{\hat\novelrate{}} &= \simannvizoppnovelrateguess{}\;. 
         \end{align*}
-
+    
+    \section{Gradient Descent Illustration}
+        TODO
 
 
 
