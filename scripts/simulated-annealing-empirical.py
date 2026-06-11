@@ -66,7 +66,7 @@ if __name__ == "__main__":
     
     
     print("initializing simulated annealing...")
-    sa = SimulatedAnnealingApprox(g, true_theta)
+    sa = SimulatedAnnealingApprox(g, true_theta, approx=100)
 
     best_likelihood = -float('inf')
     best_ari = -float('inf')
