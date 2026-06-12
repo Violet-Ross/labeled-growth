@@ -587,7 +587,58 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
     
     \section{Approximation Argument for Simulated Anealing}\label{sec:simulated-annealing-approximation}
 
-        TODO 
+        \frannie{define $\prec$ or use other notation}
+
+        To reduce the computational complexity of computing Equation \ref{eq:likelihood}, we propose the following approximation for the simulated annealing algorithm. First, the likelihood term for a generated edge $e$ can be expressed as follows.  Note that the time term $t$ is dropped for convenience on $\hypergraph, \vz,$ and $e$.  
+        \begin{align*}
+            \prob(\hypergraph, \vz, \newedge^{t+1} | \paramvector) = \sum_{\seededge\prec \newedge}\frac{1}{m_t}\sum_{\focalnode \in \seededge\cap \newedge}\frac{1}{|f|}\prob(\newedge | \seededge , \focalnode, \vz| \paramvector)
+        \end{align*}
+
+        This expression can be rewritten by indexing by the size of $|\seededge\cap \newedge|$.  
+        \begin{align*}
+            \prob(\hypergraph, \vz, \newedge^{t+1}|\paramvector)=\sum_{k=0}^{|\newedge|}\sum_{\substack{\seededge\prec \newedge\\|\seededge\cap \newedge| = k}}\frac{1}{m_t}\sum_{\focalnode\in \seededge\cap \newedge}\frac{1}{|\seededge|}\prob(\newedge |\seededge, \focalnode, \vz, \paramvector)
+        \end{align*}
+
+        We will argue that $\prob(\newedge|\hypergraph, \seededge, \focalnode, \vz, \paramvector)$ depends on $|\seededge\cap \newedge|$, or $k$, when $n$ is large due to the extant node term of the likelihood Equation \ref{eq:likelihood}.  Without loss of generality, let $\vz_\focalnode =0$ and $\underline{ \vz }_\focalnode =1$.  Assume $\newedge$ has $a_{0}$ extant nodes of label $0$ and $a_{1}$ extant nodes of label $1$.  Then, the extant term of Equation \ref{eq:likelihood} can be rewritten as follows.  
+        \begin{align*}
+            \prob(a_{0}, a_{1}) = \frac{\text{Poisson}(a_{0}|\extantrate_+)\times\text{Poisson}(a_{1}|\extantrate_-)}{\dbinom{\nodes_{0}^t - |\seededge_{0}|}{a_{0}}\dbinom{\nodes_{1}^t - |\seededge_{1}|}{a_{1}}}
+        \end{align*}
+
+        We assume that $n$ is large compared to $|\seededge|$ and $|\newedge|$.  Let $\nodes^t_{0} = c_{0}n,\nodes^t_{1} = c_{1}n$ where $c_{0}, c_{1}$ are constants with respect to $n_t$.  Use the approximation that $\binom{N}{k} \approx \frac{N^k}{k!}$ for $N \gg k$ and let the Poissons be absorbed into constant term $C(a_{0}, a_{1})$ as they do not depend on $n$.  Then,
+        \begin{align*}
+            \prob(a_{0}, a_{1}) &\approx C(a_{0}, a_{1}) \frac{a_{0}!a_{1}!}{(c_{0}n)^{a_{0}}(c_{1}n)^{a_{1}}}\\
+            &= \frac{C(a_{0}, a_{1})a_{0}!a_{1}!}{c_{0}^{a_{0}}c_{1}^{a_{1}}}n^{-a_{0}-a_{1}}\\
+            &= C^\prime(a_{0}, a_{1})n^{-a_{0}-a_{1}}
+        \end{align*}
+        where 
+        \begin{align*}
+                C^\prime(a_{0}, a_{1}) = &\frac{C(a_{0}, a_{1})a_{0}!a_{1}!}{c_{0}^{a_{0}}c_{1}^{a_{1}}}
+        \end{align*}
+
+        Since the extant node term examined above is the only part of the likelihood depending on $n$, as $n_t$ grows large, the above term will dominate each $\prob(\newedge|\seededge, \focalnode, \vz)$.  As $n_t$ grows large, this is $O(n^{-a_{0}-a_{1}})$.  
+
+
+        Now, define $h_\newedge$ to be the number of extant and copied nodes in $\newedge$.  Let $a = a_{0}+a_{1}$ be the number of extant nodes added to hyperedge $\newedge$.  Then, $a =h_\newedge - k$, which expresses the idea that the number of extant nodes of $\newedge$ is equal to the number of copied and external nodes minus the number of copied nodes.  Thus, plugging in this equality for $-a$, we get, 
+        \begin{align*}
+            \prob(\hypergraph, \vz, \newedge^{t+1}|\paramvector)\approx\sum_{k=0}^{|\newedge|}\sum_{\substack{\seededge\prec \newedge\\|\seededge\cap \newedge| = k}}\frac{1}{m_t}\sum_{\focalnode\in \seededge\cap \newedge}\frac{1}{|\seededge|}O(n^{k{-h_\newedge}})
+        \end{align*}
+
+        $h_\newedge$ is constant for all $\seededge$ choices for a specific $\newedge$ as it is the sum of copied and extant nodes.  Thus, as $n_t$ grows large, this sum is asymptotically dominated by terms where $k=|\seededge\cap \newedge|$ is large.  Let $k^\prime = \max_{\seededge\prec \newedge}|\seededge\cap \newedge|$.  
+
+        We thus have
+        \begin{widetext}
+            \begin{align}
+                \label{eq:approx}\overset{\sim}{\prob}(\hypergraph, \vz, \paramvector)=\prod_{\newedge\in \edges}\left(\sum_{\substack{\seededge\prec \newedge\\|\seededge\cap \newedge| = k^\prime}}\left(\frac{1}{m_t}\sum_{\focalnode\in \seededge\cap \newedge}\frac{1}{|\seededge|}\prob(\newedge|\seededge, \focalnode, \vz| \paramvector)\right) + O(n^{k^\prime-1})\right).
+            \end{align}
+        \end{widetext}
+
+        This approximation reduces the computational cost of calculating the likelihood, greatly expanding the number of computations possible for large hypergraphs.  
+
+        However, on real-world hypergraphs with large $n$ and $m$, Equation \ref{eq:approx} is too coarse and can result in poor performance.  Thus, we propose the following two modifications to our approximation for datasets where our prior approximation does not perform well.  First, we loosen the approximation by evaluating more possible $\seededge$ choices.  In Equation \ref{eq:approx}, we only evaluate the likelihood of a hyperedge $\seededge$ as possible to form $\newedge$ if $|\seededge\cap \newedge|=k^\prime$.  Now, for each hyperedge $\newedge$, we evaluate a hyperedge $\seededge\prec \newedge$ if it is among the hyperedges in $\edges^t$ with the top $100$ $|\seededge\cap \newedge|$ values.  This allows for more information from the graph to be incorporated into the likelihood, making it more accurate.  Secondly, note that in Equation \ref{eq:approx} that we divide the probability of each hyperedge $\newedge$ being formed given hyperedge $\seededge$ by the number of possible choices of $\seededge$, $m_t$, before the approximation.  When graphs have large $m$, under Equation \ref{eq:approx}, edges generated later in the hypergraph often account for less of the likelihood than the number of hyperedges $\seededge$ with $|\seededge\cap \newedge|=k^\prime$.  Define $\mathcal{F}_\newedge = \argmax_{F\subset (\seededge\prec \newedge), |F|\leq100}\sum_{\seededge\in F}|\seededge\cap \newedge|$.  Thus, to value each hyperedge $\newedge$ equally as $m$ grows large, we instead divide the probability of forming hyperedge $\newedge$ given the choice of hyperedge $seededge$ in Step 1 by the number of hyperedges $\seededge$ we evaluate for a specific $\newedge$, $\mathcal{F}_\newedge$.  Thus, we propose the following updated approximated likelihood for large datasets.  
+        \begin{align}
+            \label{eq:approxBetter}\overset{\sim}{\prob}(\hypergraph, \vz|\paramvector)\approx\prod_{\newedge\in \edges}\sum_{\seededge\in\mathcal{F}_\newedge}\frac{1}{|\mathcal{F}_\newedge|}\sum_{\focalnode\in \seededge\cap \newedge}\frac{1}{|\seededge|}\prob(\newedge|\seededge, \focalnode, \vz, \paramvector)
+        \end{align}
+     
     
     \section{Algorithmic specification for simulated annealing}
         \frannie{Define simulated annealing with references}
