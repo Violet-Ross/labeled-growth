@@ -6,7 +6,7 @@
 %Control: page (0) single
 %Control: year (1) truncated
 %Control: production of eprint (0) enabled
-\begin{thebibliography}{40}%
+\begin{thebibliography}{41}%
 \makeatletter
 \providecommand \@ifxundefined [1]{%
  \@ifx{#1\undefined}
@@ -30,8 +30,7 @@
 \providecommand \href [0]{\begingroup \@sanitize@url \@href}%
 \providecommand \@href[1]{\@@startlink{#1}\@@href}%
 \providecommand \@@href[1]{\endgroup#1\@@endlink}%
-\providecommand \@sanitize@url [0]{\catcode `\\12\catcode `\$12\catcode
-  `\&12\catcode `\#12\catcode `\^12\catcode `\_12\catcode `\%12\relax}%
+\providecommand \@sanitize@url [0]{\catcode `\\12\catcode `\$12\catcode `\&12\catcode `\#12\catcode `\^12\catcode `\_12\catcode `\%12\relax}%
 \providecommand \@@startlink[1]{}%
 \providecommand \@@endlink[0]{}%
 \providecommand \url  [0]{\begingroup\@sanitize@url \@url }%
@@ -50,434 +49,127 @@
 \providecommand \BibitemShut  [1]{\csname bibitem#1\endcsname}%
 \let\auto@bib@innerbib\@empty
 %</preamble>
-\bibitem [{\citenamefont {Mastrandrea}\ \emph {et~al.}(2015)\citenamefont
-  {Mastrandrea}, \citenamefont {Fournet},\ and\ \citenamefont
-  {Barrat}}]{mastrandrea2015contact}%
+\bibitem [{\citenamefont {Mastrandrea}\ \emph {et~al.}(2015)\citenamefont {Mastrandrea}, \citenamefont {Fournet},\ and\ \citenamefont {Barrat}}]{mastrandrea2015contact}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {R.}~\bibnamefont
-  {Mastrandrea}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
-  {Fournet}},\ and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
-  {Barrat}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {PloS
-  one}\ }\textbf {\bibinfo {volume} {10}},\ \bibinfo {pages} {e0136497}
-  (\bibinfo {year} {2015})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Benson}\ \emph
-  {et~al.}(2018{\natexlab{a}})\citenamefont {Benson}, \citenamefont {Abebe},
-  \citenamefont {Schaub}, \citenamefont {Jadbabaie},\ and\ \citenamefont
-  {Kleinberg}}]{bensonSimplicialClosureHigherorder2018}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Mastrandrea}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Fournet}},\ and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Barrat}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {PloS one}\ }\textbf {\bibinfo {volume} {10}},\ \bibinfo {pages} {e0136497} (\bibinfo {year} {2015})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Benson}\ \emph {et~al.}(2018{\natexlab{a}})\citenamefont {Benson}, \citenamefont {Abebe}, \citenamefont {Schaub}, \citenamefont {Jadbabaie},\ and\ \citenamefont {Kleinberg}}]{bensonSimplicialClosureHigherorder2018}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~R.}\ \bibnamefont
-  {Benson}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Abebe}},
-  \bibinfo {author} {\bibfnamefont {M.~T.}\ \bibnamefont {Schaub}}, \bibinfo
-  {author} {\bibfnamefont {A.}~\bibnamefont {Jadbabaie}},\ and\ \bibinfo
-  {author} {\bibfnamefont {J.}~\bibnamefont {Kleinberg}},\ }\href
-  {https://doi.org/10.1073/pnas.1800683115} {\bibfield  {journal} {\bibinfo
-  {journal} {Proceedings of the National Academy of Sciences}\ }\textbf
-  {\bibinfo {volume} {115}},\ \bibinfo {pages} {E11221} (\bibinfo {year}
-  {2018}{\natexlab{a}})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Wu}\ \emph {et~al.}(2022)\citenamefont {Wu},
-  \citenamefont {Yan},\ and\ \citenamefont {Ng}}]{wu2022hypergraph}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~R.}\ \bibnamefont {Benson}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Abebe}}, \bibinfo {author} {\bibfnamefont {M.~T.}\ \bibnamefont {Schaub}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Jadbabaie}},\ and\ \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Kleinberg}},\ }\href {https://doi.org/10.1073/pnas.1800683115} {\bibfield  {journal} {\bibinfo  {journal} {Proceedings of the National Academy of Sciences}\ }\textbf {\bibinfo {volume} {115}},\ \bibinfo {pages} {E11221} (\bibinfo {year} {2018}{\natexlab{a}})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Wu}\ \emph {et~al.}(2022)\citenamefont {Wu}, \citenamefont {Yan},\ and\ \citenamefont {Ng}}]{wu2022hypergraph}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.}~\bibnamefont
-  {Wu}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Yan}},\ and\
-  \bibinfo {author} {\bibfnamefont {M.~K.-P.}\ \bibnamefont {Ng}},\ }\href@noop
-  {} {\bibfield  {journal} {\bibinfo  {journal} {IEEE Transactions on Pattern
-  Analysis and Machine Intelligence}\ }\textbf {\bibinfo {volume} {45}},\
-  \bibinfo {pages} {3245} (\bibinfo {year} {2022})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Levine}\ \emph {et~al.}(2017)\citenamefont {Levine},
-  \citenamefont {Bascompte}, \citenamefont {Adler},\ and\ \citenamefont
-  {Allesina}}]{levine2017beyond}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {H.}~\bibnamefont {Wu}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Yan}},\ and\ \bibinfo {author} {\bibfnamefont {M.~K.-P.}\ \bibnamefont {Ng}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {IEEE Transactions on Pattern Analysis and Machine Intelligence}\ }\textbf {\bibinfo {volume} {45}},\ \bibinfo {pages} {3245} (\bibinfo {year} {2022})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Levine}\ \emph {et~al.}(2017)\citenamefont {Levine}, \citenamefont {Bascompte}, \citenamefont {Adler},\ and\ \citenamefont {Allesina}}]{levine2017beyond}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~M.}\ \bibnamefont
-  {Levine}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Bascompte}},
-  \bibinfo {author} {\bibfnamefont {P.~B.}\ \bibnamefont {Adler}},\ and\
-  \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Allesina}},\ }\href@noop
-  {} {\bibfield  {journal} {\bibinfo  {journal} {Nature}\ }\textbf {\bibinfo
-  {volume} {546}},\ \bibinfo {pages} {56} (\bibinfo {year} {2017})}\BibitemShut
-  {NoStop}%
-\bibitem [{\citenamefont {Battiston}\ \emph {et~al.}(2020)\citenamefont
-  {Battiston}, \citenamefont {Cencetti}, \citenamefont {Iacopini},
-  \citenamefont {Latora}, \citenamefont {Lucas}, \citenamefont {Patania},
-  \citenamefont {Young},\ and\ \citenamefont
-  {Petri}}]{battistonNetworksPairwiseInteractions2020}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~M.}\ \bibnamefont {Levine}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Bascompte}}, \bibinfo {author} {\bibfnamefont {P.~B.}\ \bibnamefont {Adler}},\ and\ \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Allesina}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Nature}\ }\textbf {\bibinfo {volume} {546}},\ \bibinfo {pages} {56} (\bibinfo {year} {2017})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Battiston}\ \emph {et~al.}(2020)\citenamefont {Battiston}, \citenamefont {Cencetti}, \citenamefont {Iacopini}, \citenamefont {Latora}, \citenamefont {Lucas}, \citenamefont {Patania}, \citenamefont {Young},\ and\ \citenamefont {Petri}}]{battistonNetworksPairwiseInteractions2020}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.}~\bibnamefont
-  {Battiston}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Cencetti}},
-  \bibinfo {author} {\bibfnamefont {I.}~\bibnamefont {Iacopini}}, \bibinfo
-  {author} {\bibfnamefont {V.}~\bibnamefont {Latora}}, \bibinfo {author}
-  {\bibfnamefont {M.}~\bibnamefont {Lucas}}, \bibinfo {author} {\bibfnamefont
-  {A.}~\bibnamefont {Patania}}, \bibinfo {author} {\bibfnamefont {J.-G.}\
-  \bibnamefont {Young}},\ and\ \bibinfo {author} {\bibfnamefont
-  {G.}~\bibnamefont {Petri}},\ }\href
-  {https://doi.org/10.1016/j.physrep.2020.05.004} {\bibfield  {journal}
-  {\bibinfo  {journal} {Physics Reports}\ }\textbf {\bibinfo {volume} {874}},\
-  \bibinfo {pages} {1} (\bibinfo {year} {2020})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Bick}\ \emph {et~al.}(2023)\citenamefont {Bick},
-  \citenamefont {Gross}, \citenamefont {Harrington},\ and\ \citenamefont
-  {Schaub}}]{bick2023higher}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Battiston}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Cencetti}}, \bibinfo {author} {\bibfnamefont {I.}~\bibnamefont {Iacopini}}, \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Latora}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Lucas}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Patania}}, \bibinfo {author} {\bibfnamefont {J.-G.}\ \bibnamefont {Young}},\ and\ \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Petri}},\ }\href {https://doi.org/10.1016/j.physrep.2020.05.004} {\bibfield  {journal} {\bibinfo  {journal} {Physics Reports}\ }\textbf {\bibinfo {volume} {874}},\ \bibinfo {pages} {1} (\bibinfo {year} {2020})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Bick}\ \emph {et~al.}(2023)\citenamefont {Bick}, \citenamefont {Gross}, \citenamefont {Harrington},\ and\ \citenamefont {Schaub}}]{bick2023higher}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.}~\bibnamefont
-  {Bick}}, \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont {Gross}},
-  \bibinfo {author} {\bibfnamefont {H.~A.}\ \bibnamefont {Harrington}},\ and\
-  \bibinfo {author} {\bibfnamefont {M.~T.}\ \bibnamefont {Schaub}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {SIAM review}\
-  }\textbf {\bibinfo {volume} {65}},\ \bibinfo {pages} {686} (\bibinfo {year}
-  {2023})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Peixoto}\ \emph {et~al.}(2026)\citenamefont
-  {Peixoto}, \citenamefont {Peel}, \citenamefont {Gross},\ and\ \citenamefont
-  {De~Domenico}}]{peixoto2026graphs}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Bick}}, \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont {Gross}}, \bibinfo {author} {\bibfnamefont {H.~A.}\ \bibnamefont {Harrington}},\ and\ \bibinfo {author} {\bibfnamefont {M.~T.}\ \bibnamefont {Schaub}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {SIAM review}\ }\textbf {\bibinfo {volume} {65}},\ \bibinfo {pages} {686} (\bibinfo {year} {2023})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Peixoto}\ \emph {et~al.}(2026)\citenamefont {Peixoto}, \citenamefont {Peel}, \citenamefont {Gross},\ and\ \citenamefont {De~Domenico}}]{peixoto2026graphs}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.~P.}\ \bibnamefont
-  {Peixoto}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Peel}},
-  \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Gross}},\ and\ \bibinfo
-  {author} {\bibfnamefont {M.}~\bibnamefont {De~Domenico}},\ }\href@noop {}
-  {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint arXiv:2602.16937}\
-  } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Chodrow}\ \emph {et~al.}(2021)\citenamefont
-  {Chodrow}, \citenamefont {Veldt},\ and\ \citenamefont
-  {Benson}}]{chodrowGenerativeHypergraphClustering2021}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {T.~P.}\ \bibnamefont {Peixoto}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Peel}}, \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Gross}},\ and\ \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {De~Domenico}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint arXiv:2602.16937}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Chodrow}\ \emph {et~al.}(2021)\citenamefont {Chodrow}, \citenamefont {Veldt},\ and\ \citenamefont {Benson}}]{chodrowGenerativeHypergraphClustering2021}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont
-  {Chodrow}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Veldt}},\
-  and\ \bibinfo {author} {\bibfnamefont {A.~R.}\ \bibnamefont {Benson}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Science Advances}\
-  }\textbf {\bibinfo {volume} {7}},\ \bibinfo {pages} {eabh1303} (\bibinfo
-  {year} {2021})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Ruggeri}\ \emph {et~al.}(2023)\citenamefont
-  {Ruggeri}, \citenamefont {Contisciani}, \citenamefont {Battiston},\ and\
-  \citenamefont {De~Bacco}}]{ruggeriCommunityDetectionLarge2023}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont {Chodrow}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Veldt}},\ and\ \bibinfo {author} {\bibfnamefont {A.~R.}\ \bibnamefont {Benson}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Science Advances}\ }\textbf {\bibinfo {volume} {7}},\ \bibinfo {pages} {eabh1303} (\bibinfo {year} {2021})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ruggeri}\ \emph {et~al.}(2023)\citenamefont {Ruggeri}, \citenamefont {Contisciani}, \citenamefont {Battiston},\ and\ \citenamefont {De~Bacco}}]{ruggeriCommunityDetectionLarge2023}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.}~\bibnamefont
-  {Ruggeri}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
-  {Contisciani}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont
-  {Battiston}},\ and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont
-  {De~Bacco}},\ }\href {https://doi.org/10.1126/sciadv.adg9159} {\bibfield
-  {journal} {\bibinfo  {journal} {Science Advances}\ }\textbf {\bibinfo
-  {volume} {9}},\ \bibinfo {pages} {eadg9159} (\bibinfo {year}
-  {2023})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Kim}\ \emph {et~al.}(2018)\citenamefont {Kim},
-  \citenamefont {Bandeira},\ and\ \citenamefont {Goemans}}]{kim2018stochastic}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Ruggeri}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Contisciani}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Battiston}},\ and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {De~Bacco}},\ }\href {https://doi.org/10.1126/sciadv.adg9159} {\bibfield  {journal} {\bibinfo  {journal} {Science Advances}\ }\textbf {\bibinfo {volume} {9}},\ \bibinfo {pages} {eadg9159} (\bibinfo {year} {2023})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Kim}\ \emph {et~al.}(2018)\citenamefont {Kim}, \citenamefont {Bandeira},\ and\ \citenamefont {Goemans}}]{kim2018stochastic}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.}~\bibnamefont
-  {Kim}}, \bibinfo {author} {\bibfnamefont {A.~S.}\ \bibnamefont {Bandeira}},\
-  and\ \bibinfo {author} {\bibfnamefont {M.~X.}\ \bibnamefont {Goemans}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint
-  arXiv:1807.02884}\ } (\bibinfo {year} {2018})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Badalyan}\ \emph {et~al.}(2024)\citenamefont
-  {Badalyan}, \citenamefont {Ruggeri},\ and\ \citenamefont
-  {De~Bacco}}]{badalyanStructureInferenceHypergraphs2024}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Kim}}, \bibinfo {author} {\bibfnamefont {A.~S.}\ \bibnamefont {Bandeira}},\ and\ \bibinfo {author} {\bibfnamefont {M.~X.}\ \bibnamefont {Goemans}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint arXiv:1807.02884}\ } (\bibinfo {year} {2018})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Badalyan}\ \emph {et~al.}(2024)\citenamefont {Badalyan}, \citenamefont {Ruggeri},\ and\ \citenamefont {De~Bacco}}]{badalyanStructureInferenceHypergraphs2024}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
-  {Badalyan}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Ruggeri}},\
-  and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {De~Bacco}},\ }\href
-  {https://doi.org/10.1038/s41467-024-51388-5} {\bibfield  {journal} {\bibinfo
-  {journal} {Nature Communications}\ }\textbf {\bibinfo {volume} {15}},\
-  \bibinfo {pages} {7073} (\bibinfo {year} {2024})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Hood}\ \emph {et~al.}(2026)\citenamefont {Hood},
-  \citenamefont {De~Bacco},\ and\ \citenamefont {Schein}}]{hood2026broad}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Badalyan}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Ruggeri}},\ and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {De~Bacco}},\ }\href {https://doi.org/10.1038/s41467-024-51388-5} {\bibfield  {journal} {\bibinfo  {journal} {Nature Communications}\ }\textbf {\bibinfo {volume} {15}},\ \bibinfo {pages} {7073} (\bibinfo {year} {2024})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hood}\ \emph {et~al.}(2026)\citenamefont {Hood}, \citenamefont {De~Bacco},\ and\ \citenamefont {Schein}}]{hood2026broad}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
-  {Hood}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {De~Bacco}},\
-  and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Schein}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Nature
-  Communications}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Chodrow}\ \emph {et~al.}(2023)\citenamefont
-  {Chodrow}, \citenamefont {Eikmeier},\ and\ \citenamefont
-  {Haddock}}]{chodrowNonbacktrackingSpectralClustering2023}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Hood}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {De~Bacco}},\ and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Schein}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Nature Communications}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Chodrow}\ \emph {et~al.}(2023)\citenamefont {Chodrow}, \citenamefont {Eikmeier},\ and\ \citenamefont {Haddock}}]{chodrowNonbacktrackingSpectralClustering2023}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont
-  {Chodrow}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Eikmeier}},\
-  and\ \bibinfo {author} {\bibfnamefont {J.~L.}\ \bibnamefont {Haddock}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {SIAM Journal on
-  Mathematics of Data Science}\ }\textbf {\bibinfo {volume} {5}},\ \bibinfo
-  {pages} {251} (\bibinfo {year} {2023})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Fernandez~V}\ \emph {et~al.}(2026)\citenamefont
-  {Fernandez~V}, \citenamefont {Stephan},\ and\ \citenamefont
-  {Zhu}}]{fernandez2026achieving}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont {Chodrow}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Eikmeier}},\ and\ \bibinfo {author} {\bibfnamefont {J.~L.}\ \bibnamefont {Haddock}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {SIAM Journal on Mathematics of Data Science}\ }\textbf {\bibinfo {volume} {5}},\ \bibinfo {pages} {251} (\bibinfo {year} {2023})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Fernandez~V}\ \emph {et~al.}(2026)\citenamefont {Fernandez~V}, \citenamefont {Stephan},\ and\ \citenamefont {Zhu}}]{fernandez2026achieving}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
-  {Fernandez~V}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont
-  {Stephan}},\ and\ \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Zhu}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint
-  arXiv:2604.20907}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Li}\ \emph {et~al.}(2026)\citenamefont {Li},
-  \citenamefont {Schaub},\ and\ \citenamefont {Peel}}]{li2026higher}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Fernandez~V}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Stephan}},\ and\ \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Zhu}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint arXiv:2604.20907}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Li}\ \emph {et~al.}(2026)\citenamefont {Li}, \citenamefont {Schaub},\ and\ \citenamefont {Peel}}]{li2026higher}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
-  {Li}}, \bibinfo {author} {\bibfnamefont {M.~T.}\ \bibnamefont {Schaub}},\
-  and\ \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Peel}},\ }\href@noop
-  {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint
-  arXiv:2601.10502}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Ruggeri}\ \emph {et~al.}(2024)\citenamefont
-  {Ruggeri}, \citenamefont {Lonardi},\ and\ \citenamefont
-  {De~Bacco}}]{ruggeri2024message}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Li}}, \bibinfo {author} {\bibfnamefont {M.~T.}\ \bibnamefont {Schaub}},\ and\ \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Peel}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint arXiv:2601.10502}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Ruggeri}\ \emph {et~al.}(2024)\citenamefont {Ruggeri}, \citenamefont {Lonardi},\ and\ \citenamefont {De~Bacco}}]{ruggeri2024message}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.}~\bibnamefont
-  {Ruggeri}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Lonardi}},\
-  and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {De~Bacco}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Journal of
-  Statistical Mechanics: Theory and Experiment}\ }\textbf {\bibinfo {volume}
-  {2024}},\ \bibinfo {pages} {043403} (\bibinfo {year} {2024})}\BibitemShut
-  {NoStop}%
-\bibitem [{\citenamefont {Kritschgau}\ \emph {et~al.}(2024)\citenamefont
-  {Kritschgau}, \citenamefont {Kaiser}, \citenamefont {Alvarado~Rodriguez},
-  \citenamefont {Amburg}, \citenamefont {Bolkema}, \citenamefont {Grubb},
-  \citenamefont {Lan}, \citenamefont {Maleki}, \citenamefont {Chodrow},\ and\
-  \citenamefont {Kay}}]{kritschgauCommunityDetectionHypergraphs2024}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Ruggeri}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Lonardi}},\ and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {De~Bacco}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Journal of Statistical Mechanics: Theory and Experiment}\ }\textbf {\bibinfo {volume} {2024}},\ \bibinfo {pages} {043403} (\bibinfo {year} {2024})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Kritschgau}\ \emph {et~al.}(2024)\citenamefont {Kritschgau}, \citenamefont {Kaiser}, \citenamefont {Alvarado~Rodriguez}, \citenamefont {Amburg}, \citenamefont {Bolkema}, \citenamefont {Grubb}, \citenamefont {Lan}, \citenamefont {Maleki}, \citenamefont {Chodrow},\ and\ \citenamefont {Kay}}]{kritschgauCommunityDetectionHypergraphs2024}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
-  {Kritschgau}}, \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Kaiser}},
-  \bibinfo {author} {\bibfnamefont {O.}~\bibnamefont {Alvarado~Rodriguez}},
-  \bibinfo {author} {\bibfnamefont {I.}~\bibnamefont {Amburg}}, \bibinfo
-  {author} {\bibfnamefont {J.}~\bibnamefont {Bolkema}}, \bibinfo {author}
-  {\bibfnamefont {T.}~\bibnamefont {Grubb}}, \bibinfo {author} {\bibfnamefont
-  {F.}~\bibnamefont {Lan}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
-  {Maleki}}, \bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont
-  {Chodrow}},\ and\ \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Kay}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Scientific
-  Reports}\ }\textbf {\bibinfo {volume} {14}},\ \bibinfo {pages} {6933}
-  (\bibinfo {year} {2024})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Yu}\ and\ \citenamefont
-  {Zhu}(2025)}]{yuModelingHypergraphsDiversity2025}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Kritschgau}}, \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Kaiser}}, \bibinfo {author} {\bibfnamefont {O.}~\bibnamefont {Alvarado~Rodriguez}}, \bibinfo {author} {\bibfnamefont {I.}~\bibnamefont {Amburg}}, \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Bolkema}}, \bibinfo {author} {\bibfnamefont {T.}~\bibnamefont {Grubb}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Lan}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Maleki}}, \bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont {Chodrow}},\ and\ \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Kay}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Scientific Reports}\ }\textbf {\bibinfo {volume} {14}},\ \bibinfo {pages} {6933} (\bibinfo {year} {2024})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Yu}\ and\ \citenamefont {Zhu}(2025)}]{yuModelingHypergraphsDiversity2025}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont
-  {Yu}}\ and\ \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Zhu}},\
-  }\href {https://doi.org/10.1080/01621459.2025.2455200} {\bibfield  {journal}
-  {\bibinfo  {journal} {Journal of the American Statistical Association}\
-  }\textbf {\bibinfo {volume} {120}},\ \bibinfo {pages} {1491} (\bibinfo {year}
-  {2025})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Landry}\ \emph {et~al.}(2024)\citenamefont {Landry},
-  \citenamefont {Young},\ and\ \citenamefont
-  {Eikmeier}}]{landrySimplicialityHigherorderNetworks2024}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {Yu}}\ and\ \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Zhu}},\ }\href {https://doi.org/10.1080/01621459.2025.2455200} {\bibfield  {journal} {\bibinfo  {journal} {Journal of the American Statistical Association}\ }\textbf {\bibinfo {volume} {120}},\ \bibinfo {pages} {1491} (\bibinfo {year} {2025})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Landry}\ \emph {et~al.}(2024)\citenamefont {Landry}, \citenamefont {Young},\ and\ \citenamefont {Eikmeier}}]{landrySimplicialityHigherorderNetworks2024}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.~W.}\ \bibnamefont
-  {Landry}}, \bibinfo {author} {\bibfnamefont {J.-G.}\ \bibnamefont {Young}},\
-  and\ \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Eikmeier}},\ }\href
-  {https://doi.org/10.1140/epjds/s13688-024-00458-1} {\bibfield  {journal}
-  {\bibinfo  {journal} {EPJ Data Science}\ }\textbf {\bibinfo {volume} {13}},\
-  \bibinfo {pages} {17} (\bibinfo {year} {2024})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Lee}\ \emph {et~al.}(2021)\citenamefont {Lee},
-  \citenamefont {Choe},\ and\ \citenamefont
-  {Shin}}]{leeHowHyperedgesOverlap2021}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.~W.}\ \bibnamefont {Landry}}, \bibinfo {author} {\bibfnamefont {J.-G.}\ \bibnamefont {Young}},\ and\ \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Eikmeier}},\ }\href {https://doi.org/10.1140/epjds/s13688-024-00458-1} {\bibfield  {journal} {\bibinfo  {journal} {EPJ Data Science}\ }\textbf {\bibinfo {volume} {13}},\ \bibinfo {pages} {17} (\bibinfo {year} {2024})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lee}\ \emph {et~al.}(2021)\citenamefont {Lee}, \citenamefont {Choe},\ and\ \citenamefont {Shin}}]{leeHowHyperedgesOverlap2021}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
-  {Lee}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Choe}},\ and\
-  \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Shin}},\ }in\ \href
-  {https://doi.org/10.1145/3442381.3450010} {\emph {\bibinfo {booktitle}
-  {Proceedings of the {{Web Conference}} 2021}}}\ (\bibinfo  {publisher}
-  {ACM},\ \bibinfo {address} {Ljubljana Slovenia},\ \bibinfo {year} {2021})\
-  pp.\ \bibinfo {pages} {3396--3407}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Malizia}\ \emph {et~al.}(2025)\citenamefont
-  {Malizia}, \citenamefont {{Lamata-Ot{\'i}n}}, \citenamefont {Frasca},
-  \citenamefont {Latora},\ and\ \citenamefont
-  {{G{\'o}mez-Garde{\~n}es}}}]{maliziaHyperedgeOverlapDrives2025}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Lee}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Choe}},\ and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Shin}},\ }in\ \href {https://doi.org/10.1145/3442381.3450010} {\emph {\bibinfo {booktitle} {Proceedings of the {{Web Conference}} 2021}}}\ (\bibinfo  {publisher} {ACM},\ \bibinfo {address} {Ljubljana Slovenia},\ \bibinfo {year} {2021})\ pp.\ \bibinfo {pages} {3396--3407}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Malizia}\ \emph {et~al.}(2025)\citenamefont {Malizia}, \citenamefont {{Lamata-Ot{\'i}n}}, \citenamefont {Frasca}, \citenamefont {Latora},\ and\ \citenamefont {{G{\'o}mez-Garde{\~n}es}}}]{maliziaHyperedgeOverlapDrives2025}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.}~\bibnamefont
-  {Malizia}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
-  {{Lamata-Ot{\'i}n}}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
-  {Frasca}}, \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Latora}},\
-  and\ \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
-  {{G{\'o}mez-Garde{\~n}es}}},\ }\href
-  {https://doi.org/10.1038/s41467-024-55506-1} {\bibfield  {journal} {\bibinfo
-  {journal} {Nature Communications}\ }\textbf {\bibinfo {volume} {16}},\
-  \bibinfo {pages} {555} (\bibinfo {year} {2025})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Lamata-Ot{\'\i}n}\ \emph {et~al.}(2025)\citenamefont
-  {Lamata-Ot{\'\i}n}, \citenamefont {Malizia}, \citenamefont {Latora},
-  \citenamefont {Frasca},\ and\ \citenamefont
-  {G{\'o}mez-Garde{\~n}es}}]{lamata2025hyperedge}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Malizia}}, \bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {{Lamata-Ot{\'i}n}}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Frasca}}, \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Latora}},\ and\ \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {{G{\'o}mez-Garde{\~n}es}}},\ }\href {https://doi.org/10.1038/s41467-024-55506-1} {\bibfield  {journal} {\bibinfo  {journal} {Nature Communications}\ }\textbf {\bibinfo {volume} {16}},\ \bibinfo {pages} {555} (\bibinfo {year} {2025})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lamata-Ot{\'\i}n}\ \emph {et~al.}(2025)\citenamefont {Lamata-Ot{\'\i}n}, \citenamefont {Malizia}, \citenamefont {Latora}, \citenamefont {Frasca},\ and\ \citenamefont {G{\'o}mez-Garde{\~n}es}}]{lamata2025hyperedge}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
-  {Lamata-Ot{\'\i}n}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont
-  {Malizia}}, \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Latora}},
-  \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Frasca}},\ and\ \bibinfo
-  {author} {\bibfnamefont {J.}~\bibnamefont {G{\'o}mez-Garde{\~n}es}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review
-  E}\ }\textbf {\bibinfo {volume} {111}},\ \bibinfo {pages} {034302} (\bibinfo
-  {year} {2025})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Benson}\ \emph
-  {et~al.}(2018{\natexlab{b}})\citenamefont {Benson}, \citenamefont {Kumar},\
-  and\ \citenamefont {Tomkins}}]{bensonSequencesSets2018}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Lamata-Ot{\'\i}n}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Malizia}}, \bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Latora}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Frasca}},\ and\ \bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {G{\'o}mez-Garde{\~n}es}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review E}\ }\textbf {\bibinfo {volume} {111}},\ \bibinfo {pages} {034302} (\bibinfo {year} {2025})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Benson}\ \emph {et~al.}(2018{\natexlab{b}})\citenamefont {Benson}, \citenamefont {Kumar},\ and\ \citenamefont {Tomkins}}]{bensonSequencesSets2018}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~R.}\ \bibnamefont
-  {Benson}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Kumar}},\ and\
-  \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Tomkins}},\ }in\ \href
-  {https://doi.org/10.1145/3219819.3220100} {\emph {\bibinfo {booktitle}
-  {Proceedings of the 24th {{ACM SIGKDD International Conference}} on
-  {{Knowledge Discovery}} \& {{Data Mining}}}}}\ (\bibinfo  {publisher} {ACM},\
-  \bibinfo {address} {London United Kingdom},\ \bibinfo {year} {2018})\ pp.\
-  \bibinfo {pages} {1148--1157}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Avin}\ \emph {et~al.}(2019)\citenamefont {Avin},
-  \citenamefont {Lotker}, \citenamefont {Nahum},\ and\ \citenamefont
-  {Peleg}}]{avinRandomPreferentialAttachment2019}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~R.}\ \bibnamefont {Benson}}, \bibinfo {author} {\bibfnamefont {R.}~\bibnamefont {Kumar}},\ and\ \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Tomkins}},\ }in\ \href {https://doi.org/10.1145/3219819.3220100} {\emph {\bibinfo {booktitle} {Proceedings of the 24th {{ACM SIGKDD International Conference}} on {{Knowledge Discovery}} \& {{Data Mining}}}}}\ (\bibinfo  {publisher} {ACM},\ \bibinfo {address} {London United Kingdom},\ \bibinfo {year} {2018})\ pp.\ \bibinfo {pages} {1148--1157}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Avin}\ \emph {et~al.}(2019)\citenamefont {Avin}, \citenamefont {Lotker}, \citenamefont {Nahum},\ and\ \citenamefont {Peleg}}]{avinRandomPreferentialAttachment2019}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.}~\bibnamefont
-  {Avin}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Lotker}},
-  \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Nahum}},\ and\ \bibinfo
-  {author} {\bibfnamefont {D.}~\bibnamefont {Peleg}},\ }in\ \href
-  {https://doi.org/10.1145/3341161.3342867} {\emph {\bibinfo {booktitle}
-  {Proceedings of the 2019 {{IEEE}}/{{ACM International Conference}} on
-  {{Advances}} in {{Social Networks Analysis}} and {{Mining}}}}}\ (\bibinfo
-  {publisher} {ACM},\ \bibinfo {address} {Vancouver British Columbia Canada},\
-  \bibinfo {year} {2019})\ pp.\ \bibinfo {pages} {398--405}\BibitemShut
-  {NoStop}%
-\bibitem [{\citenamefont {He}\ \emph {et~al.}(2025)\citenamefont {He},
-  \citenamefont {Chodrow},\ and\ \citenamefont
-  {Mucha}}]{heEdgeCorrelationsLink2025}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Avin}}, \bibinfo {author} {\bibfnamefont {Z.}~\bibnamefont {Lotker}}, \bibinfo {author} {\bibfnamefont {Y.}~\bibnamefont {Nahum}},\ and\ \bibinfo {author} {\bibfnamefont {D.}~\bibnamefont {Peleg}},\ }in\ \href {https://doi.org/10.1145/3341161.3342867} {\emph {\bibinfo {booktitle} {Proceedings of the 2019 {{IEEE}}/{{ACM International Conference}} on {{Advances}} in {{Social Networks Analysis}} and {{Mining}}}}}\ (\bibinfo  {publisher} {ACM},\ \bibinfo {address} {Vancouver British Columbia Canada},\ \bibinfo {year} {2019})\ pp.\ \bibinfo {pages} {398--405}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {He}\ \emph {et~al.}(2025)\citenamefont {He}, \citenamefont {Chodrow},\ and\ \citenamefont {Mucha}}]{heEdgeCorrelationsLink2025}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont
-  {He}}, \bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont {Chodrow}},\
-  and\ \bibinfo {author} {\bibfnamefont {P.~J.}\ \bibnamefont {Mucha}},\ }\href
-  {https://doi.org/10.1103/4lkd-mtzq} {\bibfield  {journal} {\bibinfo
-  {journal} {Physical Review E}\ }\textbf {\bibinfo {volume} {112}},\ \bibinfo
-  {pages} {024305} (\bibinfo {year} {2025})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Lee}\ and\ \citenamefont
-  {Shin}(2021)}]{leeTHyMeTemporalHypergraph2021}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {X.}~\bibnamefont {He}}, \bibinfo {author} {\bibfnamefont {P.~S.}\ \bibnamefont {Chodrow}},\ and\ \bibinfo {author} {\bibfnamefont {P.~J.}\ \bibnamefont {Mucha}},\ }\href {https://doi.org/10.1103/4lkd-mtzq} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review E}\ }\textbf {\bibinfo {volume} {112}},\ \bibinfo {pages} {024305} (\bibinfo {year} {2025})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lee}\ and\ \citenamefont {Shin}(2021)}]{leeTHyMeTemporalHypergraph2021}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
-  {Lee}}\ and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Shin}},\
-  }in\ \href {https://doi.org/10.1109/ICDM51629.2021.00042} {\emph {\bibinfo
-  {booktitle} {2021 {{IEEE International Conference}} on {{Data Mining}}
-  ({{ICDM}})}}}\ (\bibinfo  {publisher} {IEEE},\ \bibinfo {address} {Auckland,
-  New Zealand},\ \bibinfo {year} {2021})\ pp.\ \bibinfo {pages}
-  {310--319}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Lee}\ and\ \citenamefont
-  {Shin}(2023)}]{leeTemporalHypergraphMotifs2023}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Lee}}\ and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Shin}},\ }in\ \href {https://doi.org/10.1109/ICDM51629.2021.00042} {\emph {\bibinfo {booktitle} {2021 {{IEEE International Conference}} on {{Data Mining}} ({{ICDM}})}}}\ (\bibinfo  {publisher} {IEEE},\ \bibinfo {address} {Auckland, New Zealand},\ \bibinfo {year} {2021})\ pp.\ \bibinfo {pages} {310--319}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Lee}\ and\ \citenamefont {Shin}(2023)}]{leeTemporalHypergraphMotifs2023}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont
-  {Lee}}\ and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Shin}},\
-  }\href {https://doi.org/10.1007/s10115-023-01837-2} {\bibfield  {journal}
-  {\bibinfo  {journal} {Knowledge and Information Systems}\ }\textbf {\bibinfo
-  {volume} {65}},\ \bibinfo {pages} {1549} (\bibinfo {year}
-  {2023})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Landry}\ \emph {et~al.}(2023)\citenamefont {Landry},
-  \citenamefont {Lucas}, \citenamefont {Iacopini}, \citenamefont {Petri},
-  \citenamefont {Schwarze}, \citenamefont {Patania},\ and\ \citenamefont
-  {Torres}}]{landryXGIPythonPackage2023}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Lee}}\ and\ \bibinfo {author} {\bibfnamefont {K.}~\bibnamefont {Shin}},\ }\href {https://doi.org/10.1007/s10115-023-01837-2} {\bibfield  {journal} {\bibinfo  {journal} {Knowledge and Information Systems}\ }\textbf {\bibinfo {volume} {65}},\ \bibinfo {pages} {1549} (\bibinfo {year} {2023})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Landry}\ \emph {et~al.}(2023)\citenamefont {Landry}, \citenamefont {Lucas}, \citenamefont {Iacopini}, \citenamefont {Petri}, \citenamefont {Schwarze}, \citenamefont {Patania},\ and\ \citenamefont {Torres}}]{landryXGIPythonPackage2023}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.~W.}\ \bibnamefont
-  {Landry}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Lucas}},
-  \bibinfo {author} {\bibfnamefont {I.}~\bibnamefont {Iacopini}}, \bibinfo
-  {author} {\bibfnamefont {G.}~\bibnamefont {Petri}}, \bibinfo {author}
-  {\bibfnamefont {A.}~\bibnamefont {Schwarze}}, \bibinfo {author}
-  {\bibfnamefont {A.}~\bibnamefont {Patania}},\ and\ \bibinfo {author}
-  {\bibfnamefont {L.}~\bibnamefont {Torres}},\ }\href
-  {https://doi.org/10.21105/joss.05162} {\bibfield  {journal} {\bibinfo
-  {journal} {Journal of Open Source Software}\ }\textbf {\bibinfo {volume}
-  {8}},\ \bibinfo {pages} {5162} (\bibinfo {year} {2023})}\BibitemShut
-  {NoStop}%
-\bibitem [{\citenamefont {Laber}\ and\ \citenamefont
-  {Klein}(2026)}]{laber2026guide}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {N.~W.}\ \bibnamefont {Landry}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Lucas}}, \bibinfo {author} {\bibfnamefont {I.}~\bibnamefont {Iacopini}}, \bibinfo {author} {\bibfnamefont {G.}~\bibnamefont {Petri}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Schwarze}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Patania}},\ and\ \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Torres}},\ }\href {https://doi.org/10.21105/joss.05162} {\bibfield  {journal} {\bibinfo  {journal} {Journal of Open Source Software}\ }\textbf {\bibinfo {volume} {8}},\ \bibinfo {pages} {5162} (\bibinfo {year} {2023})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Newman}\ and\ \citenamefont {Girvan}(2004)}]{newman2004finding}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
-  {Laber}}\ and\ \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Klein}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint
-  arXiv:2606.02537}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont
-  {Mitzenmacher}(2004)}]{mitzenmacherBriefHistoryGenerative2004}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.~E.}\ \bibnamefont {Newman}}\ and\ \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Girvan}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical review E}\ }\textbf {\bibinfo {volume} {69}},\ \bibinfo {pages} {026113} (\bibinfo {year} {2004})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Laber}\ and\ \citenamefont {Klein}(2026)}]{laber2026guide}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont
-  {Mitzenmacher}},\ }\href {https://doi.org/10.1080/15427951.2004.10129088}
-  {\bibfield  {journal} {\bibinfo  {journal} {Internet Mathematics}\ }\textbf
-  {\bibinfo {volume} {1}},\ \bibinfo {pages} {226} (\bibinfo {year}
-  {2004})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Dempster}\ \emph {et~al.}(1977)\citenamefont
-  {Dempster}, \citenamefont {Laird},\ and\ \citenamefont
-  {Rubin}}]{dempster1977maximum}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Laber}}\ and\ \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Klein}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {arXiv preprint arXiv:2606.02537}\ } (\bibinfo {year} {2026})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Mitzenmacher}(2004)}]{mitzenmacherBriefHistoryGenerative2004}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~P.}\ \bibnamefont
-  {Dempster}}, \bibinfo {author} {\bibfnamefont {N.~M.}\ \bibnamefont
-  {Laird}},\ and\ \bibinfo {author} {\bibfnamefont {D.~B.}\ \bibnamefont
-  {Rubin}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Journal
-  of the Royal Statistical Society: Series B (Methodological)}\ }\textbf
-  {\bibinfo {volume} {39}},\ \bibinfo {pages} {1} (\bibinfo {year}
-  {1977})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Capp{\'e}}\ and\ \citenamefont
-  {Moulines}(2009)}]{cappeOnLineExpectationMaximization2009}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Mitzenmacher}},\ }\href {https://doi.org/10.1080/15427951.2004.10129088} {\bibfield  {journal} {\bibinfo  {journal} {Internet Mathematics}\ }\textbf {\bibinfo {volume} {1}},\ \bibinfo {pages} {226} (\bibinfo {year} {2004})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Dempster}\ \emph {et~al.}(1977)\citenamefont {Dempster}, \citenamefont {Laird},\ and\ \citenamefont {Rubin}}]{dempster1977maximum}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {O.}~\bibnamefont
-  {Capp{\'e}}}\ and\ \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont
-  {Moulines}},\ }\href {https://doi.org/10.1111/j.1467-9868.2009.00698.x}
-  {\bibfield  {journal} {\bibinfo  {journal} {Journal of the Royal Statistical
-  Society Series B: Statistical Methodology}\ }\textbf {\bibinfo {volume}
-  {71}},\ \bibinfo {pages} {593} (\bibinfo {year} {2009})}\BibitemShut
-  {NoStop}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~P.}\ \bibnamefont {Dempster}}, \bibinfo {author} {\bibfnamefont {N.~M.}\ \bibnamefont {Laird}},\ and\ \bibinfo {author} {\bibfnamefont {D.~B.}\ \bibnamefont {Rubin}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Journal of the Royal Statistical Society: Series B (Methodological)}\ }\textbf {\bibinfo {volume} {39}},\ \bibinfo {pages} {1} (\bibinfo {year} {1977})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Capp{\'e}}\ and\ \citenamefont {Moulines}(2009)}]{cappeOnLineExpectationMaximization2009}%
+  \BibitemOpen
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {O.}~\bibnamefont {Capp{\'e}}}\ and\ \bibinfo {author} {\bibfnamefont {E.}~\bibnamefont {Moulines}},\ }\href {https://doi.org/10.1111/j.1467-9868.2009.00698.x} {\bibfield  {journal} {\bibinfo  {journal} {Journal of the Royal Statistical Society Series B: Statistical Methodology}\ }\textbf {\bibinfo {volume} {71}},\ \bibinfo {pages} {593} (\bibinfo {year} {2009})}\BibitemShut {NoStop}%
 \bibitem [{\citenamefont {Newman}(2016)}]{newman2016equivalence}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.~E.}\ \bibnamefont
-  {Newman}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
-  {Physical Review E}\ }\textbf {\bibinfo {volume} {94}},\ \bibinfo {pages}
-  {052315} (\bibinfo {year} {2016})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Kirkpatrick}\ \emph {et~al.}(1983)\citenamefont
-  {Kirkpatrick}, \citenamefont {Gelatt~Jr},\ and\ \citenamefont
-  {Vecchi}}]{kirkpatrickOptimizationSimulatedAnnealing1983}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {M.~E.}\ \bibnamefont {Newman}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review E}\ }\textbf {\bibinfo {volume} {94}},\ \bibinfo {pages} {052315} (\bibinfo {year} {2016})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Kirkpatrick}\ \emph {et~al.}(1983)\citenamefont {Kirkpatrick}, \citenamefont {Gelatt~Jr},\ and\ \citenamefont {Vecchi}}]{kirkpatrickOptimizationSimulatedAnnealing1983}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont
-  {Kirkpatrick}}, \bibinfo {author} {\bibfnamefont {C.~D.}\ \bibnamefont
-  {Gelatt~Jr}},\ and\ \bibinfo {author} {\bibfnamefont {M.~P.}\ \bibnamefont
-  {Vecchi}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
-  {Science}\ }\textbf {\bibinfo {volume} {220}},\ \bibinfo {pages} {671}
-  (\bibinfo {year} {1983})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Stehl{\'e}}\ \emph {et~al.}(2011)\citenamefont
-  {Stehl{\'e}}, \citenamefont {Voirin}, \citenamefont {Barrat}, \citenamefont
-  {Cattuto}, \citenamefont {Isella}, \citenamefont {Pinton}, \citenamefont
-  {Quaggiotto}, \citenamefont {Van~den Broeck}, \citenamefont {R{\'e}gis},
-  \citenamefont {Lina} \emph {et~al.}}]{stehle2011high}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {S.}~\bibnamefont {Kirkpatrick}}, \bibinfo {author} {\bibfnamefont {C.~D.}\ \bibnamefont {Gelatt~Jr}},\ and\ \bibinfo {author} {\bibfnamefont {M.~P.}\ \bibnamefont {Vecchi}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Science}\ }\textbf {\bibinfo {volume} {220}},\ \bibinfo {pages} {671} (\bibinfo {year} {1983})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Stehl{\'e}}\ \emph {et~al.}(2011)\citenamefont {Stehl{\'e}}, \citenamefont {Voirin}, \citenamefont {Barrat}, \citenamefont {Cattuto}, \citenamefont {Isella}, \citenamefont {Pinton}, \citenamefont {Quaggiotto}, \citenamefont {Van~den Broeck}, \citenamefont {R{\'e}gis}, \citenamefont {Lina} \emph {et~al.}}]{stehle2011high}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont
-  {Stehl{\'e}}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Voirin}},
-  \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Barrat}}, \bibinfo
-  {author} {\bibfnamefont {C.}~\bibnamefont {Cattuto}}, \bibinfo {author}
-  {\bibfnamefont {L.}~\bibnamefont {Isella}}, \bibinfo {author} {\bibfnamefont
-  {J.-F.}\ \bibnamefont {Pinton}}, \bibinfo {author} {\bibfnamefont
-  {M.}~\bibnamefont {Quaggiotto}}, \bibinfo {author} {\bibfnamefont
-  {W.}~\bibnamefont {Van~den Broeck}}, \bibinfo {author} {\bibfnamefont
-  {C.}~\bibnamefont {R{\'e}gis}}, \bibinfo {author} {\bibfnamefont
-  {B.}~\bibnamefont {Lina}}, \emph {et~al.},\ }\href@noop {} {\bibfield
-  {journal} {\bibinfo  {journal} {PloS one}\ }\textbf {\bibinfo {volume} {6}},\
-  \bibinfo {pages} {e23176} (\bibinfo {year} {2011})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Gemmetto}\ \emph {et~al.}(2014)\citenamefont
-  {Gemmetto}, \citenamefont {Barrat},\ and\ \citenamefont
-  {Cattuto}}]{gemmetto2014mitigation}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.}~\bibnamefont {Stehl{\'e}}}, \bibinfo {author} {\bibfnamefont {N.}~\bibnamefont {Voirin}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Barrat}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Cattuto}}, \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Isella}}, \bibinfo {author} {\bibfnamefont {J.-F.}\ \bibnamefont {Pinton}}, \bibinfo {author} {\bibfnamefont {M.}~\bibnamefont {Quaggiotto}}, \bibinfo {author} {\bibfnamefont {W.}~\bibnamefont {Van~den Broeck}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {R{\'e}gis}}, \bibinfo {author} {\bibfnamefont {B.}~\bibnamefont {Lina}}, \emph {et~al.},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {PloS one}\ }\textbf {\bibinfo {volume} {6}},\ \bibinfo {pages} {e23176} (\bibinfo {year} {2011})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Gemmetto}\ \emph {et~al.}(2014)\citenamefont {Gemmetto}, \citenamefont {Barrat},\ and\ \citenamefont {Cattuto}}]{gemmetto2014mitigation}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {V.}~\bibnamefont
-  {Gemmetto}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Barrat}},\
-  and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Cattuto}},\
-  }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {BMC infectious
-  diseases}\ }\textbf {\bibinfo {volume} {14}},\ \bibinfo {pages} {695}
-  (\bibinfo {year} {2014})}\BibitemShut {NoStop}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {V.}~\bibnamefont {Gemmetto}}, \bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Barrat}},\ and\ \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Cattuto}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {BMC infectious diseases}\ }\textbf {\bibinfo {volume} {14}},\ \bibinfo {pages} {695} (\bibinfo {year} {2014})}\BibitemShut {NoStop}%
 \bibitem [{\citenamefont {Fowler}(2006{\natexlab{a}})}]{fowler2006connecting}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~H.}\ \bibnamefont
-  {Fowler}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal}
-  {Political analysis}\ }\textbf {\bibinfo {volume} {14}},\ \bibinfo {pages}
-  {456} (\bibinfo {year} {2006}{\natexlab{a}})}\BibitemShut {NoStop}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~H.}\ \bibnamefont {Fowler}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Political analysis}\ }\textbf {\bibinfo {volume} {14}},\ \bibinfo {pages} {456} (\bibinfo {year} {2006}{\natexlab{a}})}\BibitemShut {NoStop}%
 \bibitem [{\citenamefont {Fowler}(2006{\natexlab{b}})}]{fowler2006legislative}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~H.}\ \bibnamefont
-  {Fowler}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Social
-  networks}\ }\textbf {\bibinfo {volume} {28}},\ \bibinfo {pages} {454}
-  (\bibinfo {year} {2006}{\natexlab{b}})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Decelle}\ \emph {et~al.}(2011)\citenamefont
-  {Decelle}, \citenamefont {Krzakala}, \citenamefont {Moore},\ and\
-  \citenamefont {Zdeborov{\'a}}}]{decelle2011asymptotic}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {J.~H.}\ \bibnamefont {Fowler}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Social networks}\ }\textbf {\bibinfo {volume} {28}},\ \bibinfo {pages} {454} (\bibinfo {year} {2006}{\natexlab{b}})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Decelle}\ \emph {et~al.}(2011)\citenamefont {Decelle}, \citenamefont {Krzakala}, \citenamefont {Moore},\ and\ \citenamefont {Zdeborov{\'a}}}]{decelle2011asymptotic}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont
-  {Decelle}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Krzakala}},
-  \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Moore}},\ and\ \bibinfo
-  {author} {\bibfnamefont {L.}~\bibnamefont {Zdeborov{\'a}}},\ }\href@noop {}
-  {\bibfield  {journal} {\bibinfo  {journal} {Physical Review E—Statistical,
-  Nonlinear, and Soft Matter Physics}\ }\textbf {\bibinfo {volume} {84}},\
-  \bibinfo {pages} {066106} (\bibinfo {year} {2011})}\BibitemShut {NoStop}%
-\bibitem [{\citenamefont {Hagberg}\ \emph {et~al.}(2008)\citenamefont
-  {Hagberg}, \citenamefont {Schult},\ and\ \citenamefont {Swart}}]{networkx}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.}~\bibnamefont {Decelle}}, \bibinfo {author} {\bibfnamefont {F.}~\bibnamefont {Krzakala}}, \bibinfo {author} {\bibfnamefont {C.}~\bibnamefont {Moore}},\ and\ \bibinfo {author} {\bibfnamefont {L.}~\bibnamefont {Zdeborov{\'a}}},\ }\href@noop {} {\bibfield  {journal} {\bibinfo  {journal} {Physical Review E—Statistical, Nonlinear, and Soft Matter Physics}\ }\textbf {\bibinfo {volume} {84}},\ \bibinfo {pages} {066106} (\bibinfo {year} {2011})}\BibitemShut {NoStop}%
+\bibitem [{\citenamefont {Hagberg}\ \emph {et~al.}(2008)\citenamefont {Hagberg}, \citenamefont {Schult},\ and\ \citenamefont {Swart}}]{networkx}%
   \BibitemOpen
-  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~A.}\ \bibnamefont
-  {Hagberg}}, \bibinfo {author} {\bibfnamefont {D.~A.}\ \bibnamefont
-  {Schult}},\ and\ \bibinfo {author} {\bibfnamefont {P.~J.}\ \bibnamefont
-  {Swart}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of
-  the 7th Python in Science Conference}}},\ \bibinfo {editor} {edited by\
-  \bibinfo {editor} {\bibfnamefont {G.}~\bibnamefont {Varoquaux}}, \bibinfo
-  {editor} {\bibfnamefont {T.}~\bibnamefont {Vaught}},\ and\ \bibinfo {editor}
-  {\bibfnamefont {J.}~\bibnamefont {Millman}}}\ (\bibinfo {address} {Pasadena,
-  CA USA},\ \bibinfo {year} {2008})\ pp.\ \bibinfo {pages} {11--15}\BibitemShut
-  {NoStop}%
+  \bibfield  {author} {\bibinfo {author} {\bibfnamefont {A.~A.}\ \bibnamefont {Hagberg}}, \bibinfo {author} {\bibfnamefont {D.~A.}\ \bibnamefont {Schult}},\ and\ \bibinfo {author} {\bibfnamefont {P.~J.}\ \bibnamefont {Swart}},\ }in\ \href@noop {} {\emph {\bibinfo {booktitle} {Proceedings of the 7th Python in Science Conference}}},\ \bibinfo {editor} {edited by\ \bibinfo {editor} {\bibfnamefont {G.}~\bibnamefont {Varoquaux}}, \bibinfo {editor} {\bibfnamefont {T.}~\bibnamefont {Vaught}},\ and\ \bibinfo {editor} {\bibfnamefont {J.}~\bibnamefont {Millman}}}\ (\bibinfo {address} {Pasadena, CA USA},\ \bibinfo {year} {2008})\ pp.\ \bibinfo {pages} {11--15}\BibitemShut {NoStop}%
 \end{thebibliography}%
