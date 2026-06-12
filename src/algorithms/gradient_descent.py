@@ -26,9 +26,9 @@ class GradientDescent:
 
         self.labels = [.5]*len(g.get_labels())
         # self.labels[0] = .8
-        self.labels = [random.uniform(.2, .8) for _ in range(len(g.get_labels()))]
+        # self.labels = [random.uniform(.2, .8) for _ in range(len(g.get_labels()))]
         self.tensor_labels = torch.tensor(self.labels, dtype=torch.float64, requires_grad=True)
-        # self.tensor_labels = torch.full((len(g.get_labels()),), 0.5, requires_grad=True, dtype=torch.float64)
+        self.tensor_labels = torch.full((len(g.get_labels()),), 0.5, requires_grad=True, dtype=torch.float64)
         self.optimizer = torch.optim.Adam([self.tensor_labels], lr=learning_rate, betas=momentum)
 
         self.tensors = self.generate_tensors()

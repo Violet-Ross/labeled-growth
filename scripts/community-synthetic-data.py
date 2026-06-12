@@ -10,6 +10,7 @@ import pandas as pd
 # in a .py file, just this import works
 from src.poisson_hypergraph import GH # custom hypergraph class
 from src.algorithms.simulated_annealing import SimulatedAnnealingApprox
+from src.algorithms.gradient_descent import GradientDescent
 import xgi
 import csv
 
@@ -69,6 +70,16 @@ def simulated_annealing(g, guessed_theta):
             
     return labels_at_max_ll
 
+def gradient_descent(g, guessed_theta):
+    learning_rate = .01
+    momentum = (.9,.99)
+    gd = GradientDescent(guessed_theta, g, learning_rate, momentum, novel_nodes=True)
+
+    gd.run(500)
+
+    return gd.label_aris[-1]
+
+
 def run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath, guessed_theta = None, **kwargs):
     
     if guessed_theta is None: 
@@ -95,6 +106,8 @@ def run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LA
         simulated_annealing_labels = simulated_annealing(g, guessed_theta)
         
         simulated_annealing_ari = adjusted_rand_score(g.get_labels(), simulated_annealing_labels)
+
+        gradient_descent_ari = gradient_descent(g, guessed_theta)
         
         df = pd.DataFrame(
             {
@@ -106,6 +119,7 @@ def run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LA
                 "lambda_minus"            : theta[5],
                 "spectral_ari"            : spectral_ari, 
                 "simulated_annealing_ari" : simulated_annealing_ari, 
+                "gradient_descent_ari"    : gradient_descent_ari,
                 "condition"               : condition
             }, index = [0]
         )
