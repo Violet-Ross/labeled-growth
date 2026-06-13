@@ -4,7 +4,7 @@
 #SBATCH --array=0-9
 #SBATCH --mail-user=fcataldo@middlebury.edu    
 #SBATCH --mail-type=ALL                        
-#SBATCH --mem-per-cpu=50gb
+#SBATCH --mem-per-cpu=70gb
 #SBATCH --partition=himem-long                   
 #SBATCH --time=120:00:00        
 #SBATCH --output=throughput/logs/simulated-annealing-empirical/senate_bills_%a.out            

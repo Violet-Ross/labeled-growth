@@ -588,9 +588,11 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
     
     \section{Approximation Argument for Simulated Anealing}\label{sec:simulated-annealing-approximation}
 
-        \frannie{define $\prec$ or use other notation}
-
         This section provides further detail on the approximation to the likelihood described in \Cref{sec:community-detection} and used in our simulated annealing implementation. 
+        For convenience, we define $\prec$ such that $\seededge\prec\newedge$ is true if and only if $\seededge$ is a valid candidate parent edge, which is rigorously defined as follows.
+        \begin{align}
+            \seededge \prec \newedge \iff & \exists t \geq 1, t \in \mathbb{Z} | \seededge, \newedge \in \edges^{t-1}, \\ & \seededge\notin \edges^t, \newedge\in \edges^t, \seededge \cap \newedge \neq \{\emptyset\}
+        \end{align} 
         The likelihood of an edge $e$ being generated in timestep $t$ can be written 
         \begin{align}
             \prob(\newedge|\vz;\paramvector) &= \sum_{\substack{\seededge \prec \newedge \\ u\in \seededge}} \prob(\newedge | \seededge, u, \vz; \paramvector)  \\
@@ -608,12 +610,12 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
         Let $h_z = |(\newedge_z \setminus \seededge_z )\cap \nodes_z|$ be the number of extant nodes of label $z$ in $\newedge$.
         Then, the extant node addition process appears in $\prob(\newedge | \seededge, u, \vz; \paramvector)$ as a factor 
         \begin{align}
-            E(h_0, h_1) = \frac{\text{Poisson}(h_{z_u}|\extantrate_+)\times\text{Poisson}(h_{\bar{z}_u}|\extantrate_-)}{\dbinom{\nodes_{0}^t - |\seededge_{0}|}{h_{0}}\dbinom{\nodes_{1}^t - |\seededge_{1}|}{h_{1}}} \;,
+            E(h_0, h_1) = \frac{\text{Poisson}(h_{z_u}|\extantrate_+)\times\text{Poisson}(h_{\bar{z}_u}|\extantrate_-)}{\dbinom{|\nodes_{0}^t| - |\seededge_{0}|}{h_{0}}\dbinom{|\nodes_{1}^t| - |\seededge_{1}|}{h_{1}}} \;,
         \end{align}
         where the numerator describes the likelihood of adding fixed numbers of extant nodes of each label and the denominator describes the likelihood of selecting the \emph{specific set} of extant nodes from the set of all candidates. 
         Under the assumption that $n \gg |\seededge|, |\newedge|$, we can estimate 
         \begin{align}
-            \dbinom{\nodes_{z}^t - |\seededge_{z}|}{h_{z}} \approx \frac{(\nodes_z^t)^{h_z}}{h_z!} \approx \frac{(c_z n)^{h_z}}{h_z!} \;,
+            \dbinom{|\nodes_{z}^t| - |\seededge_{z}|}{h_{z}} \approx \frac{(|\nodes_z^t|)^{h_z}}{h_z!} \approx \frac{(c_z n)^{h_z}}{h_z!} \;,
         \end{align}
         where we have defined $c_z = \frac{|\nodes_z^t|}{n}$ as the fraction of nodes with label $z$. 
         Then, absorbing terms that do not depend on $n$ into a constant term $C(h_0, h_1)$, we have 
@@ -644,7 +646,11 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
             This may be $j$ under the top $j$ heuristic, or it may be the number of $\seededge$ choices with $h$ equal to the minimum $h'$ if we do not use the top $j$ heuristic. 
             Letting $\mathcal{F}_\newedge$ be the set of $\seededge$ choices we evaluate for a specific $\newedge$, our approximation is 
             \begin{align}
-                \tilde{\prob}(\newedge|\vz;\paramvector) &=\frac{1}{|\mathcal{F}_\newedge|}\sum_{\substack{\seededge \in \mathcal{F}_\newedge}} \sum_{u \in \seededge \cap \newedge} \frac{1}{|\seededge|}  \prob(\newedge | \seededge, u, \vz; \paramvector)\;. \label{eq:sa-approx-2}
+                \tilde{\prob}(\newedge|\vz;\paramvector) &=\frac{1}{|\mathcal{F}_\newedge|}\sum_{\substack{\seededge \in \mathcal{F}_\newedge}} \sum_{u \in \seededge \cap \newedge} \frac{1}{|\seededge|}  \prob(\newedge | \seededge, u, \vz; \paramvector)\;. 
+            \end{align}
+            Meaning the approximate likelihood of the entire $\hypergraph$ is
+            \begin{align}
+                 \tilde{\prob} (\hypergraph, \vz; \paramvector )&= \prod_{\newedge \in \edges}\tilde{\prob}(\newedge|\vz;\paramvector) \label{eq:sa-approx-2}
             \end{align}
         \end{itemize}
         It is important to note that the batch normalization \cref{eq:sa-approx-2} tends to overestimate the likelihood, since we have restricted ourselves to an average of high-probability seed-edges. 
@@ -655,7 +661,7 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
 
 
     \section{Algorithmic specification for simulated annealing}
-        \frannie{Define simulated annealing with references}
+        We describe the simulated annealing algorithm implementation in detail.
         Define the number of epochs for the simulated annealing algorithm $A = 20$.  
         Let $B$ be the probability that the simulated annealing algorithm accepts a change on labels that lowers the approximated likelihood
         
