@@ -29,8 +29,30 @@ sns.set_style("whitegrid")
 
 def initial_condition_GH(theta, timesteps):
     eta_plus, eta_minus, gamma_nu, gamma_nr, gamma_eu, gamma_er = theta
-    H = xgi.Hypergraph([[0,1,2, 3], [3, 4, 5]])
-    H.set_node_attributes({0:0,1:0,2:0,3:0,4:0,5:1}, name="label")
+    
+    edges = [
+        [0, 1, 2], 
+        [3, 4, 5], 
+        [6, 7, 8], 
+        [9, 10, 11], 
+        [12, 13, 14], 
+        [15, 16, 17], 
+        [18, 19, 20], 
+        [21, 22, 23], 
+    ]
+    node_labels = {
+        0: 0, 1: 0, 2: 0, 
+        3: 0, 4: 0, 5: 1, 
+        6: 0, 7: 1, 8: 0, 
+        9: 1, 10: 0, 11: 0, 
+        12: 0, 13: 1, 14: 1, 
+        15: 1, 16: 1, 17: 0, 
+        18: 1, 19: 0, 20: 1, 
+        21: 1, 22:1, 23:1
+    }
+    
+    H = xgi.Hypergraph(edges)
+    H.set_node_attributes(node_labels, name="label")
     g = GH(H,[0, 1], eta_plus , eta_minus)
     g.add_hyperedge(timesteps, gamma_nu , gamma_nr , gamma_eu , gamma_er)
     return g
@@ -104,7 +126,6 @@ def run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LA
 
             
         simulated_annealing_labels = simulated_annealing(g, guessed_theta)
-        
         simulated_annealing_ari = adjusted_rand_score(g.get_labels(), simulated_annealing_labels)
 
         gradient_descent_ari = gradient_descent(g, guessed_theta)

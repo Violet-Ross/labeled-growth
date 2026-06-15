@@ -11,14 +11,14 @@ for file in os.listdir('./throughput/community/synthetic'):
         df_temp = pd.read_csv('./throughput/community/synthetic/' + file)
         df = pd.concat([df, df_temp], ignore_index=True)
 
-df.groupby(["condition", "run"]).size().reset_index()
+
     
 # round all the parameters to 2 decimal places
 for col in ["eta_plus", "eta_minus", "lambda_plus", "lambda_minus", "gamma_plus", "gamma_minus"]:
     df[col] = df[col].round(2)
 
 df = df.melt(id_vars=["eta_plus", "eta_minus", "lambda_plus", "lambda_minus", "gamma_plus", "gamma_minus", "condition", "vary"], 
-        value_vars=["simulated_annealing_ari", "spectral_ari"],
+        value_vars=["simulated_annealing_ari", "spectral_ari", "gradient_descent_ari"],
         var_name="metric", value_name="value")
 
 # remove rows where the condition is "guess" and the metric is "spectral_ari"
@@ -31,16 +31,16 @@ df["metric_type"] = df["metric"] + "_" + df["condition"]
 df = df[df["metric_type"] != "spectral_ari_nishimori"]
 
 sns.set_style("whitegrid")
-fig, axarr = plt.subplots(3, 3, figsize=(11, 8.5))
+fig, axarr = plt.subplots(5, 3, figsize=(15, 13))
 
 titles = {
-    "simulated_annealing_ari_guess": "ML (fixed)", 
-    "simulated_annealing_ari_nishimori": "ML (Nishimori)", 
+    "simulated_annealing_ari_guess": "Simulated annealing (fixed)", 
+    "simulated_annealing_ari_nishimori": "Simulated annealing (Nishimori)", 
     "spectral_ari_guess": "Spectral clustering", 
-    "spectral_ari_nishimori": "Spectral clustering"
+    "spectral_ari_nishimori": "Spectral clustering",
+    "gradient_descent_ari_guess": "Gradient descent (fixed)",
+    "gradient_descent_ari_nishimori": "Gradient descent (Nishimori)"
 }
-
-
 
 
 for i, vary in enumerate(["eta", "lambda", "gamma"]): 
