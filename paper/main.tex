@@ -237,9 +237,12 @@
 
     We first consider the problem of learning the parameter vector $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed hypergraph $\hypergraph$ with sequential edge indices and known node labels $\vz$.
     We aim to do this via maximum-likelihood estimation. 
-    Computing the complete data likelihood requires marginalizing over the model latent variables, which in this case are the edge $f$ and node $u$ selected at each timestep of the growth model to form the new edge $e$: 
+    Computing the complete data likelihood requires marginalizing over the model latent variables, which in this case are the edge $f$ and node $u$ selected at each timestep of the growth model to form the new edge $e$. 
+    For $\newedge \in \edges$, let $t_\newedge$ denote the time at which $\newedge$ was added to the hypergraph.
+    We say that $f \prec e$ if $t_f < t_e$. 
+    Then, the complete data likelihood can be written 
     \begin{align}
-        \prob(\hypergraph, \vz | \paramvector) = \prod_{t=1}^T \sum_{f \in \edges_{t - 1}} \sum_{u \in f} p(e | f, u, \vz, \paramvector) p(f,u| \edges_{t - 1}, \vz, \paramvector) \;. \label{eq:likelihood}
+        \prob(\hypergraph, \vz | \paramvector) = \prod_{\newedge \in \edges} \sum_{\seededge \prec \newedge} \sum_{\focalnode \in \seededge} p(\newedge | \seededge, \focalnode, \vz, \paramvector) p(\seededge,\focalnode| \edges_{t - 1}, \vz, \paramvector) \;. \label{eq:likelihood}
     \end{align}
     For notational simplicity, we have repressed the additional entries of $\vz$ introduced by the novel node addition step. 
     The requirement to sum over the latent variables at each timestep implies a computational cost to evaluate $\prob(\hypergraph, \vz | \paramvector)$ (or its derivatives) which is quadratic in the number of edges, making direct optimization of the likelihood expensive for data sets of even modest size. 
@@ -263,9 +266,9 @@ To initialize the SEM algorithm, we initialize a vector $\at{\sufficientstatsvec
 We then update a moving average of $\sufficientstatsvec$ as follows. 
 In each algorithmic step $\ell$, we pick an edge $e$ uniformly at random from $\hypergraph$. 
 Then, given current estimates $\at{\hat{\paramvector}}{\ell}$, we form a belief distribution over the latent identities of $f \in \edges$ and $u \in f$ which could have been selected in the edge-copying step to form $e$. 
-For notational convenience, let $f \prec e$ denote that edge $f$ was formed in a previous timestep. 
 Given $e$, the probability that $f$ and $u$ were selected can be computed in closed form. 
 Let $\at{m}{t-1}$ denote the size of the edge set at time $t - 1$.
+
 
 We have 
 \begin{align*}
@@ -589,10 +592,6 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
     \section{Approximation Argument for Simulated Anealing}\label{sec:simulated-annealing-approximation}
 
         This section provides further detail on the approximation to the likelihood described in \Cref{sec:community-detection} and used in our simulated annealing implementation. 
-        For convenience, we define $\prec$ such that $\seededge\prec\newedge$ is true if and only if $\seededge$ is a valid candidate parent edge, which is rigorously defined as follows.
-        \begin{align}
-            \seededge \prec \newedge \iff & \exists t \geq 1, t \in \mathbb{Z} | \seededge, \newedge \in \edges^{t-1}, \\ & \seededge\notin \edges^t, \newedge\in \edges^t, \seededge \cap \newedge \neq \{\emptyset\}
-        \end{align} 
         The likelihood of an edge $e$ being generated in timestep $t$ can be written 
         \begin{align}
             \prob(\newedge|\vz;\paramvector) &= \sum_{\substack{\seededge \prec \newedge \\ u\in \seededge}} \prob(\newedge | \seededge, u, \vz; \paramvector)  \\
@@ -668,41 +667,54 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
         \begin{algorithm}[H]
             \begin{algorithmic}
                 \caption{\texttt{SimulatedAnnealing}$(\hypergraph, \theta)$}\label{algocf:small}
-                \Require{Hypergraph $\hypergraph$, parameters $\paramvector$}
+                \Require{Hypergraph $\hypergraph$, parameters $\paramvector$, number of epochs $A$}
                 \Ensure{Label set $\vz$, approximation of the true labels $\vz^*$}
-                \State $\vz \sim \text{Uniform}(\{0,1\})^{n}$
-                \State $\Delta \mathcal{L}$ $\gets$ $[ ]$
-                \State $\sigma_\hypergraph$ $\gets$ None
-                \For{$\text{step} = 0$ to $n*A$}
-                    \State $j$ $\sim$ Uniform($\{0,...,n-1\}$)
-                    \State $\vz^\prime$ $\gets$ $\vz$
-                    \State $\vz^\prime_j\gets1-\vz^\prime_j$
-                    \State $\Delta E \gets \log(\overset{\sim}{\prob}(\hypergraph, \vz^\prime | \paramvector)) - \log(\overset{\sim}{\prob}(\hypergraph, \vz | \paramvector))$
-                    \State epoch $\gets\lfloor \text{step}/n\rfloor$
-                    \If{epoch $ == 0$}
-                        \State $\Delta \mathcal{L}$.append($\Delta E$)
-                    \EndIf
-                    \If{$\sigma_\hypergraph == \text{None} \And \text{epoch} > 0$}
-                            \State $\sigma_\hypergraph$ $\gets$ \State $\sqrt{\frac{\sum_{i=1}^{|\Delta \mathcal{L}|} \Delta \mathcal{L}_i^2 - (\sum_{i=1}^{|\Delta \mathcal{L}|} \Delta \mathcal{L}_i)^2/|\Delta \mathcal{L}|}{|\Delta \mathcal{L}|-1}}$
+                \State Sample $\vz \sim \text{Uniform}(\{0,1\})^{n}$
+                \State $\Delta \mathcal{L} \gets \emptyset$
+                \State $\sigma_\hypergraph \gets 0$
+                \For{$\epoch = 0$ to $A$}
+                    \For{$\step = 0$ to $n$}
+                        \State Sample $j$ $\sim$ Uniform($\{0,...,n-1\}$)
+                        \State $\vz^\prime$ $\gets$ $\vz$
+                        \State $z^\prime_j\gets1-z^\prime_j$
+                        \State $\Delta E \gets \log \overset{\sim}{\prob}(\hypergraph, \vz^\prime | \paramvector) - \log \overset{\sim}{\prob}(\hypergraph, \vz | \paramvector)$
+                        \If{ $\epoch = 0$}
+                            \State $\Delta \mathcal{L} \gets \Delta \mathcal{L} \cup \{\Delta E\}$
                         \EndIf
-                    \If{$\Delta E>0$}
-                        \State $\vz \gets\vz^\prime$
-                    \Else
-                        \State $B$ $\gets$ 1
-                        \State $\sigma_a$ $\gets$ $\Delta E/\sigma_\hypergraph$
-                        \If{1 $\leq$ epoch $\leq$ 4}
-                            \State $B$ $\sim $ Normal($\sigma_a|\mu = 0, \sigma=2$)
-                        \ElsIf{5 $\leq$ epoch}
-                            \State $B$ $\sim $ Normal($\sigma_a|\mu = 0, \sigma=2-2\times \text{epoch} / A$)
+                        \If{$\sigma_\hypergraph = 0 \And \epoch > 0$}
+                                \State $\sigma_\hypergraph\gets \sigma(\Delta \mathcal{L})$
+                            \EndIf
+                        \If{$\Delta E>0$}
+                            \State $\vz \gets\vz^\prime$
+                        \Else
+                            \State $B$ $\gets$ 1
+                            \State $\zeta_a$ $\gets$ $\Delta E/\sigma_\hypergraph$
+                            \If{$1 \leq \epoch \leq 4$}
+                                \State Sample $B$ $\sim $ Normal($\zeta_a|\mu = 0, \sigma=2$)
+                            \ElsIf{5 $\leq \epoch$}
+                                \State Sample $B$ $\sim $ Normal($\zeta_a|\mu = 0, \sigma=2(1 - \frac{\epoch}{A}))$
+                            \EndIf
+                            \State Sample $x \sim \text{Uniform}(0,1)$
+                            \If{$B > x$} 
+                                \State $\vz \gets \vz^\prime$
+                            \EndIf
                         \EndIf
-                        \If{$B$ $>$ x $\sim$ Uniform(0,1)} 
-                            \State $\vz \gets \vz^\prime$
-                        \EndIf
-                    \EndIf
+                    \EndFor
                 \EndFor
                 \State \Return$\vz$
             \end{algorithmic}
         \end{algorithm}
+
+        \phil{Some things to check here: }
+        \begin{itemize}
+            \item \phil{It looks like $\sigma_{\hypergraph}$ is only computed after the first epoch, but it is used in the acceptance probability for all epochs. Is this intentional?}
+            \item \phil{What is $A$?}
+            \item \phil{Should require the number of steps or epochs desired. Maybe $A$ is the number of epochs? }
+        \end{itemize}
+        Here, 
+        \begin{align}
+            \sigma(\Delta \mathcal{L}) = \sqrt{\frac{\sum_{\delta  \in \Delta \mathcal{L}} \delta^2 - (\frac{1}{|\Delta \mathcal{L}|}\sum_{\delta \in \Delta \mathcal{L}} \delta)^2}{|\Delta \mathcal{L}|-1}}
+        \end{align}
     
     \section{Simulated Annealing Illustration}
 
