@@ -4,7 +4,7 @@
 #SBATCH --array=0-9
 #SBATCH --mail-user=fcataldo@middlebury.edu    
 #SBATCH --mail-type=ALL                        
-#SBATCH --mem-per-cpu=350gb
+#SBATCH --mem-per-cpu=120gb
 #SBATCH --partition=himem-long                   
 #SBATCH --time=120:00:00        
 #SBATCH --output=throughput/logs/simulated-annealing-empirical/highschool-class_%a.out            
