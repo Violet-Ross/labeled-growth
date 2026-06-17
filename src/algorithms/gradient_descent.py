@@ -157,109 +157,6 @@ class GradientDescent:
 
         return cop_tens, notcop_tens, nov_tens, ext_tens, posext_tens, nt
     
-    def differentiable_log_likelihood_3D_tensor(self, tensor_labels):
-        m = len(self.g.get_edges())
-        p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er = self.theta
-
-        summ = torch.tensor([0.0], requires_grad=True)
-
-        one_minus_tensor_labels = 1-tensor_labels
-
-        cop1 = self.tensors[0]@tensor_labels
-        cop0 = self.tensors[0]@one_minus_tensor_labels
-
-        notcop1 = self.tensors[1]@tensor_labels
-        notcop0 = self.tensors[1]@one_minus_tensor_labels
-
-        nov1 = self.tensors[2]@tensor_labels
-        nov0 = self.tensors[2]@one_minus_tensor_labels
-
-        ext1 = self.tensors[3]@tensor_labels
-        ext0 = self.tensors[3]@one_minus_tensor_labels
-
-        # posext1 = self.tensors[4]@tensor_labels
-        # posext0 = self.tensors[4]@(1-tensor_labels)
-        
-
-        # try vectorized
-        prob_u_label_equals_1 = cop1 / (cop1 + cop0)
-        prob_u_label_equals_0 = cop0 / (cop1 + cop0)
-        prob_u_label_equals_1 = torch.nan_to_num(prob_u_label_equals_1, nan=0.0)
-        prob_u_label_equals_0 = torch.nan_to_num(prob_u_label_equals_0, nan=0.0)
-
-        # as approximate stand in for external nodes of each label
-        count_1_label_nodes = torch.sum(tensor_labels).detach().clone()
-        count_0_label_nodes = torch.sum(1-tensor_labels).detach().clone()
-
-
-        if self.novel_nodes:
-
-
-            # torch.set_printoptions(threshold=torch.inf)
-            # print(count_1_label_nodes)
-            # print(count_0_label_nodes)
-
-            count_1_label_nodes = self.tensors[5]@tensor_labels
-            count_0_label_nodes = self.tensors[5]@one_minus_tensor_labels
-
-            count_1_label_nodes = torch.repeat_interleave(count_1_label_nodes, m)
-            count_0_label_nodes = torch.repeat_interleave(count_0_label_nodes, m)
-
-            # print(count_1_label_nodes)
-            # print(count_0_label_nodes)
-
-            # import time
-
-            # time.sleep(100)
-
-
-        
-
-        prob_given_f_u_label_1 = (torch.pow(p, (cop1-1)) * (torch.pow((1-p), notcop1)) * (torch.pow(q,cop0)) * (torch.pow((1-q), notcop0)))
-        prob_given_f_u_label_1 = prob_given_f_u_label_1 * torch.pow(gamma_eu,ext1) * math.exp(-gamma_eu) / torch.exp(torch.lgamma(ext1+1)) / self.generalized_comb(count_1_label_nodes, ext1)
-        prob_given_f_u_label_1 = prob_given_f_u_label_1 * torch.pow(gamma_er,ext0) * math.exp(-gamma_er) / torch.exp(torch.lgamma(ext0+1)) / self.generalized_comb(count_0_label_nodes, ext0)
-        prob_given_f_u_label_1 = prob_given_f_u_label_1 * torch.pow(gamma_nu,nov1) * math.exp(-gamma_nu) / torch.exp(torch.lgamma(nov1+1))
-        prob_given_f_u_label_1 = prob_given_f_u_label_1 * torch.pow(gamma_nr,nov0) * math.exp(-gamma_nr) / torch.exp(torch.lgamma(nov0+1))
-
-        # calculate prob of e given f and u_label = 0
-        prob_given_f_u_label_0 = (torch.pow(p, (cop0-1)) * (torch.pow((1-p), notcop0)) * (torch.pow(q, cop1)) * (torch.pow((1-q), notcop1)))
-        prob_given_f_u_label_0 = prob_given_f_u_label_0 * torch.pow(gamma_eu,ext0) * math.exp(-gamma_eu) / torch.exp(torch.lgamma(ext0+1)) / self.generalized_comb(count_0_label_nodes, ext0)
-        prob_given_f_u_label_0 = prob_given_f_u_label_0 * torch.pow(gamma_er,ext1) * math.exp(-gamma_er) / torch.exp(torch.lgamma(ext1+1)) / self.generalized_comb(count_1_label_nodes, ext1)
-        prob_given_f_u_label_0 = prob_given_f_u_label_0 * torch.pow(gamma_nu,nov0) * math.exp(-gamma_nu) / torch.exp(torch.lgamma(nov0+1))
-        prob_given_f_u_label_0 = prob_given_f_u_label_0 * torch.pow(gamma_nr,nov1) * math.exp(-gamma_nr) / torch.exp(torch.lgamma(nov1+1))
-
-
-
-        divide_by_e_index = []
-        for i in range(len(self.g.get_edges())):
-            divide_by_e_index.extend([float(i)] * len(self.g.get_edges()))
-
-
-        divide_by_e_index = torch.tensor(divide_by_e_index)
-
-            
-        summ = ((prob_u_label_equals_1*prob_given_f_u_label_1 + prob_u_label_equals_0*prob_given_f_u_label_0)) /self.divide_by_e_index
-      
-
-        summ = summ.reshape(len(self.g.get_edges()), len(self.g.get_edges()))
-        summ = torch.sum(summ, dim=1)
-
-        # with open('gradient_descent_senate_bills_results.csv', 'a', newline="") as file:
-        #     writer = csv.writer(file)
-        #     writer.writerows([[summ]])
-
-
-
-        # add epsilon to avoid infinity underflow
-        epsilon = 10**-40
-        summ = torch.sum(torch.log(summ[1:] + epsilon))
-
-        
-        REGULARIZATION_CONSTANT = math.sqrt(len(self.g.get_edges())) # LL goes down based on the number of edges, so this makes sense
-
-        regularization = torch.sum(torch.log(tensor_labels) + torch.log(1-tensor_labels))
-
-        return -1*summ - regularization * REGULARIZATION_CONSTANT    
     
     def differentiable_log_likelihood_3D_tensor(self, tensor_labels):
         m = len(self.g.get_edges())
@@ -334,12 +231,12 @@ class GradientDescent:
 
 
 
-        divide_by_e_index = []
-        for i in range(len(self.g.get_edges())):
-            divide_by_e_index.extend([float(i)] * len(self.g.get_edges()))
+        # divide_by_e_index = []
+        # for i in range(len(self.g.get_edges())):
+        #     divide_by_e_index.extend([float(i)] * len(self.g.get_edges()))
 
 
-        divide_by_e_index = torch.tensor(divide_by_e_index)
+        # divide_by_e_index = torch.tensor(divide_by_e_index)
 
             
         summ = ((prob_u_label_equals_1*prob_given_f_u_label_1 + prob_u_label_equals_0*prob_given_f_u_label_0)) /self.divide_by_e_index
@@ -691,8 +588,8 @@ class GradientDescent:
         equal_count = 0
 
         for step in range(num_steps):
-            if equal_count == 20:
-                break
+            # if equal_count == 20:
+            #     break
 
             
             loss = self.differentiable_log_likelihood_3D_tensor(self.tensor_labels)
