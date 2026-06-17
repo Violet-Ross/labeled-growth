@@ -705,12 +705,6 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
             \end{algorithmic}
         \end{algorithm}
 
-        \phil{Some things to check here: }
-        \begin{itemize}
-            \item \phil{It looks like $\sigma_{\hypergraph}$ is only computed after the first epoch, but it is used in the acceptance probability for all epochs. Is this intentional?}
-            \item \phil{What is $A$?}
-            \item \phil{Should require the number of steps or epochs desired. Maybe $A$ is the number of epochs? }
-        \end{itemize}
         Here, 
         \begin{align}
             \sigma(\Delta \mathcal{L}) = \sqrt{\frac{\sum_{\delta  \in \Delta \mathcal{L}} \delta^2 - (\frac{1}{|\Delta \mathcal{L}|}\sum_{\delta \in \Delta \mathcal{L}} \delta)^2}{|\Delta \mathcal{L}|-1}}
