@@ -21,7 +21,12 @@ from tqdm import tqdm
 from sklearn.cluster import SpectralClustering
 from itertools import combinations
 
-def spectral_clustering_comparison(g): 
+# Modularity Maximization Implementation
+from sklearn.metrics import adjusted_rand_score 
+import networkx as nx
+import numpy as np
+from itertools import combinations
+def clique_projection_modularity_maximization_algo(g):
     H = g.H
     G = nx.Graph()
     G.add_nodes_from(H.nodes)
@@ -34,11 +39,10 @@ def spectral_clustering_comparison(g):
             else:
                 G.add_edge(u, v, weight=1)
 
-    adjacency_matrix = nx.to_numpy_array(G, weight="weight")
-    spectral = SpectralClustering(n_clusters=2, affinity='precomputed', random_state=0)
-    labels = spectral.fit_predict(adjacency_matrix)
+    partition = nx.community.greedy_modularity_communities(G, best_n=2)
+    z = np.array([0 if node in partition[0] else 1 for node in G.nodes()])
 
-    return labels
+    return z
 
 data_sets = {
     "senate_bills": "senate_bills",
@@ -54,7 +58,7 @@ header = True
 
 if __name__ == "__main__":
     # figure out which data set we are using
-    args = argparse.ArgumentParser(description='Run spectral clustering on a user-specified prepared data set.')
+    args = argparse.ArgumentParser(description='Run modularity maximization on a user-specified prepared data set.')
     args.add_argument('--data_set', type=str, choices=data_sets.keys(), help='The data set to run simulated annealing on. Must be one of: ' + ', '.join(data_sets.keys()))
     args.add_argument("--job_id", type=int, help="The job ID for this run, used to differentiate output files when running multiple jobs.")
     
@@ -67,7 +71,7 @@ if __name__ == "__main__":
     # if args.results_folder != None:
     #     results_folder = args.results_folder # override if provided
 
-    path = f"throughput/spectral-clustering/{results_folder}"
+    path = f"throughput/modularity/{results_folder}"
     os.makedirs(path, exist_ok=True)
     os.makedirs(path + "/labels", exist_ok=True)
     os.makedirs(path + "/metrics", exist_ok=True)
@@ -77,7 +81,7 @@ if __name__ == "__main__":
     H = xgi.read_json(f"throughput/{data_sets[data_set]}.json", nodetype=int)
     g = GH(H, [0, 1], 0, 0)
 
-    labels = spectral_clustering_comparison(g)
+    labels = clique_projection_modularity_maximization_algo(g)
     ari = adjusted_rand_score(labels, g.get_labels())
 
     df = pd.DataFrame({
