@@ -18,6 +18,8 @@ from sklearn.metrics import normalized_mutual_info_score, adjusted_rand_score
 import pickle as pkl
 import pandas as pd 
 from tqdm import tqdm
+# from sklearn.cluster import SpectralClustering
+# from itertools import combinations
 
 
 data_sets = {
@@ -29,6 +31,26 @@ data_sets = {
     "gender_coauth": "gender_coauth_shrunk"
 }
 
+# # spectral clustering for warmstart
+# def spectral_clustering_comparison(g): 
+#     H = g.H
+#     G = nx.Graph()
+#     G.add_nodes_from(H.nodes)
+
+#     # Clique projection
+#     for edge in H.edges.members():
+#         for u, v in combinations(edge, 2):
+#             if G.has_edge(u, v):
+#                 G[u][v]["weight"] += 1
+#             else:
+#                 G.add_edge(u, v, weight=1)
+
+#     adjacency_matrix = nx.to_numpy_array(G, weight="weight")
+#     spectral = SpectralClustering(n_clusters=2, affinity='precomputed', random_state=0)
+#     labels = spectral.fit_predict(adjacency_matrix)
+
+#     return labels
+
 if __name__ == "__main__":
     
     # figure out which data set we are using
@@ -37,12 +59,14 @@ if __name__ == "__main__":
     args.add_argument("--job_id", type=int, help="The job ID for this run, used to differentiate output files when running multiple jobs.")
     args.add_argument("--results_folder", type=str, help="Folder to store results (defaults to data set name)", default=None)
     args.add_argument("--params", type=float, nargs=6, help="Specified simulated annealingparameters to override default.  6-tuple of floats in the form (p+, p-, a+, a-, r+, r-)", default=None)
+    # args.add_argument("--warm_start", type=bool, default=False, help="Give labels to start the algorithm with (in 10th epoch)")
 
     args = args.parse_args()
     
     data_set = args.data_set
     job_id = args.job_id
     params = args.params
+    # warm_start = args.warm_start
 
     results_folder = data_sets[data_set] # set default name of results folder to the title of dataset
     if args.results_folder != None:
@@ -79,6 +103,12 @@ if __name__ == "__main__":
     num_steps = len(g.nodes)*20
     
     for step_num in tqdm(range(num_steps)):
+
+        # if step_num == num_steps/20.0+1 and warm_start:
+        #     step_num = num_steps/2 # set epoch to 10 to avoid randomness
+        
+        #     sa.labels = spectral_clustering_comparison(g) # sets labels to the warm start
+
         print("step num: " + str(step_num))
         sa.step()
         
