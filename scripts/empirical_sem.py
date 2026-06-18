@@ -15,42 +15,42 @@ DATASETS = [
         "label":   "senate-bills",
         "json":    "throughput/senate_bills.json",
         "kwargs":  {"nodetype": int},
-        "color":   "#e63946",
+        "color":   "#B81365",
         "marker":  "o",
     },
     {
         "label":   "coauthorship",
         "json":    "throughput/gender_coauth_sorted.json",
         "kwargs":  {"nodetype": int},
-        "color":   "#2a9d8f",
+        "color":   "#A7ACD9",
         "marker":  "s",
     },
     {
         "label":   "high-school",
         "json":    "throughput/highschool_gender.json",
         "kwargs":  {"nodetype": int, "edgetype": int},
-        "color":   "#f4a261",
+        "color":   "#1B998B",
         "marker":  "^",
     },
     {
         "label":   "primary-school",
         "json":    "throughput/primaryschool_gender.json",
         "kwargs":  {"nodetype": int, "edgetype": int},
-        "color":   "#457b9d",
+        "color":   "#1B998B",
         "marker":  "D",
     },
     {
         "label":   "house-bills",
         "json":    "throughput/house_bills.json",
         "kwargs":  {"nodetype": int},
-        "color":   "#8338ec",
+        "color":   "#B81365",
         "marker":  "P",
     },
     {
         "label":   "emails",
         "json":    "throughput/emails.json",
         "kwargs":  {"nodetype": int},
-        "color":   "#06d6a0",
+        "color":   "#E28413",
         "marker":  "X",
     },
 ]
@@ -127,6 +127,9 @@ else:
 
     save_cache(finals)
 
+# After finals is assembled (either from cache or SEM run), reorder to desired legend order
+LEGEND_ORDER = ["senate-bills", "house-bills", "high-school", "primary-school", "coauthorship", "emails"]
+finals = sorted(finals, key=lambda f: LEGEND_ORDER.index(f["label"]))
 # ── Plot ─────────────────────────────────────────────────────────────────────
 
 sns.set_style("whitegrid")
@@ -141,21 +144,21 @@ plt.rcParams.update({
 
 PANELS = [
     {
-        "title":  "Edge copy parameters",
+        "title":  "Edge copy",
         "xlabel": r"$\hat{p}_+$",
         "ylabel": r"$\hat{p}_-$",
         "xkey":   "p",
         "ykey":   "q",
     },
     {
-        "title":  "External node addition parameters",
+        "title":  "External node addition",
         "xlabel": r"$\hat{r}_+$",
         "ylabel": r"$\hat{r}_{-}$",
         "xkey":   "gam_eu",
         "ykey":   "gam_er",
     },
     {
-        "title":  "Novel node parameters",
+        "title":  "Novel node addition",
         "xlabel": r"$\hat{a}_+$",
         "ylabel": r"$\hat{a}_{-}$",
         "xkey":   "gam_nu",
@@ -204,14 +207,14 @@ for ax, panel in zip(axs, PANELS):
     ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
     ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
 
-axs[0].set_xlabel(r"$\hat{p}_+$")
-axs[0].set_ylabel(r"$\hat{p}_-$")
+axs[0].set_xlabel(r"$\hat{\rho}_-$")
+axs[0].set_ylabel(r"$\hat{\rho}_+$")
 
-axs[1].set_xlabel(r"$\hat{r}_+$")
-axs[1].set_ylabel(r"$\hat{r}_{-}$")
+axs[1].set_xlabel(r"$\hat{\gamma}_-$")
+axs[1].set_ylabel(r"$\hat{\gamma}_+$")
 
-axs[2].set_xlabel(r"$\hat{a}_+$")
-axs[2].set_ylabel(r"$\hat{a}_{-}$")
+axs[2].set_xlabel(r"$\hat{\eta}_{-}$")
+axs[2].set_ylabel(r"$\hat{\eta}_+$")
 
 handles, labels = axs[0].get_legend_handles_labels()
 axs[2].legend(
@@ -221,4 +224,35 @@ axs[2].legend(
     framealpha=0.9,
 )
 
-fig.savefig("fig/sem_estimates_comparison.png", dpi=300, bbox_inches="tight")
+# ── after the scatter loop for axs[0], before fig.savefig ──
+
+# Add homophily / heterophily arrows to the first panel only
+# Homophily arrow
+axs[0].annotate(
+    "",
+    xy=(0.42, 0.76),
+    xytext=(0.58, 0.62),
+    arrowprops=dict(
+        arrowstyle="->",
+        connectionstyle="arc3,rad=-0.35",
+        color="black",
+        lw=1.2,
+    ),
+)
+axs[0].text(0.48, 0.7, "homophily", fontsize=10, ha="left", va="center")
+
+# Heterophily arrow
+axs[0].annotate(
+    "",
+    xy=(0.78, 0.45),
+    xytext=(0.66, 0.5),
+    arrowprops=dict(
+        arrowstyle="->",
+        connectionstyle="arc3,rad=-0.35",
+        color="black",
+        lw=1.2,
+    ),
+)
+axs[0].text(0.52, 0.48, "heterophily", fontsize=10, ha="left", va="top")
+
+fig.savefig("fig/empiricial_sem.png", dpi=300, bbox_inches="tight")
