@@ -333,12 +333,32 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
     This includes edges in which node $i$ does not participate, implying that we must perform $O(m^2)$ computations even to evaluate the change in likelihood under a proposed change to $z_i$.
     
     
-    To mitigate the comptuational burden, we use an intersection-based approximation to the likelihood of forming edge $e$ in which we only sum over candidate copied edges $f$ such that $f = \argmax_{f' \in \edges} \abs{f' \cap e}$.
+    To mitigate the computational burden, we use an intersection-based approximation to the likelihood of forming edge $e$ in which we only sum over candidate copied edges $f$ such that $f = \argmax_{f' \in \edges} \abs{f' \cap e}$.
     To justify this approximation, we start by observing that, if $f$ is the edge sampled to form $e$, then the number of extant nodes required to form $e$ is $x = \abs{e} - \abs{e\cap f} - \abs{e \setminus \nodes}$. 
     We'll argue that, when the number of nodes $n$ is large, $p(e|f, u, \vz, \paramvector) \in O(n^{-x})$, which implies that edges $f$ which do not maximize $\abs{f \cap e}$ will have negligible contributions to the likelihood.
     The essence of the argument is that forming $x$ extant nodes requires $x$ independent samples from the sets $\nodes_0\setminus f$ and $\nodes_1\setminus f$, each of which have size scaling linearly with $n$. 
     So, each independent sample has probability $O(n^{-1})$, and the probability of forming a given set of $x$ extant nodes is $O(n^{-x})$.
     We detail this argument in \Cref{sec:simulated-annealing-approximation}.
+
+    In our application of simulated annealing, we run the algorithm for $A\times n$ steps where $A$ represents the number of epochs.
+    In each step, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random and evaluating the change in likelihood of "flipping" the binary node label ($\vz_j = 1 - \vz_j$).  
+    If the proposal increases \Cref{eq:sa-approx}, it is accepted.
+    However, if the proposal decreases the likelihood, we accept it with a probability that decreases as the epochs increase.
+    When evaluating this change in likelihood, we implement custom data structures that allow us to compute only the change in likelihood from the prior state by storing the components of the prior likelihood calculation, resulting in a $30$ times decrease in compute time on real world datasets at the expense of memory.  
+    
+    
+    In simulated annealing applications, it is important accept proposals that decrease the value of the objective function with a probability that decreases gradually as the algorithm runs.
+    Similarly, proposals that slightly lower the objective function should be accepted more frequently than proposals causing large objective function decreases.
+    A balance must be struck, both accepting enough proposals decreasing the objective function to avoid becoming stuck in local optima and not accepting too many to allow convergence to a maxima.  
+    However, the change in log-likelihood of a proposal in our application changes significantly depending on the size of the hypergraph considered.  
+    Thus, traditional annealing schedules struggle to accept an effective balance of proposals that decrease the likelihood on varying sized hypergraphs.  
+    For example, on datasets with large $m$, the logged form of \Cref{eq:sa-approx} have orders of magnitude larger changes compared to hypergraphs with small $m$.  
+    Thus, we implement a custom annealing schedule based on the idea of z-scores.  
+    Breaking the runtime into epochs, the algorithm's first epoch accepts all proposals while storing the changes in log-likelihood and, at the end of the first epoch, calculating its standard deviation, $\sigma_\hypergraph$.
+    For the rest of the steps of the algorithm, the acceptance probability of a proposal that decreases the likelihood is determined by the change in log-likelihood of the proposal divided by $\sigma_\hypergraph$, interpreting the change in likelihood in context of the specific hypergraph. 
+    A full specification of the algorithm is provided in \Cref{sec:simulated-annealing-algorithm-spec}.
+
+    \frannie{Need data structure description??}
 
     
     
@@ -659,14 +679,14 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
         
 
 
-    \section{Algorithmic specification for simulated annealing}
+    \section{Algorithmic specification for simulated annealing}\label{sec:simulated-annealing-algorithm-spec}
         We describe the simulated annealing algorithm implementation in detail.
         Define the number of epochs for the simulated annealing algorithm $A = 20$.  
         Let $B$ be the probability that the simulated annealing algorithm accepts a change on labels that lowers the approximated likelihood
         
         \begin{algorithm}[H]
             \begin{algorithmic}
-                \caption{\texttt{SimulatedAnnealing}$(\hypergraph, \theta)$}\label{algocf:small}
+                \caption{\texttt{SimulatedAnnealing}$(\hypergraph, \theta)$}\label{algocf:simulated_annealing}
                 \Require{Hypergraph $\hypergraph$, parameters $\paramvector$, number of epochs $A$}
                 \Ensure{Label set $\vz$, approximation of the true labels $\vz^*$}
                 \State Sample $\vz \sim \text{Uniform}(\{0,1\})^{n}$
