@@ -186,12 +186,15 @@ for ax, panel in zip(axs, PANELS):
         )
 
     # axis limits with margin
-    all_x = [f[panel["xkey"]] for f in finals]
-    all_y = [f[panel["ykey"]] for f in finals]
-    lo = min(min(all_x), min(all_y))
-    hi = max(max(all_x), max(all_y))
-    margin = (hi - lo) * 0.12 if hi != lo else 0.1
-    lim = (lo - margin, hi + margin)
+    if panel["xkey"] == "p":          # first panel: fix to [0, 1]
+        lim = (0.0, 1.0)
+    else:
+        all_x = [f[panel["xkey"]] for f in finals]
+        all_y = [f[panel["ykey"]] for f in finals]
+        lo = min(min(all_x), min(all_y))
+        hi = max(max(all_x), max(all_y))
+        margin = (hi - lo) * 0.12 if hi != lo else 0.1
+        lim = (lo - margin, hi + margin)
     ax.set_xlim(lim)
     ax.set_ylim(lim)
 
@@ -239,13 +242,13 @@ axs[0].annotate(
         lw=1.2,
     ),
 )
-axs[0].text(0.48, 0.7, "homophily", fontsize=10, ha="left", va="center")
+axs[0].text(0.48, 0.75, "homophily", fontsize=10, ha="left", va="center")
 
 # Heterophily arrow
 axs[0].annotate(
     "",
-    xy=(0.78, 0.45),
-    xytext=(0.66, 0.5),
+    xy=(0.83, 0.47),
+    xytext=(0.68, 0.55),
     arrowprops=dict(
         arrowstyle="->",
         connectionstyle="arc3,rad=-0.35",
@@ -253,6 +256,6 @@ axs[0].annotate(
         lw=1.2,
     ),
 )
-axs[0].text(0.52, 0.48, "heterophily", fontsize=10, ha="left", va="top")
+axs[0].text(0.54, 0.53, "heterophily", fontsize=10, ha="left", va="top")
 
-fig.savefig("fig/empiricial_sem.png", dpi=300, bbox_inches="tight")
+fig.savefig("fig/empirical_sem.png", dpi=300, bbox_inches="tight")
