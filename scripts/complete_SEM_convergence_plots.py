@@ -179,6 +179,8 @@ plt.subplots_adjust(left=0.45, top=0.75)
 pink_gradient = LinearSegmentedColormap.from_list("pink_gradient", ["#fce8f1", "#e06098", "#B81365"])
 im = ax.imshow(kl_values, cmap=pink_gradient, aspect="auto")
 
+ax.grid(False)
+
 cbar = fig.colorbar(im, ax=ax, shrink=0.8)
 cbar.set_label("KL divergence", fontsize=10)
 
@@ -188,15 +190,25 @@ ax.xaxis.set_label_position("top")
 ax.xaxis.tick_top()
 ax.set_yticks(range(n_rows))
 ax.set_yticklabels(row_labels, fontsize=10)
+ax.yaxis.tick_left()
 
 vmin_idx = np.unravel_index(np.nanargmin(kl_values), kl_values.shape)
 vmax_idx = np.unravel_index(np.nanargmax(kl_values), kl_values.shape)
 
-for idx in [vmin_idx, vmax_idx]:
+# Visual guides for dividers
+linewidth = 4
+ax.vlines(x=1.5, ymin=-0.5, ymax=n_rows-0.5, colors="white", linestyles="solid", linewidth=linewidth)
+ax.hlines(y=1.5, xmin=-0.5, xmax=n_cols-0.5, colors="white", linestyles="solid", linewidth=linewidth)
+ax.hlines(y=3.5, xmin=-0.5, xmax=n_cols-0.5, colors="white", linestyles="solid", linewidth=linewidth)
+ax.hlines(y=5.5, xmin=-0.5, xmax=n_cols-0.5, colors="white", linestyles="solid", linewidth=linewidth)
+
+
+
+for i, idx in enumerate([vmin_idx, vmax_idx]):
     r, c = idx
     val = kl_values[r, c]
-    ax.text(c, r, f"{val:.4f}", ha="center", va="center",
-            fontsize=8, color="black")
+    ax.text(c, r, f"{val:.3f}", ha="center", va="center",
+            fontsize=10, color=["black", "white"][i])
 
 # ── 6. Y-axis brackets (left side) ───────────────────────────────────────────
 
@@ -271,3 +283,4 @@ print(np.nanmin(kl_values), np.nanmax(kl_values))
 output_path = "fig/sem_convergence_heatmap.png"
 plt.savefig(output_path, dpi=300, bbox_inches="tight")
 print(f"Saved → {output_path}")
+
