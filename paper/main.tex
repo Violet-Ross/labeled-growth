@@ -730,13 +730,61 @@ Furthermore, maximum-likelihood estimation under both the Nishimori and fixed co
         TODO
 
     \section{Synthetic SEM Parameter Values} \label{sec:SEM-appendix}
-    \begin{tabular}{ c c c c }
-        \toprule
-        Label & $\copyrate_+, \copyrate_-$ & $\extantrate_+, \extantrate_-$ & $\novelrate_+, \novelrate_-$ \\
-        \midrule
-        \makecell{Weak external \\ node addition} &  &   & \\
-        \bottomrule
-    \end{tabular}
+
+    \begin{table}[h]
+        \caption{Strength of Homophily in Edge Copying}
+        \begin{tabular}{ c c}
+            \toprule
+            & $\copyrate_+, \copyrate_-$ \\
+            \midrule
+            Weak &  0.6, 0.4 \\
+            Strong & 0.9, 0.2 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \begin{table}[h]
+        \caption{Strength of Homophily in External and Novel Node Addition}
+        \begin{tabular}{ c c c }
+            \toprule
+            & $\extantrate_+, \extantrate_-$ & $\novelrate_+, \novelrate_-$\\
+            \midrule
+            \makecell{Weak in external \\ node addition} & 1, 0.8 & \nullnov \\
+            \makecell{Strong in external \\ node addition} & 2, 0.2 & \nullnov \\
+            \makecell{Weak in novel \\ node addition} & \nullext & 1, 0.8 \\
+            \makecell{Strong in novel \\ node addition} & \nullext & 2, 0.2 \\
+            \makecell{Weak in both} & 1, 0.8 & 1, 0.8 \\
+            \makecell{Strong in both} & 2, 0.2 & 2, 0.2 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+
+    \begin{table}[h]
+        \caption{Strength of Copy Mechanism}
+        \begin{tabular}{ c c}
+            \toprule
+            & $\copyrate_+, \copyrate_-$ \\
+            \midrule
+            Weak &  0.1, 0.1 \\
+            Strong & 0.9, 0.9\\
+            \bottomrule
+        \end{tabular}
+    \end{table}
+
+    \begin{table}[h]
+        \caption{Strength of External and Novel Node Addition Mechanisms}
+        \begin{tabular}{ c c c }
+            \toprule
+            & $\extantrate_+, \extantrate_-$ & $\novelrate_+, \novelrate_-$\\
+            \midrule
+            \makecell{Both weak} & 0.1, 0.1 & 0.1, 0.1 \\
+            \makecell{Strong external \\ node mechanism} & 2, 2 & \nullnov \\
+            \makecell{Weak novel \\ node mechanism} & \nullext & 2, 2 \\
+            \makecell{Both strong} & 2, 2 & 2, 2 \\
+            \bottomrule
+        \end{tabular}
+    \end{table}
 
 \end{document}
 
