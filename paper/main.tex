@@ -11,6 +11,8 @@
 \usepackage{cleveref}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage{booktabs}
+\usepackage{makecell}
 
 \newcommand{\algorithmautorefname}{Algorithm}
 
@@ -728,7 +730,13 @@ Furthermore, maximum-likelihood estimation under both the Nishimori and fixed co
         TODO
 
     \section{Synthetic SEM Parameter Values} \label{sec:SEM-appendix}
-
+    \begin{tabular}{ c c c c }
+        \toprule
+        Label & $\copyrate_+, \copyrate_-$ & $\extantrate_+, \extantrate_-$ & $\novelrate_+, \novelrate_-$ \\
+        \midrule
+        \makecell{Weak external \\ node addition} &  &   & \\
+        \bottomrule
+    \end{tabular}
 
 \end{document}
 
