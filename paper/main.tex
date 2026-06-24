@@ -394,6 +394,10 @@ Furthermore, maximum-likelihood estimation under both the Nishimori and fixed co
 
 \subsection{Parameter Estimation}
 
+Figure \ref{fig:synthetic_sem} shows the performance of SEM on synthetic data. 
+Each synthetic hypergraph is generated using our model (\violet{should the model have a name?}) from a known parameter vector $\paramvector$.
+We performed SEM accross a set of hypergraphs which were generated from varying amounts of homophily in each step of the growth process as well as variation in the expected number of nodes added to $e$ in each step.
+Figure \ref{fig:synthetic_sem} demonstrates the accuracy of the SEM-inferred parameter estimates for each of these synthetic hypergraphs.
 
 \begin{figure}[t]
     \includegraphics[width=0.5\textwidth]{../fig/sem_convergence_heatmap.png}
@@ -405,9 +409,14 @@ Furthermore, maximum-likelihood estimation under both the Nishimori and fixed co
     \label{fig:synthetic_sem}
 \end{figure}
 
+We performed SEM on six empirical higher-order networks, represented as hypergraphs.
+
+
+For all runs of SEM, the initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001.
+
 \begin{figure}[t]
     \includegraphics[width=0.5\textwidth]{../fig/empirical_sem.png}
-    \caption{Model parameters inferred via SEM for six empirical higher-order networks. The initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001.}
+    \caption{Model parameters inferred via SEM for six empirical higher-order networks.}
      \label{fig:empirical_sem}
 \end{figure}
 
