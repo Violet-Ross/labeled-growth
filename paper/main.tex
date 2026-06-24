@@ -409,10 +409,16 @@ Figure \ref{fig:synthetic_sem} demonstrates the accuracy of the SEM-inferred par
     \label{fig:synthetic_sem}
 \end{figure}
 
-We performed SEM on six empirical higher-order networks, represented as hypergraphs.
+We performed SEM on six empirical higher-order networks, represented as hypergraphs. 
+Some hypergraphs, like the primary-school network, appear on or near the line of equality in all three panels, suggesting that there is little to no homophily present in any of the growth mechanisms with respect to the chosen binary labels.
+The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but is plotted below the line of equality in the nodel node addition panel.
+This indicates that for the coauthorship network, homophily with respect to gender is present in one of the three growth mechanisms.
 
+\violet{Discuss intuition behind enron}
 
 For all runs of SEM, the initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001.
+\violet{initial suff stats}
+
 
 \begin{figure}[t]
     \includegraphics[width=0.5\textwidth]{../fig/empirical_sem.png}
