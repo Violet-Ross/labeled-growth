@@ -3,6 +3,17 @@ import csv
 import matplotlib.pyplot as plt
 import os
 from matplotlib.colors import LinearSegmentedColormap
+from matplotlib.gridspec import GridSpec
+import pandas as pd
+import seaborn as sns
+
+import figure_settings as fs
+
+
+
+sns.set_style("whitegrid")
+
+# fs.set_fonts()
 
 # ── 1. True parameter values ──────────────────────────────────────────────────
 
@@ -146,6 +157,10 @@ original_to_display_row = {
     6: 7, 7: 8, 8: 9,
 }
 
+
+kl_file_max = ""
+kl_file_min = ""
+
 for graph_idx, true_theta in enumerate(true_thetas, start=1):
     original_row = (graph_idx - 1) // n_cols
     col = (graph_idx - 1) % n_cols
@@ -164,17 +179,47 @@ for graph_idx, true_theta in enumerate(true_thetas, start=1):
 
         last_row = [float(v) for v in all_rows[-1] if v.strip() != ""][1:]
         estimate = np.array(last_row)
-        iter_kls.append(total_kl(truth, estimate))
+        kl = total_kl(truth, estimate)
+        
+        iter_kls.append(kl)
 
     if iter_kls:
-        kl_values[row, col] = np.mean(iter_kls)
+        mean_kl = np.mean(iter_kls)
+        
+        if mean_kl > np.nanmax(kl_values):
+            kl_file_max = csv_path
+            kl_true_theta_max = truth
+            max_kl = mean_kl
+        if mean_kl < np.nanmin(kl_values):
+            kl_file_min = csv_path
+            kl_true_theta_min = truth
+            min_kl = mean_kl
+
+        kl_values[row, col] = mean_kl
+        
+        
+        
+        
 
 kl_values = kl_values[:, [0, 1, 3, 2]]
 
+
+print(f"File with maximum KL divergence: {kl_file_max}")
+print(f"Maximum KL divergence: {max_kl}")
+print(f"File with minimum KL divergence: {kl_file_min}")
+print(f"Minimum KL divergence: {min_kl}")
+
 # ── 5. Plot ───────────────────────────────────────────────────────────────────
 
-fig, ax = plt.subplots(figsize=(8, 8))
-plt.subplots_adjust(left=0.45, top=0.75)
+
+
+fig = plt.figure(layout = "constrained", figsize=(12, 6))
+gs = GridSpec(2, 3, figure=fig)
+
+ax = fig.add_subplot(gs[:2, 0])
+
+# fig, ax = plt.subplots(figsize=(8, 8))
+# plt.subplots_adjust(left=0.45, top=0.75)
 
 pink_gradient = LinearSegmentedColormap.from_list("pink_gradient", ["#fce8f1", "#e06098", "#B81365"])
 im = ax.imshow(kl_values, cmap=pink_gradient, aspect="auto")
@@ -278,7 +323,86 @@ for label, c_start, c_end in x_bracket_groups:
     ax.text(x_mid, text_y, label, ha="center", va="bottom",
             fontsize=9, transform=trans, clip_on=False)
 
+
+
 print(np.nanmin(kl_values), np.nanmax(kl_values))
+
+
+
+
+
+pixel_1_ix = [1,2]
+pixel_2_ix = [3,4]
+
+for k in range(2): 
+    
+    df = pd.read_csv([kl_file_min, kl_file_max][k])
+    
+    true_theta = [kl_true_theta_min, kl_true_theta_max][k]
+    pixel_ix = [pixel_1_ix, pixel_2_ix][k]
+    
+    n_steps = len(df)
+    
+    
+    
+    lil_ax = fig.add_subplot(gs[k, 1])
+    lil_ax.set_ylabel(f"Parameter value")
+    lil_ax.plot(df.iloc[:,1], color=fs.palette[0], label=r"$\rho_{+}$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,2], color=fs.lighten(fs.palette[0]), label=r"$\rho_{-}$", linewidth = 3)
+    lines_1, labs_1 = lil_ax.get_legend_handles_labels()
+    
+    lil_ax.plot([0, n_steps], [true_theta[0], true_theta[0]], color=fs.palette[0], linestyle='--')
+    lil_ax.plot([0, n_steps], [true_theta[1], true_theta[1]], color=fs.lighten(fs.palette[0]), linestyle='--')
+    
+    lil_ax.plot()
+    
+    lil_ax.set_title(f"Node copy parameters" if k == 0 else "")
+    lil_ax.set_xlabel(f"SEM timestep" if k == 1 else "")
+    if k == 0:
+        lil_ax.set_xticklabels([])
+        
+    lil_ax.semilogx()
+    lil_ax.set_ylim(0, 1)
+    
+    if k == 1:
+        # two column legend
+        lil_ax.legend(lines_1, labs_1, loc='upper right', fontsize=11, ncol=2)
+        
+    if k == 0: 
+        lil_ax.set_xticklabels([])
+    
+    
+    
+    lil_ax = fig.add_subplot(gs[k, 2])
+    lil_ax.plot(df.iloc[:,3], color=fs.palette[1], label = r"$\gamma_{+}$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,5], color=fs.palette[2], label = r"$\eta_{+}$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,4], color=fs.lighten(fs.palette[1]), label = r"$\gamma_{-}$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,6], color=fs.lighten(fs.palette[2]), label = r"$\eta_{-}$", linewidth = 3)
+
+    lil_ax.plot([0, n_steps], [true_theta[2], true_theta[2]], color=fs.palette[1], linestyle='--')
+    lil_ax.plot([0, n_steps], [true_theta[3], true_theta[3]], color=fs.lighten(fs.palette[1]), linestyle='--')
+    lil_ax.plot([0, n_steps], [true_theta[4], true_theta[4]], color=fs.palette[2], linestyle='--')
+    lil_ax.plot([0, n_steps], [true_theta[5], true_theta[5]], color=fs.lighten(fs.palette[2]), linestyle='--')
+    lines_2, labs_2 = lil_ax.get_legend_handles_labels()
+    
+    lil_ax.set_ylim(0, 2.1)
+    
+    print(true_theta)
+
+    lil_ax.set_xlabel(f"SEM timestep" if k == 1 else "")
+    lil_ax.set_title(f"Node addition parameters" if k == 0 else "")
+    if k == 0:
+        lil_ax.set_xticklabels([])
+        
+    lil_ax.semilogx()
+    
+    if k == 1:
+        # two column legend
+        lil_ax.legend(lines_2, labs_2, loc='upper right', fontsize=11, ncol=2)
+        
+    if k == 0: 
+        lil_ax.set_xticklabels([])
+
 
 output_path = "fig/sem_convergence_heatmap.png"
 plt.savefig(output_path, dpi=300, bbox_inches="tight")

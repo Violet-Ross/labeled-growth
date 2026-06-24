@@ -358,7 +358,8 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
     For the rest of the steps of the algorithm, the acceptance probability of a proposal that decreases the likelihood is determined by the change in log-likelihood of the proposal divided by $\sigma_\hypergraph$, interpreting the change in likelihood in context of the specific hypergraph. 
     A full specification of the algorithm is provided in \Cref{sec:simulated-annealing-algorithm-spec}.
 
-    \frannie{Need data structure description??}
+    % \frannie{Need data structure description??}
+    % \phil{nah}
 
     
     
@@ -376,21 +377,15 @@ Senate bills: \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialC
 Coauthorship: ??? \phil{Violet can you supply the reference here}
 
 
-\subsection{Simulated Annealing for Community Detection}
-
-We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic}. 
-Under the Nishimori condition \cite{decelle2011asymptotic}, we generate a synthetic hypergraph according to a parameter vector $\paramvector$ and then attempt to learn $\vz$ via simulated annealing using the same parameter vector $\paramvector$. 
-Under the ``fixed'' condition, which simulates a more realistic data analysis scenario, we always use the same parameter vector $\paramvector'$ to learn $\vz$ via simulated annealing, regardless of the true parameter vector $\paramvector$ used to generate the synthetic data. 
-In this condition, we use $\paramvector' = \thetaguess$, which is the same parameter vector used in \Cref{fig:dynamics-eigenvectors} and which we found to be a reasonable default for learning $\vz$ across a range of synthetic data sets generated with different parameters.
-We compare these methods against each other and against a baseline of Laplacian spectral clustering applied to the weighted clique projection of the hypergraph.
-
-Comparing the first and second rows of \Cref{fig:community-synthetic}, we find that in these examples the penalty for using the ``wrong'' parameter vector $\paramvector'$ is relatively small. 
-Furthermore, maximum-likelihood estimation under both the Nishimori and fixed conditions tends to outperform clique-projection spectral clustering in most of the areas of parameter space explored by this experiment. 
-
-
-
-
 \subsection{Parameter Estimation}
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\textwidth]{../fig/sem_convergence_heatmap.png}
+    \caption{Synthetic tests of SEM convergence. \phil{Violet, can you caption more caption?}} \label{fig:sem-convergence-synthetic}
+\end{figure*}
+
 
 Results of SEM on empirical data are in Table \ref{tab:sem-empirical}.
 
@@ -446,14 +441,30 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
 
 \violet{Hate the presentation of this (table 2). Thinking of better ways to convey this information.}
 
+
+
+
+\subsection{Simulated Annealing for Community Detection}
+
+We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic}. 
+Under the Nishimori condition \cite{decelle2011asymptotic}, we generate a synthetic hypergraph according to a parameter vector $\paramvector$ and then attempt to learn $\vz$ via simulated annealing using the same parameter vector $\paramvector$. 
+Under the ``fixed'' condition, which simulates a more realistic data analysis scenario, we always use the same parameter vector $\paramvector'$ to learn $\vz$ via simulated annealing, regardless of the true parameter vector $\paramvector$ used to generate the synthetic data. 
+In this condition, we use $\paramvector' = \thetaguess$, which is the same parameter vector used in \Cref{fig:dynamics-eigenvectors} and which we found to be a reasonable default for learning $\vz$ across a range of synthetic data sets generated with different parameters.
+We compare these methods against each other and against a baseline of Laplacian spectral clustering applied to the weighted clique projection of the hypergraph.
+
+Comparing the first and second rows of \Cref{fig:community-synthetic}, we find that in these examples the penalty for using the ``wrong'' parameter vector $\paramvector'$ is relatively small. 
+Furthermore, maximum-likelihood estimation under both the Nishimori and fixed conditions tends to outperform clique-projection spectral clustering in most of the areas of parameter space explored by this experiment. 
+
+
+
+
 \begin{figure*}
-    \includegraphics[width=\textwidth]{../fig/community-synthetic-data-viz.png}
+    \includegraphics[width=\textwidth]{../fig/community-synthetic-data-viz-main.png}
     \caption{
-        Community detection results on synthetic data under the Nishimori condition \cite{decelle2011asymptotic} of exactly known parameters.
+        Community detection results on synthetic data.
         Each pixel represents \synthrepetitions{} independent hypergraphs generated from our model with \synthtimesteps{} timesteps. 
-        The default parameters are $(\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}}) =
-        (\synthfixedetaplus, \synthfixedetaminus, \synthfixedlambdaplus, \synthfixedlambdaminus, \synthfixedgammaplus, \synthfixedgammaminus)$; in each panel, two of these parameters instead vary across the range shown on the axes. 
-        \phil{This figure is probably a bit too bulky in comparison to the value it adds, consider ways to edit, compactify, or move part of it to supplementary.}
+        In each heatmap, we vary $\same{\copyrate{}}$ and $\opp{\copyrate{}}$, holding $(\same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}}) =
+        (\synthfixedlambdaplus, \synthfixedlambdaminus, \synthfixedgammaplus, \synthfixedgammaminus)$. 
     } \label{fig:community-synthetic}
 \end{figure*}
 
@@ -761,8 +772,18 @@ $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\varepsilon$ & $v$ & $\vareps
             \opp{\hat\novelrate{}} &= \simannvizoppnovelrateguess{}\;. 
         \end{align*}
     
-    \section{Gradient Descent Illustration}
-        TODO
+    \section{More Simulated Annealing on Synthetic Data}
+
+    \begin{figure*}
+    \includegraphics[width=\textwidth]{../fig/community-synthetic-data-viz-supplementary.png}
+    \caption{
+        Community detection results on synthetic data.
+        Each pixel represents \synthrepetitions{} independent hypergraphs generated from our model with \synthtimesteps{} timesteps. 
+        In each heatmap, we vary $\same{\copyrate{}}$ and $\opp{\copyrate{}}$, holding $(\same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}}) =
+        (\synthfixedlambdaplus, \synthfixedlambdaminus, \synthfixedgammaplus, \synthfixedgammaminus)$. 
+    } \label{fig:community-synthetic}
+\end{figure*}
+
 
 
 
