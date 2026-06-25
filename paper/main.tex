@@ -14,6 +14,7 @@
 \usepackage{booktabs}
 \usepackage{makecell}
 
+
 \newcommand{\algorithmautorefname}{Algorithm}
 
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
@@ -424,6 +425,25 @@ We compare these methods against each other and against a baseline of Laplacian 
 Comparing the first and second rows of \Cref{fig:community-synthetic}, we find that in these examples the penalty for using the ``wrong'' parameter vector $\paramvector'$ is relatively small. 
 Furthermore, maximum-likelihood estimation under both the Nishimori and fixed conditions tends to outperform clique-projection spectral clustering in most of the areas of parameter space explored by this experiment. 
 
+Further, we evaluate our simulated annealing algorithm on several empirical datasets:~senate bills \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialClosureHigherorder2018}, contact high school \cite{mastrandrea2015contact,bensonSimplicialClosureHigherorder2018}, and contact primary school \cite{stehle2011high,gemmetto2014mitigation,bensonSimplicialClosureHigherorder2018}.  
+All of these datasets have small $\novelrate$ under our model due to their large number of edges compared to small number of nodes.  
+Further, especially in the context of the datasets, the novel node mechanism does not seem to be accurate for the treatment of nodes as the system and many of their nodes already exist far before the data is collected.
+Thus, in our empirical runs, we treat all nodes as external nodes in our simulated annealing algorithm.  
+\begin{table}
+    \caption{Community detection results ARI on empirical datasets.  Simulated annealing returns average ARI on 10 runs}\label{tab:results}
+    \resizebox{\columnwidth}{!}{
+        
+        \begin{tabular}{lrrr}
+        \toprule
+        & Senate Bills & Primary School & High School \\
+        \midrule
+        \textbf{Simulated Annealing} & 0.160 & 0.152 & 0.091 \\
+        \textbf{Modularity} & -0.003 & 0.158 & 0.182 \\
+        \textbf{Spectral Clustering} & 0.005 & 0.175 & 0.182 \\
+        \bottomrule
+        \end{tabular}
+    }
+\end{table}
 
 
 
