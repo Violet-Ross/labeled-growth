@@ -87,11 +87,11 @@ if __name__ == "__main__":
     print_headers = True
     mode = "w"
 
-    ETA_PLUS     = np.linspace(0.5, 1.0, 11)
-    ETA_MINUS    = np.linspace(0.0, 0.5, 11)
+    ETA_PLUS     = np.linspace(0.5, 1.0, 21)
+    ETA_MINUS    = np.linspace(0.0, 0.5, 21)
     
     LAMBDA_PLUS  = np.linspace(0.5, 2.0, 4)
-    LAMBDA_MINUS = [0.2, 0.5]{}
+    LAMBDA_MINUS = [0.2, 0.5]
     # GAMMA_PLUS   = np.linspace(0.0, 0.5, 3)
     # GAMMA_MINUS  = np.linspace(0.0, 0.2, 3)
     GAMMA_PLUS = [0.2]

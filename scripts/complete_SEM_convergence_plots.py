@@ -13,7 +13,7 @@ import figure_settings as fs
 
 sns.set_style("whitegrid")
 
-# fs.set_fonts()
+fs.set_fonts()
 
 # ── 1. True parameter values ──────────────────────────────────────────────────
 

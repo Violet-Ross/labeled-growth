@@ -15,6 +15,13 @@ from math import factorial
 from linear_map import matrix_of_linear_map
 import matplotlib.patches as patches
 
+import figure_settings as fs
+
+plt.style.use('seaborn-v0_8-whitegrid')
+
+fs.set_fonts()
+
+
 def get_dist(TS, window, k_max):
     C = np.zeros((k_max + 1, k_max + 1))
     for e in TS.edge_list[-window:]: 
@@ -78,7 +85,7 @@ if __name__ == "__main__":
     
     
     
-    k_max = 12
+    
     theta = [eta_plus, eta_minus, 0.5, 0.2, 0.4, 0.2]
     
     # FIRST: spectral analysis of the linear operator governing the system dynamics

@@ -11,9 +11,13 @@ import networkx as nx
 from src.algorithms.sem import sem_functions
 import pandas as pd
 sem = sem_functions()
+import figure_settings as fs
+
 
 
 sns.set_style("whitegrid")
+fs.set_fonts()
+
 
 df = pd.DataFrame()
 
@@ -110,10 +114,10 @@ inset_4 = ax.inset_axes(
 n_steps = int(30)
 
 choices_to_highlight = [
-    {"theta_1" : 0.95, "theta_3" : 2.0},
-    {"theta_1" : 0.95, "theta_3" : 0.5},
-    {"theta_1" : 0.55, "theta_3" : 2.0},
-    {"theta_1" : 0.55, "theta_3" : 0.5},
+    {"theta_1" : 0.975, "theta_3" : 2.0},
+    {"theta_1" : 0.975, "theta_3" : 0.5},
+    {"theta_1" : 0.525, "theta_3" : 2.0},
+    {"theta_1" : 0.525, "theta_3" : 0.5},
 ]
 
 

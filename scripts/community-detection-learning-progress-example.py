@@ -1,6 +1,7 @@
 # if using a .ipynb in a folder, this heading is needed before importing
 import sys
 import os
+import scripts.figure_settings as fs
 
 project_root = os.path.abspath(os.path.join(os.getcwd(), '..'))
 sys.path.insert(0, project_root)
@@ -23,6 +24,9 @@ from itertools import combinations
 from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set_style("whitegrid")
+
+fs.set_fonts()
+
 
 def generate_graph_26_starting_nodes(true_theta, timesteps):
     true_p, true_q, gamma_nu, gamma_nr, gamma_eu, gamma_er = true_theta

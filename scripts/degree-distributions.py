@@ -8,7 +8,10 @@ import xgi
 from collections import Counter
 import numpy as np
 from matplotlib import pyplot as plt
+import figure_settings as fs
+
 plt.style.use('seaborn-v0_8-whitegrid')
+fs.set_fonts()
 
 theta = [0.7, 0.3, 0.5, 0.3, 0.2, 0.1]
 
@@ -87,7 +90,7 @@ y = (x ** (-zeta))
 y = offset[1]*y / y.sum()
 
 ax.plot(x, y, linestyle = "--", color = "black", zorder = -10, linewidth=1)
-ax.annotate(fr"$\zeta=${zeta:.2f}", xy = (x[0]*2, y[0]/2))
+ax.annotate(fr"$\zeta=${zeta:.2f}", xy = (x[0]*2, y[0]/2), size=12)
 
 ax.scatter(centers, heights, facecolors='none', edgecolors =  '#055775', linewidth = 2)
 ax.set_xscale("log")
