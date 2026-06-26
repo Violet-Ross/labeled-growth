@@ -181,7 +181,7 @@ for ax, panel in zip(panel_axes, PANELS):
 
     for f in finals:
         ax.scatter(
-            f[panel["xkey"]], f[panel["ykey"]],
+            f[panel["ykey"]], f[panel["xkey"]],
             color=f["color"],
             marker=f["marker"],
             s=350,
@@ -233,7 +233,7 @@ axs[0, 0].annotate(
         lw=1.2,
     ),
 )
-axs[0, 0].text(0.48, 0.85, "homophily", fontsize=12, ha="left", va="center", zorder = 100)
+axs[0, 0].text(0.40, 0.85, "homophily", fontsize=12, ha="left", va="center", zorder = 100)
 
 axs[0, 0].annotate(
     "",
