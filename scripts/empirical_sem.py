@@ -8,6 +8,14 @@ import seaborn as sns
 import json
 import os
 
+
+import scripts.figure_settings as fs
+
+
+
+fs.set_fonts()
+
+
 # ── Configuration ────────────────────────────────────────────────────────────
 
 DATASETS = [
@@ -176,7 +184,7 @@ for ax, panel in zip(panel_axes, PANELS):
             f[panel["xkey"]], f[panel["ykey"]],
             color=f["color"],
             marker=f["marker"],
-            s=400,
+            s=350,
             alpha=0.7,
             zorder=5,
             label=f["label"],
@@ -209,6 +217,9 @@ for ax, panel in zip(panel_axes, PANELS):
     ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
     ax.set_xlabel(panel["xlabel"])
     ax.set_ylabel(panel["ylabel"])
+    
+    # make the axis tick labels larger
+    ax.tick_params(axis='both', which='major', labelsize=14)
 
 # Homophily / heterophily arrows on panel 0 (top-left)
 axs[0, 0].annotate(
@@ -222,7 +233,7 @@ axs[0, 0].annotate(
         lw=1.2,
     ),
 )
-axs[0, 0].text(0.48, 0.75, "homophily", fontsize=10, ha="left", va="center")
+axs[0, 0].text(0.48, 0.85, "homophily", fontsize=12, ha="left", va="center", zorder = 100)
 
 axs[0, 0].annotate(
     "",
@@ -235,7 +246,7 @@ axs[0, 0].annotate(
         lw=1.2,
     ),
 )
-axs[0, 0].text(0.54, 0.53, "heterophily", fontsize=10, ha="left", va="top")
+axs[0, 0].text(0.57, 0.45, "heterophily", fontsize=12, ha="left", va="top", zorder = 100)
 
 # ── Legend panel (bottom-right) ───────────────────────────────────────────────
 ax_legend = axs[1, 1]
@@ -248,7 +259,7 @@ ax_legend.legend(
     frameon=True,
     framealpha=0.9,
     fontsize=16,
-    markerscale=1.2,
+    markerscale=1.0,
     handlelength=2.0,
     handletextpad=0.8,
     borderpad=1.2,
