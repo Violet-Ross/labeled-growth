@@ -377,9 +377,11 @@ Coauthorship: ??? \cite{agarwal2016women}
 
 Figure \ref{fig:synthetic_sem} shows the performance of SEM on synthetic data. 
 Each synthetic hypergraph is generated using our model (\violet{should the model have a name?} \phil{Yes, an ideal name will have an acronym which is fun in some way.}) and a known parameter vector $\paramvector$.
-We performed SEM accross a set of hypergraphs which were generated with varying amounts of homophily in each of the three steps of creating a new edge: the edge copy step, the external node addition step, and the novel node addition step.
+We performed SEM on a set of hypergraphs which were generated with varying amounts of homophily across each of the three growth mechanisms: the edge copy step, the external node addition step, and the novel node addition step.
 We also varied the expected number of nodes added to $e$ in each of these steps.
 Figure \ref{fig:synthetic_sem} demonstrates the accuracy of the SEM-inferred parameter estimates for each of these synthetic hypergraphs.
+The heatmap in Figure \ref{fig:synthetic_sem} shows that the divergence between true and estimated parameters varies among the generating parameters.
+Still, a visual inspection of SEM convergence on the hypergraph with poorest performance shows that the distance between the true and estimated parameter values is small.
 
 \begin{figure*}[t]
     \includegraphics[width=\textwidth]{../fig/sem_convergence_heatmap.png}
@@ -398,7 +400,7 @@ We performed SEM on six empirical higher-order networks, represented as hypergra
 Some hypergraphs, like the primary-school network, appear on or near the line of equality in all three panels, suggesting that there is little to no homophily present in any of the growth mechanisms with respect to the chosen binary labels.
 The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but is plotted below the line of equality in the novel node addition panel.
 This indicates that for the coauthorship network, homophily with respect to gender is present in one of the three growth mechanisms.
-
+The emails hypergraph falls in the het
 
 \violet{Discuss intuition behind enron}
 
