@@ -15,6 +15,7 @@
 \usepackage{makecell}
 
 
+
 \newcommand{\algorithmautorefname}{Algorithm}
 
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
@@ -380,7 +381,7 @@ Each synthetic hypergraph is generated using our model (\violet{should the model
 We performed SEM on a set of hypergraphs which were generated with varying amounts of homophily across each of the three growth mechanisms: the edge copy step, the external node addition step, and the novel node addition step.
 We also varied the expected number of nodes added to $e$ in each of these steps.
 Figure \ref{fig:synthetic_sem} demonstrates the accuracy of the SEM-inferred parameter estimates for each of these synthetic hypergraphs.
-The heatmap in Figure \ref{fig:synthetic_sem} shows that the divergence between true and estimated parameters varies among the generating parameters.
+The heatmap shows that the divergence between true and estimated parameters varies depending on the true parameters.
 Still, a visual inspection of SEM convergence on the hypergraph with poorest performance shows that the distance between the true and estimated parameter values is small.
 
 \begin{figure*}[t]
@@ -398,11 +399,20 @@ Still, a visual inspection of SEM convergence on the hypergraph with poorest per
 
 We performed SEM on six empirical higher-order networks, represented as hypergraphs. 
 Some hypergraphs, like the primary-school network, appear on or near the line of equality in all three panels, suggesting that there is little to no homophily present in any of the growth mechanisms with respect to the chosen binary labels.
-The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but is plotted below the line of equality in the novel node addition panel.
+The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but is plotted above the line of equality in the novel node addition panel.
 This indicates that for the coauthorship network, homophily with respect to gender is present in one of the three growth mechanisms.
-The emails hypergraph falls in the het
 
-\violet{Discuss intuition behind enron}
+The emails hypergraph falls in the heterophilic region of the edge copy panel.
+This is a feature of the sampling strategy.
+The enron dataset contains the email data from 145 users associated with the Enron Corporation.
+These users are the ``core'' nodes of the hypergraph.
+Any users who were included on emails with core users, but whose complete email data was not sampled, are referred to as ``fringe'' nodes.
+Each hyperedge represents an email between a set of nodes, or users.
+Therefore, each hyperedge must contain at least one core node.
+And since 73\% of edges in the hypergraph have size 2, and less than one percent of the nodes in the hypergraph are core nodes, it is likely that any given edge containins one core node and one fringe node.
+In fact, 67\% of edges in the Enron data match exactly this description.
+The high magnitude of the copy parameters, particularly $\copyrate_-$, is a result of the nature of email — rarely does an email interaction between a group of users occur only once.
+Often, an email is precipated by an existing conversation between that set of users, making the edge copy mechanism well suited for modeling email network growth.
 
 For all runs of SEM, the initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001.
 Initial sufficient statistics $\sufficientstatsvec^{(0)} = (1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5)$ were used.
