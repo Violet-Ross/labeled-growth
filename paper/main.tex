@@ -479,29 +479,28 @@ Comparing the first and second rows of \Cref{fig:community-synthetic}, we find t
 Furthermore, maximum-likelihood estimation under both the Nishimori and fixed conditions tends to outperform clique-projection spectral clustering in most of the areas of parameter space explored by this experiment. 
 
 Further, we evaluate our simulated annealing algorithm on several empirical datasets:~senate bills \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialClosureHigherorder2018}, contact high school \cite{mastrandrea2015contact,bensonSimplicialClosureHigherorder2018}, and contact primary school \cite{stehle2011high,gemmetto2014mitigation,bensonSimplicialClosureHigherorder2018}.  
+To best simulate a real application where the parameters that formed the dataset are unknown, we use the same fixed parameter vector for all empirical datasets: $\paramvector' = (.9, .1, 1, .25, .001, .001)$.
 All of these datasets have small $\novelrate$ under our model due to their large number of edges compared to small number of nodes.  
 Further, especially in the context of the datasets, the novel node mechanism does not seem to be accurate for the treatment of nodes as the system and many of their nodes already exist far before the data is collected.
 Thus, in our empirical runs, we treat all nodes as external nodes in our simulated annealing algorithm.  
 
 \begin{figure}
     \includegraphics[width=\columnwidth]{../fig/community_detection_boxplot.png}
-    \caption{Community detection results on empirical datasets.}
+    \caption{Community detection results on empirical datasets.  Box plots correspond to the max likelihood label set's corresponding ARI plotted for 10 runs of simulated annealing on each dataset.  We compare these results with the ARI of the labels generated from the spectral clustering and greedy modularity algorithms of community detection.}
     \label{fig:community-empirical}
 \end{figure}
 
 
-
-
-\frannie{Box plot to be included}\label{fig:simulated-annealing-box-plot}
 \frannie{Ref greedy-modularity and spectral clustering}
 \frannie{Ref ARI?}
 \frannie{Talk about how the datasets were parsed? No duplicated hyperedges for the same interaction}
-\ref
 
-In \Cref{fig:simulated-annealing-box-plot}, we observe that simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
-On the primary school dataset, simulated annealing performs comparably in ARIf to the competitor methods, with a slightly lower average over the ten runs.  
+In \Cref{fig:community-empirical}, we observe that simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
+On the primary school dataset, simulated annealing performs comparably in ARI to the competitor methods, with a slightly lower average ARI compared to spectral clustering and greedy modularity's results.  
 However, simulated annealing performs worse on the high school dataset in ARI compared to its competitors.
-While the computational performance of simulated annealing presents a difficulty in its application, these results provide evidence to support the idea that our model provides a more effective model of the formation of the senate bills dataset compared to modularity's mathematical equivalent, the stochastic block model, and spectral clustering.
+While the computational performance of simulated annealing presents a difficulty in its application, the detection of communities via the maximization of likelihood provides evidence that the formations of these datasets, especially senate-bills, can be modeled via our proposed method.  
+
+\frannie{Unsure of the assumptions behind spectral clustering, tried to google but couldn't find.  If assumption of edge independence, could say something about that}
 
 
 
