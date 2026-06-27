@@ -357,8 +357,6 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
     For the rest of the steps of the algorithm, the acceptance probability of a proposal that decreases the likelihood is determined by the change in log-likelihood of the proposal divided by $\sigma_\hypergraph$, interpreting the change in likelihood in context of the specific hypergraph. 
     A full specification of the algorithm is provided in \Cref{sec:simulated-annealing-algorithm-spec}.
 
-    % \frannie{Need data structure description??}
-    % \phil{nah}
 
     
     
@@ -492,6 +490,18 @@ Thus, in our empirical runs, we treat all nodes as external nodes in our simulat
 \end{figure}
 
 
+
+
+\frannie{Box plot to be included}\label{fig:simulated-annealing-box-plot}
+\frannie{Ref greedy-modularity and spectral clustering}
+\frannie{Ref ARI?}
+\frannie{Talk about how the datasets were parsed? No duplicated hyperedges for the same interaction}
+\ref
+
+In \Cref{fig:simulated-annealing-box-plot}, we observe that simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
+On the primary school dataset, simulated annealing performs comparably in ARIf to the competitor methods, with a slightly lower average over the ten runs.  
+However, simulated annealing performs worse on the high school dataset in ARI compared to its competitors.
+While the computational performance of simulated annealing presents a difficulty in its application, these results provide evidence to support the idea that our model provides a more effective model of the formation of the senate bills dataset compared to modularity's mathematical equivalent, the stochastic block model, and spectral clustering.
 
 
 
