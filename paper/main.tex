@@ -413,16 +413,15 @@ As seen in \Cref{fig:synthetic_sem}, the quality of the learned parameter estima
 We observe especially low estimation errors when the seeded parameters reflect high copy rates $\copyrate_{*}$ and homophily as reflected in the differences $\same{\extantrate} - \opp{\extantrate}$ and $\same{\novelrate} - \opp{\novelrate}$; a typical SEM run for these parameter settings is shown in the top row on the right of \Cref{fig:synthetic_sem}.
 That said, even in the least successful cases for estimation with high KL divergence, the learned estimates are still visually close to the true values, illustrated in the bottom row on the right of \Cref{fig:synthetic_sem}. 
 
-We also used our method to infer parameters for six empirical hypergraph datasets. 
-
+We also used our method to infer parameters for six standard empirical hypergraph datasets described in \Cref{tab:datasets}. 
 \begin{table}
     \caption{Data sets used for parameter estimation. We show the number of nodes ($n$), edges ($m$), average degree ($\langle d \rangle$), and average edge size ($\langle k \rangle$) for each dataset. \phil{Can one of y'all fill in this table, with 1 sig fig for $\langle d \rangle$ and $\langle k \rangle$?}}\label{tab:datasets}
     \resizebox{\columnwidth}{!}{
-        \begin{tabular}{lrrrrr}
+        \begin{tabular}{lrrrrrrr}
         \toprule
-        & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Source\\
+        & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Nodes are & Edges mean & Labels represent\\
         \midrule
-        \texttt{senate-bills} & 100 & 200 & 2.0 & 4.0 & [1]\\
+        \texttt{senate-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} & 100 & 200 & 2.0 & 4.0 & Cosponsored bills & Political parties\\
         \texttt{house-bills} &  &  &  \\
         \texttt{high-school} &  &  &  \\
         \texttt{primary-school} &  &  &  \\
@@ -433,11 +432,16 @@ We also used our method to infer parameters for six empirical hypergraph dataset
     }
 \end{table}
 
+\Cref{fig:empirical_sem} shows our parameter estimates for each of the empirical data sets. 
+In each panel, we plot the same-label and opposite-label parameter estimates on opposing axes. 
+Some data sets, like the gendered primary school contact network, appear on or near the line of equality in all three panels, suggesting that there is little selection in network evolution with respect to the chosen binary labels. 
+The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but there is a difference in the novel node addition parameters: $\hat{\same{\novelrate}} > \hat{\opp{\novelrate}}$.
+Our model presents a simplified picture of the process of collaboration formation as being initiated by a focal individual scientist, who then recruits from a previous collaboration, from other published scientists in the field, and from an unobserved pool of novices who have never published before. 
+Our findings suggest that of these mechanisms, only the latter (the recruitment of novices) displays substantial gender homophily, with novices who share the gender of the focal scientist more likely to be recruited to the collaboration. 
+This effect may be partially due to gender homophily between PhD students and their advisors, a known phenomenon in several scientific areas \cite{schwartz2022impact}. 
 
+\phil{gotta say at least a bit about all the other data sets too.}
 
-Some hypergraphs, like the primary-school network, appear on or near the line of equality in all three panels, suggesting that there is little to no homophily present in any of the growth mechanisms with respect to the chosen binary labels.
-The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but is plotted above the line of equality in the novel node addition panel.
-This indicates that for the coauthorship network, homophily with respect to gender is present in one of the three growth mechanisms.
 
 The emails hypergraph falls in the heterophilic region of the edge copy panel.
 This is a feature of the sampling strategy.
