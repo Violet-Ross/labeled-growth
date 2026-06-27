@@ -256,7 +256,7 @@ handles, labels = panel_axes[0].get_legend_handles_labels()
 ax_legend.legend(
     handles, labels,
     loc="center",
-    frameon=True,
+    frameon=False,
     framealpha=0.9,
     fontsize=16,
     markerscale=1.0,
