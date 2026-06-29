@@ -371,7 +371,7 @@ We evaluate our methods on several data sets.
 Contact high school: \cite{mastrandrea2015contact,bensonSimplicialClosureHigherorder2018}
 Contact primary school: \cite{stehle2011high,gemmetto2014mitigation,bensonSimplicialClosureHigherorder2018}
 Senate bills: \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialClosureHigherorder2018}
-Coauthorship: ??? \cite{agarwal2016women}
+Coauthorship: \cite{agarwal2016women}
 
 
 \subsection{Parameter Estimation}
@@ -417,14 +417,14 @@ We also used our method to infer parameters for six standard empirical hypergrap
     \resizebox{\columnwidth}{!}{
         \begin{tabular}{lrrrrrrr}
         \toprule
-        & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Nodes are & Edges mean & Labels represent\\
+        & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Nodes are & Edges are & Labels represent\\
         \midrule
-        \texttt{senate-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} & 100 & 200 & 2.0 & 4.0 & Cosponsored bills & Political parties\\
-        \texttt{house-bills} &  &  &  \\
-        \texttt{high-school} &  &  &  \\
-        \texttt{primary-school} &  &  &  \\
-        \texttt{coauthorship} &  &  &  \\
-        \texttt{emails} &  &  &  \\
+        \texttt{senate-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} & 294 & 29157 & 789.6 & 8.0 & Senators & Cosponsored bills & Political party\\
+        \texttt{house-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} &  1494 & 60987 & 835.8 & 20.5 & Congresspeople & Cosponsored bills & Political party  \\
+        \texttt{high-school} \violet{CITE} & 320 & 60544 & 484.6 & 2.6 & Students & Social interaction & Gender  \\
+        \texttt{primary-school} \violet{CITE} & 227 & 44626 & 590.7 & 3.0 & Students & Socail interactions & Gender \\
+        \texttt{coauthorship} \violet{CITE} & 105256 & 142834 & 3.4 & 2.5 & Authors & Papers & Gender \\
+        \texttt{emails} \cite{agarwal2016women} \violet{not sure what to cite here} & 14901 & 83372 & 18.5 & 3.3 & Email addresses & Sender and all recipients of an email & Fringe vs. core \\
         \bottomrule
         \end{tabular}
     }
