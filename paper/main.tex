@@ -12,8 +12,9 @@
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage{booktabs}
+\usepackage{xcolor}
 \usepackage{makecell}
-
+\usepackage[colorinlistoftodos]{todonotes}
 
 
 
@@ -49,6 +50,10 @@
 
 \maketitle
 
+\listoftodos
+
+
+
 
 
 
@@ -58,6 +63,7 @@
 
     Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions, such as social interactions (both in-person \cite{mastrandrea2015contact} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship \cite{wu2022hypergraph}, and ecological systems \cite{levine2017beyond}. 
     Much recent work has emphasized the importance of faithfully representing polyadic structure rather than reducing it to dyadic interactions \cite{battistonNetworksPairwiseInteractions2020,bick2023higher}, though recent work has shown that some purportedly higher-order dynamics can be faithfully represented on dyadic networks under appropriate models \cite{peixoto2026graphs}.
+
 
     % MORE HIGHER ORDER HERE
     Much attention in the theory of (hyper)graph mining has focused on developing novel techniques for community detection (also often called \emph{clustering} or \emph{partitioning}). 
@@ -106,7 +112,6 @@
             Along the horizontal axis, we vary $\same{\copyrate{}}$ and set $\opp{\copyrate{}} = 1 - \same{\copyrate{}}$. 
             Each parameter combination is simulated $10^2$ times for $10^3$ timesteps. 
             On either side of the plot we show small hypergraphs sampled from parameter combinations indicated by the square markers. 
-            \phil{Fig is good but maybe we want to do $10^3$ reps just to reduce the noise a bit, and possibly increase the resolution of the copy parameters.}
         }\label{fig:community-structure-illustration}
     \end{figure}
 
@@ -223,13 +228,6 @@
     Here, $\novelrate{}$ can be interpreted as the expected number of novel nodes added per new edge, while $\expectedcopiednodes{}$ can be interpreted as the expected number of nodes copied into a new edge from the sampled edge, normalized by the average degree of a node in the hypergraph.
     A derivation of this result and computational illustration are provided in \Cref{sec:degree-distribution-appendix} and \Cref{fig:degrees}. 
     
-
-    \subsubsection{Community Structure}
-
-        \emph{Show a plot describing how the modularity of the clique projection varies by parameter, and perhaps some sample hypergraphs with associated partitions. }
-
-        
-
 \section{Model Inference}
 
 \subsection{Parameter Estimation via Stochastic EM} \label{sec:sem}
@@ -419,15 +417,15 @@ The \texttt{high-school} and \texttt{primary-school} datasets \cite{gemmetto2014
 Finally, we created the \texttt{coauthorship} data set by... \phil{Violet, can you fill this in?}
 
 \begin{table*}
-    \caption{Data sets used for parameter estimation. We show the number of nodes ($n$), edges ($m$), average degree ($\langle d \rangle$), and average edge size ($\langle k \rangle$) for each dataset.}\label{tab:datasets}
+    \caption{Data sets used for parameter estimation. We show the number of nodes $n$, edges $m$, average degree $\langle d \rangle$, and average edge size $\langle k \rangle$ for each dataset.}\label{tab:datasets}
         \begin{tabular}{lrrrrrrr}
-        \toprule
+        % \toprule
         & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Nodes are & Edges are & Labels represent\\
         \midrule
         \texttt{senate-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} & 294 & 29,157 & 789.6 & 8.0 & Senators & Cosponsored bills & Political party\\
         \texttt{house-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} &  1,494 & 60,987 & 835.8 & 20.5 & Congresspeople & Cosponsored bills & Political party  \\
-        \texttt{high-school} \cite{gemmetto2014mitigation,stehle2011high} & 320 & 60,544 & 484.6 & 2.6 & Students & Social interaction & Gender  \\
-        \texttt{primary-school} \cite{mastrandrea2015contact} & 227 & 44,626 & 590.7 & 3.0 & Students & Socail interactions & Gender \\
+        \texttt{high-school} \cite{gemmetto2014mitigation,stehle2011high} & 320 & 60,544 & 484.6 & 2.6 & Students & Social interactions & Gender  \\
+        \texttt{primary-school} \cite{mastrandrea2015contact} & 227 & 44,626 & 590.7 & 3.0 & Students & Social interactions & Gender \\
         \texttt{enron-emails} \cite{klimt2004enron}  & 14,901 & 83,372 & 18.5 & 3.3 & Email addresses & Email threads & Fringe vs. core \\
         \texttt{coauthorship} \cite{agarwal2016women} & 105,256 & 142,834 & 3.4 & 2.5 & Authors & Papers & Gender \\
         \bottomrule
@@ -436,20 +434,24 @@ Finally, we created the \texttt{coauthorship} data set by... \phil{Violet, can y
 \Cref{fig:empirical_sem} shows our parameter estimates for each of the empirical data sets. 
 In each panel, we plot the same-label and opposite-label parameter estimates on opposing axes. 
 Some data sets, like the gendered primary school contact network, appear on or near the line of equality in all three panels, suggesting that there is little selection in network evolution with respect to the chosen binary labels. 
-The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but there is a difference in the novel node addition parameters: $\hat{\same{\novelrate}} > \hat{\opp{\novelrate}}$.
+The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but there is a difference in the novel node addition parameters: $\same{\hat{\novelrate}} > \opp{\hat{\novelrate}}$.
 Our model presents a simplified picture of the process of collaboration formation as being initiated by a focal individual scientist, who then recruits from a previous collaboration, from other published scientists in the field, and from an unobserved pool of novices who have never published before. 
 Our findings suggest that of these mechanisms, only the latter (the recruitment of novices) displays substantial gender homophily, with novices who share the gender of the focal scientist more likely to be recruited to the collaboration. 
 This effect may be partially due to gender homophily between PhD students and their advisors, a known phenomenon in several scientific areas \cite{schwartz2022impact}. 
 
 \violet{begin NEW: discuss congressional data SEM}
 
-The senate-bills data appears to have slight homophily in the edge copy and external node addition steps, and has near-zero values for the novel node addition parameters.
-The house-bills data also has near-zero valued novel node addition parameters and has similar edge copy parameters to senate-bills (though house-bills is slighly heterophilic and senate-bills is slightly homophilic).
-The main distinction between the parameters of the two congressional networks is the external node addition step, where the values of both $\extantrate_+$ and $\extantrate_-$ are higher in house-bills than in senate-bills.
-This might be explained by the higher mean edge size of house-bills (20.5, as opposed to the 8.0 of senate-bills.). 
-That is, a bill in the House of Representatives has on average more cosponsors than a bill in the Senate, and since only about half of $\seededge$ is copied to $\newedge$, and $\novelrate_-$ and $\novelrate_+$ are close to zero, the external node parameters will grow proportionally to the mean edge size.
+The \texttt{senate-bills} dataset appears to have slight homophily in the estimates of the edge copy and external node addition parameters.
+Because new senators are elected far less frequently than bills are cosponsored, the novel node addition parameters are both nearly 0. 
+The analogous \texttt{house-bills} data set has edge copy parameter estimates which are relatively similar to those of \texttt{senate-bills}, but which suggest a small tendency towards heterophily rather than homophily in edge-copying \phil{Violet, we need to say something about why this might be, or sorta acknowledge the mystery of it. Thoughts?}
+The novel node estimates are also very small. 
+The biggest difference in our estimates for these two systems is in the external node addition parameter estimates; the \texttt{house-bills} data set has estimates $\same{\hat{\extantrate}}$ and $\opp{\hat{\extantrate}}$ which are each roughly three times larger than their values in the \texttt{senate-bills} data set.
+These estimates suggest the operation of similar levels of party homophily in the cosponsorship of bills, but with proportionally more of the legislators sponsoring a bill originating in the House having been previously uninvolved with a previous ``seeding'' bill.  
+These estimates reflect the higher mean edge size of \texttt{house-bills}, where a bill is co-sponsored by a mean of over 20 congresspersons, as opposed to the mean of 8 in \texttt{senate-bills}. 
+% That is, a bill in the House of Representatives has on average more cosponsors than a bill in the Senate, and since only about half of $\seededge$ is copied to $\newedge$, and $\opp{\novelrate}$ and $\same{\novelrate}$ are close to zero, the external node parameters will grow proportionally to the mean edge size.
 
 \violet{end NEW}
+\phil{Made minor revisions and a comment in the section above}
     
 The emails hypergraph falls in the heterophilic region of the edge copy panel.
 This is a feature of the sampling strategy.
@@ -463,8 +465,6 @@ In fact, 67\% of edges in the Enron data match exactly this description.
 The high magnitude of the copy parameters, particularly $\copyrate_-$, is a result of the nature of email — rarely does an email interaction between a group of users occur only once.
 Often, an email is precipated by an existing conversation between that set of users, making the edge copy mechanism well suited for modeling email network growth.
 
-For all runs of SEM, the initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001.
-Initial sufficient statistics $\sufficientstatsvec^{(0)} = (1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5)$ were used.
 
 \begin{figure}[t]
     \includegraphics[width=0.5\textwidth]{../fig/empirical_sem.png}
@@ -489,13 +489,15 @@ Comparing the first and second rows of \Cref{fig:community-synthetic}, we find t
 Furthermore, maximum-likelihood estimation under both the Nishimori and fixed conditions tends to outperform clique-projection spectral clustering in most of the areas of parameter space explored by this experiment. 
 
 We also evaluate our simulated annealing algorithm on a subset of our empirical data sets: \texttt{senate-bills}, \texttt{primary-school}, and \texttt{high-school}; the poor scaling of simulated annealing with the number of nodes $n$ made it computationally prohibitive to run on the larger \texttt{house-bills}, \texttt{enron-emails}, and \texttt{coauthorship} data sets.
-Since in data analysis contexts the labels $\vz$ (and therefore parameter estimates $\hat{\paramvector}$) are not available, we instead use a single, fixed parameter vector for each of these three experiments: $\hat{\paramvector} = (.9, .1, 1, .25, .001, .001)$.
+Since in data analysis contexts the labels $\vz$ (and therefore parameter estimates $\hat{\paramvector}$) are not available, we instead use a single, fixed parameter vector for each of these three experiments: $\hat{\paramvector} = (0.9, 0.1, 1.0, 0.25, 0.001, 0.001)$.
 All of these datasets have small $\novelrate$ under our model due to their large number of edges compared to small number of nodes.  
 Since in these three data sets many of the nodes exist in the system before data collection, for the purposes of community detection we ignore the novel node addition step, assuming instead that all nodes are present in the system and eligible to be added via the extant node addition step. 
 
 \begin{figure}
     \includegraphics[width=\columnwidth]{../fig/community_detection_boxplot.png}
-    \caption{Community detection results on empirical datasets.  Box plots correspond to the max likelihood label set's corresponding ARI plotted for 10 runs of simulated annealing on each dataset.  We compare these results with the ARI of the labels generated from the spectral clustering and greedy modularity algorithms of community detection.}
+    \caption{Community detection results on three selected empirical datasets.  Box plots describe the distribution of the ARI of simulated annealing on the selected data set across 10 separate runs. 
+    The single label set achieving the highest likelihood under simulated annealing is highlighted. 
+    We compare these results with the ARI of the labels generated via normalized spectral clustering and greedy modularity maximization.}
     \label{fig:community-empirical}
 \end{figure}
 
@@ -656,8 +658,9 @@ While the computational performance of simulated annealing presents a difficulty
         \label{fig:degrees}
     \end{figure}
 
-    \section{Sufficient Statistics for Stochastic Expectation-Maximization} \label{sec:sufficient-statistics}
+    \section{More on Stochastic Expectation-Maximization (SEM)} \label{sec:sufficient-statistics}
 
+    \subsection{Sufficient Statistics}
         We describe the function $\sigma$ from \Cref{sec:sem} which computes the conditional sufficient statistics for the parameters $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed edge $e$, a candidate parent edge $f$, a candidate seed node $u$, and the node labels $\vz$. 
         Let $z = z_u$ be the label of the seed node $u$. 
         Let $e_z$ be the set of nodes in $e$ with label $z$, and let $f_z$ be the set of nodes in $f$ with label $z$. 
@@ -689,6 +692,15 @@ While the computational performance of simulated annealing presents a difficulty
         \end{align*}
         \phil{\@Violet, I added the $-1$ here to what you had previously written but please check.}
     
+    \subsection{Implementation Details}
+
+
+        For all runs of SEM, the initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001. \phil{Violet, can we make this a bit more mathematical?}
+        We initialized the vector of sufficient statistics $\sufficientstatsvec^{(0)} = (1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5)$.
+
+
+        
+
     \section{Approximation Argument for Simulated Anealing}\label{sec:simulated-annealing-approximation}
 
         This section provides further detail on the approximation to the likelihood described in \Cref{sec:community-detection} and used in our simulated annealing implementation. 

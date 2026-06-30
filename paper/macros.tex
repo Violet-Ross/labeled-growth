@@ -5,9 +5,16 @@
 \newcommand{\squarebrackets}[1]{\left[ #1 \right]}
 \newcommand{\prob}{\mathbb{P}}
 
-\newcommand{\phil}[1]{\textcolor{blue}{PC: #1}}
-\newcommand{\violet}[1]{\textcolor{red}{VR: #1}}
-\newcommand{\frannie}[1]{\textcolor{green}{FC: #1}}
+
+\definecolor{lavender}{rgb}{0.858, 0.688, 0.878}
+\definecolor{lightblue}{rgb}{0.678, 0.847, 0.902}
+\definecolor{lightgreen}{rgb}{0.678, 0.847, 0.678}
+
+
+\newcommand{\phil}[1]{\todo[color=lightgreen,bordercolor=lightgreen,inline]{PC: #1}}
+\newcommand{\violet}[1]{\todo[color=lavender,bordercolor=lavender,inline]{VR: #1}}
+\newcommand{\frannie}[1]{\todo[color=lightblue,bordercolor=lightblue,inline]{FC: #1}}
+
 
 \newcommand{\at}[2]{#1^{(#2)}}
 \newcommand{\hypergraph}{\mathcal{H}}
