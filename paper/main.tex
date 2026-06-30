@@ -438,9 +438,16 @@ Our model presents a simplified picture of the process of collaboration formatio
 Our findings suggest that of these mechanisms, only the latter (the recruitment of novices) displays substantial gender homophily, with novices who share the gender of the focal scientist more likely to be recruited to the collaboration. 
 This effect may be partially due to gender homophily between PhD students and their advisors, a known phenomenon in several scientific areas \cite{schwartz2022impact}. 
 
-\phil{gotta say at least a bit about all the other data sets too.}
+\violet{begin NEW: discuss congressional data SEM}
 
+The senate-bills data appears to have slight homophily in the edge copy and external node addition steps, and has near-zero values for the novel node addition parameters.
+The house-bills data also has near-zero valued novel node addition parameters and has similar edge copy parameters to senate-bills (though house-bills is slighly heterophilic and senate-bills is slightly homophilic).
+The main distinction between the parameters of the two congressional networks is the external node addition step, where the values of both $\extantrate_+$ and $\extantrate_-$ are higher in house-bills than in senate-bills.
+This might be explained by the higher mean edge size of house-bills (20.5, as opposed to the 8.0 of senate-bills.). 
+That is, a bill in the House of Representatives has on average more cosponsors than a bill in the Senate, and since only about half of $\seededge$ is copied to $\newedge$, and $\novelrate_-$ and $\novelrate_+$ are close to zero, the external node parameters will grow proportionally to the mean edge size.
 
+\violet{end NEW}
+    
 The emails hypergraph falls in the heterophilic region of the edge copy panel.
 This is a feature of the sampling strategy.
 The enron dataset contains the email data from 145 users associated with the Enron Corporation.
