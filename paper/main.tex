@@ -374,7 +374,7 @@ Senate bills: \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialC
 Coauthorship: \cite{agarwal2016women}
 
 
-\subsection{Parameter Estimation}
+\subsection{Parameter Estimation on Synthetic Data}
 
 \begin{figure*}[t]
     \includegraphics[width=\textwidth]{../fig/sem_convergence_heatmap.png}
@@ -411,25 +411,28 @@ As seen in \Cref{fig:synthetic_sem}, the quality of the learned parameter estima
 We observe especially low estimation errors when the seeded parameters reflect high copy rates $\copyrate_{*}$ and homophily as reflected in the differences $\same{\extantrate} - \opp{\extantrate}$ and $\same{\novelrate} - \opp{\novelrate}$; a typical SEM run for these parameter settings is shown in the top row on the right of \Cref{fig:synthetic_sem}.
 That said, even in the least successful cases for estimation with high KL divergence, the learned estimates are still visually close to the true values, illustrated in the bottom row on the right of \Cref{fig:synthetic_sem}. 
 
+\subsection{Parameter Estimation on Empirical Data} \label{sec:sem-empirical}
+
 We also used our method to infer parameters for six standard empirical hypergraph datasets described in \Cref{tab:datasets}. 
-\begin{table}
+The \texttt{senate-bills} and \texttt{house-bills} datasets \cite{fowler2006connecting,fowler2006legislative} are hypergraphs of cosponsorships of bills in the U.S. Senate and House of Representatives, respectively, with node labels corresponding to the political party of each legislator; we use the version of these data sets used in \cite{chodrowGenerativeHypergraphClustering2021}.
+The \texttt{high-school} and \texttt{primary-school} datasets \cite{gemmetto2014mitigation,stehle2011high,mastrandrea2015contact} are hypergraphs of social interactions between students in a high school and primary school, respectively, with node labels corresponding to the gender of each student; these data sets were collected through the SocioPatterns project. 
+Finally, we created the \texttt{coauthorship} data set by... \phil{Violet, can you fill this in?}
+
+\begin{table*}
     \caption{Data sets used for parameter estimation. We show the number of nodes ($n$), edges ($m$), average degree ($\langle d \rangle$), and average edge size ($\langle k \rangle$) for each dataset.}\label{tab:datasets}
-    \resizebox{\columnwidth}{!}{
         \begin{tabular}{lrrrrrrr}
         \toprule
         & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Nodes are & Edges are & Labels represent\\
         \midrule
-        \texttt{senate-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} & 294 & 29157 & 789.6 & 8.0 & Senators & Cosponsored bills & Political party\\
-        \texttt{house-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} &  1494 & 60987 & 835.8 & 20.5 & Congresspeople & Cosponsored bills & Political party  \\
-        \texttt{high-school} \cite{gemmetto2014mitigation,stehle2011high} & 320 & 60544 & 484.6 & 2.6 & Students & Social interaction & Gender  \\
-        \texttt{primary-school} \cite{mastrandrea2015contact} & 227 & 44626 & 590.7 & 3.0 & Students & Socail interactions & Gender \\
-        \texttt{coauthorship} \cite{agarwal2016women} & 105256 & 142834 & 3.4 & 2.5 & Authors & Papers & Gender \\
-        \texttt{emails} \violet{not sure what to cite here} & 14901 & 83372 & 18.5 & 3.3 & Email addresses & Emails (sender and recipients) & Fringe vs. core \\
+        \texttt{senate-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} & 294 & 29,157 & 789.6 & 8.0 & Senators & Cosponsored bills & Political party\\
+        \texttt{house-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} &  1,494 & 60,987 & 835.8 & 20.5 & Congresspeople & Cosponsored bills & Political party  \\
+        \texttt{high-school} \cite{gemmetto2014mitigation,stehle2011high} & 320 & 60,544 & 484.6 & 2.6 & Students & Social interaction & Gender  \\
+        \texttt{primary-school} \cite{mastrandrea2015contact} & 227 & 44,626 & 590.7 & 3.0 & Students & Socail interactions & Gender \\
+        \texttt{enron-emails} \cite{klimt2004enron}  & 14,901 & 83,372 & 18.5 & 3.3 & Email addresses & Email threads & Fringe vs. core \\
+        \texttt{coauthorship} \cite{agarwal2016women} & 105,256 & 142,834 & 3.4 & 2.5 & Authors & Papers & Gender \\
         \bottomrule
         \end{tabular}
-    }
-\end{table}
-
+\end{table*}
 \Cref{fig:empirical_sem} shows our parameter estimates for each of the empirical data sets. 
 In each panel, we plot the same-label and opposite-label parameter estimates on opposing axes. 
 Some data sets, like the gendered primary school contact network, appear on or near the line of equality in all three panels, suggesting that there is little selection in network evolution with respect to the chosen binary labels. 
@@ -465,7 +468,7 @@ Initial sufficient statistics $\sufficientstatsvec^{(0)} = (1, 2, 1, 2, 0.5, 0.5
 
 \begin{figure}[t]
     \includegraphics[width=0.5\textwidth]{../fig/empirical_sem.png}
-    \caption{Model parameters inferred via SEM for six empirical higher-order networks. \phil{imo we need text and points to be a bit bigger here for legibility, not sure if we can do this as a single-column}}
+    \caption{Model parameters inferred via SEM for six empirical higher-order networks.}
      \label{fig:empirical_sem}
 \end{figure}
 
@@ -474,9 +477,9 @@ Initial sufficient statistics $\sufficientstatsvec^{(0)} = (1, 2, 1, 2, 0.5, 0.5
 
 
 
-\subsection{Simulated Annealing for Community Detection}
+\subsection{Community Detection via Simulated Annealing}
 
-We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic}. 
+We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic} \phil{repopulate this}. 
 Under the Nishimori condition \cite{decelle2011asymptotic}, we generate a synthetic hypergraph according to a parameter vector $\paramvector$ and then attempt to learn $\vz$ via simulated annealing using the same parameter vector $\paramvector$. 
 Under the ``fixed'' condition, which simulates a more realistic data analysis scenario, we always use the same parameter vector $\paramvector'$ to learn $\vz$ via simulated annealing, regardless of the true parameter vector $\paramvector$ used to generate the synthetic data. 
 In this condition, we use $\paramvector' = \thetaguess$, which is the same parameter vector used in \Cref{fig:dynamics-eigenvectors} and which we found to be a reasonable default for learning $\vz$ across a range of synthetic data sets generated with different parameters.
@@ -485,11 +488,10 @@ We compare these methods against each other and against a baseline of Laplacian 
 Comparing the first and second rows of \Cref{fig:community-synthetic}, we find that in these examples the penalty for using the ``wrong'' parameter vector $\paramvector'$ is relatively small. 
 Furthermore, maximum-likelihood estimation under both the Nishimori and fixed conditions tends to outperform clique-projection spectral clustering in most of the areas of parameter space explored by this experiment. 
 
-Further, we evaluate our simulated annealing algorithm on several empirical datasets:~senate bills \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialClosureHigherorder2018}, contact high school \cite{mastrandrea2015contact,bensonSimplicialClosureHigherorder2018}, and contact primary school \cite{stehle2011high,gemmetto2014mitigation,bensonSimplicialClosureHigherorder2018}.  
-To best simulate a real application where the parameters that formed the dataset are unknown, we use the same fixed parameter vector for all empirical datasets: $\paramvector' = (.9, .1, 1, .25, .001, .001)$.
+We also evaluate our simulated annealing algorithm on a subset of our empirical data sets: \texttt{senate-bills}, \texttt{primary-school}, and \texttt{high-school}; the poor scaling of simulated annealing with the number of nodes $n$ made it computationally prohibitive to run on the larger \texttt{house-bills}, \texttt{enron-emails}, and \texttt{coauthorship} data sets.
+Since in data analysis contexts the labels $\vz$ (and therefore parameter estimates $\hat{\paramvector}$) are not available, we instead use a single, fixed parameter vector for each of these three experiments: $\hat{\paramvector} = (.9, .1, 1, .25, .001, .001)$.
 All of these datasets have small $\novelrate$ under our model due to their large number of edges compared to small number of nodes.  
-Further, especially in the context of the datasets, the novel node mechanism does not seem to be accurate for the treatment of nodes as the system and many of their nodes already exist far before the data is collected.
-Thus, in our empirical runs, we treat all nodes as external nodes in our simulated annealing algorithm.  
+Since in these three data sets many of the nodes exist in the system before data collection, for the purposes of community detection we ignore the novel node addition step, assuming instead that all nodes are present in the system and eligible to be added via the extant node addition step. 
 
 \begin{figure}
     \includegraphics[width=\columnwidth]{../fig/community_detection_boxplot.png}
@@ -498,9 +500,9 @@ Thus, in our empirical runs, we treat all nodes as external nodes in our simulat
 \end{figure}
 
 
-\frannie{Ref greedy-modularity and spectral clustering}
-\frannie{Ref ARI?}
-\frannie{Talk about how the datasets were parsed? No duplicated hyperedges for the same interaction}
+\frannie{Ref greedy-modularity and spectral clustering} Spectral \cite{luxburg2007tutorial}, modularity \cite{clauset2004finding}. 
+\frannie{Ref ARI?} \cite{hubert1985comparing}
+\frannie{Talk about how the datasets were parsed? No duplicated hyperedges for the same interaction} \phil{That would belong in the place where we are introducing the data sets, roughly \Cref{sec:sem-empirical}}
 
 In \Cref{fig:community-empirical}, we observe that simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
 On the primary school dataset, simulated annealing performs comparably in ARI to the competitor methods, with a slightly lower average ARI compared to spectral clustering and greedy modularity's results.  
@@ -508,6 +510,8 @@ However, simulated annealing performs worse on the high school dataset in ARI co
 While the computational performance of simulated annealing presents a difficulty in its application, the detection of communities via the maximization of likelihood provides evidence that the formations of these datasets, especially senate-bills, can be modeled via our proposed method.  
 
 \frannie{Unsure of the assumptions behind spectral clustering, tried to google but couldn't find.  If assumption of edge independence, could say something about that}
+
+\phil{Good idea to look on this. Spectral clustering is not a generative (probabilistic model-based) method, but many of its standard justifications do rely on stochastic blockmodels which have the independence assumption. The best citation is probably this one: \cite{lei2015consistency}}. 
 
 
 
@@ -543,7 +547,8 @@ While the computational performance of simulated annealing presents a difficulty
 
 \begin{acknowledgments}
     PSC acknowledges support from the National Science Foundation under DMS-2407058.
-    Compute was provided by Middlebury College through support from the National Science Foundation under award 1827373.
+    Compute was provided by Middlebury College through support from the National Science Foundation under award 1827373. 
+
 \end{acknowledgments}
 
 \section*{Data Availability}
