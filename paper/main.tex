@@ -415,7 +415,7 @@ We also used our method to infer parameters for six standard empirical hypergrap
 The \texttt{senate-bills} and \texttt{house-bills} datasets \cite{fowler2006connecting,fowler2006legislative} are hypergraphs of cosponsorships of bills in the U.S. Senate and House of Representatives, respectively, with node labels corresponding to the political party of each legislator; we use the version of these data sets used in \cite{chodrowGenerativeHypergraphClustering2021}.
 The \texttt{high-school} and \texttt{primary-school} datasets \cite{gemmetto2014mitigation,stehle2011high,mastrandrea2015contact} are hypergraphs of social interactions between students in a high school and primary school, respectively, with node labels corresponding to the gender of each student; these data sets were collected through the SocioPatterns project.
 To prevent redundancy, we treat an interaction that persists across sequential timesteps as one hyperedge.
-Finally, we created the \texttt{coauthorship} data set by... \phil{Violet, can you fill this in?}
+Finally, we inferred parameters for the \texttt{coauthorship} data set \cite{agarwal2016women}, which contains publishing records for 81 computer science conferences from 2000 to 2015, with a binary gender label for each author.
 
 \begin{table*}
     \caption{Data sets used for parameter estimation. We show the number of nodes $n$, edges $m$, average degree $\langle d \rangle$, and average edge size $\langle k \rangle$ for each dataset.}\label{tab:datasets}
@@ -440,19 +440,18 @@ Our model presents a simplified picture of the process of collaboration formatio
 Our findings suggest that of these mechanisms, only the latter (the recruitment of novices) displays substantial gender homophily, with novices who share the gender of the focal scientist more likely to be recruited to the collaboration. 
 This effect may be partially due to gender homophily between PhD students and their advisors, a known phenomenon in several scientific areas \cite{schwartz2022impact}. 
 
-\violet{begin NEW: discuss congressional data SEM}
-
 The \texttt{senate-bills} dataset appears to have slight homophily in the estimates of the edge copy and external node addition parameters.
 Because new senators are elected far less frequently than bills are cosponsored, the novel node addition parameters are both nearly 0. 
-The analogous \texttt{house-bills} data set has edge copy parameter estimates which are relatively similar to those of \texttt{senate-bills}, but which suggest a small tendency towards heterophily rather than homophily in edge-copying \phil{Violet, we need to say something about why this might be, or sorta acknowledge the mystery of it. Thoughts?}
+The analogous \texttt{house-bills} data set has edge copy parameter estimates which are relatively similar to those of \texttt{senate-bills}, but which suggest a small tendency towards heterophily rather than homophily in edge-copying 
+\phil{Violet, we need to say something about why this might be, or sorta acknowledge the mystery of it. Thoughts?}
+
+
 The novel node estimates are also very small. 
 The biggest difference in our estimates for these two systems is in the external node addition parameter estimates; the \texttt{house-bills} data set has estimates $\same{\hat{\extantrate}}$ and $\opp{\hat{\extantrate}}$ which are each roughly three times larger than their values in the \texttt{senate-bills} data set.
 These estimates suggest the operation of similar levels of party homophily in the cosponsorship of bills, but with proportionally more of the legislators sponsoring a bill originating in the House having been previously uninvolved with a previous ``seeding'' bill.  
 These estimates reflect the higher mean edge size of \texttt{house-bills}, where a bill is co-sponsored by a mean of over 20 congresspersons, as opposed to the mean of 8 in \texttt{senate-bills}. 
 % That is, a bill in the House of Representatives has on average more cosponsors than a bill in the Senate, and since only about half of $\seededge$ is copied to $\newedge$, and $\opp{\novelrate}$ and $\same{\novelrate}$ are close to zero, the external node parameters will grow proportionally to the mean edge size.
 
-\violet{end NEW}
-\phil{Made minor revisions and a comment in the section above}
     
 The emails hypergraph falls in the heterophilic region of the edge copy panel.
 This is a feature of the sampling strategy.
@@ -689,12 +688,12 @@ While the computational performance of simulated annealing presents a difficulty
             }
              \;.
         \end{align*}
-        \phil{\@Violet, I added the $-1$ here to what you had previously written but please check.}
     
     \subsection{Implementation Details}
 
 
-        For all runs of SEM, the initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001. \phil{Violet, can we make this a bit more mathematical?}
+        For all runs of SEM, the initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001.
+        \phil{Violet, can we make this a bit more mathematical?}
         We initialized the vector of sufficient statistics $\sufficientstatsvec^{(0)} = (1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5)$.
 
 
