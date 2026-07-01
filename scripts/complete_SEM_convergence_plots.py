@@ -7,7 +7,7 @@ from matplotlib.gridspec import GridSpec
 import pandas as pd
 import seaborn as sns
 
-import figure_settings as fs
+import scripts.figure_settings as fs
 
 
 
@@ -303,6 +303,8 @@ for label, r_start, r_end in y_sub_bracket_groups:
     ax.text(sub_text_x, y_mid, label, ha="center", va="center",
             fontsize=9, transform=trans, rotation=90, clip_on=False)
 
+ax.annotate("(a)", xy=(-0.2, 1.05), xycoords='axes fraction', fontsize=16, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+
 # ── 7. X-axis brackets (top side) ────────────────────────────────────────────
 
 bracket_y = 1.12
@@ -333,6 +335,9 @@ print(np.nanmin(kl_values), np.nanmax(kl_values))
 
 pixel_1_ix = [1,2]
 pixel_2_ix = [3,4]
+
+labs = ["(b)", "(c)", "(d)", "(e)"]
+
 
 for k in range(2): 
     
@@ -370,6 +375,8 @@ for k in range(2):
         
     if k == 0: 
         lil_ax.set_xticklabels([])
+        
+    lil_ax.annotate(labs[2*k], xy=(0.05, 0.9), xycoords='axes fraction', fontsize=16, fontweight='bold')
     
     
     
@@ -403,6 +410,7 @@ for k in range(2):
     if k == 0: 
         lil_ax.set_xticklabels([])
 
+    lil_ax.annotate(labs[2*k+1], xy=(0.05, 0.9), xycoords='axes fraction', fontsize=16, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
 
 output_path = "fig/sem_convergence_heatmap.png"
 plt.savefig(output_path, dpi=300, bbox_inches="tight")

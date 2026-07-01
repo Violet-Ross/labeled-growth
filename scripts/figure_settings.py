@@ -1,6 +1,6 @@
 import pylab
 palette = ["#2176AE",  "#B98E00", "#FE6847", "#0CCA4A"]
-
+linestyles = ["-", "--", "-.", ":"]
 
 
 def lighten(color, amount=0.25):
@@ -10,8 +10,6 @@ def lighten(color, amount=0.25):
     hexd = '#%02x%02x%02x' % tuple(int(255 * x) for x in lightened)
     
     return hexd
-
-
 
 def set_fonts(extra_params={}):
     params = {

@@ -15,7 +15,7 @@ from math import factorial
 from linear_map import matrix_of_linear_map
 import matplotlib.patches as patches
 
-import figure_settings as fs
+import scripts.figure_settings as fs
 
 plt.style.use('seaborn-v0_8-whitegrid')
 
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # spectral gap analysis
     
     k_max = 12
-    # k_max = 8
+    # k_max = 6
     
     grid_resolution = 9
     gaps = np.zeros((grid_resolution, grid_resolution))
@@ -195,7 +195,8 @@ if __name__ == "__main__":
         ax = axes[i+1]
         im = ax.imshow(P, cmap = "BrBG", interpolation = "none", vmin = v_min, vmax = vmax, origin = "lower")
         ax.grid(False)
-        ax.set_title(rf"{letter_labels[i]}: $\mathbf{{v}}_{{{i+1}}}$ ($\lambda_{{{i+1}}} = {val:.2f}$)")
+        ax.set_title(rf"$\mathbf{{v}}_{{{i+1}}}$ ($\lambda_{{{i+1}}} = {val:.2f}$)")
+        ax.annotate(letter_labels[i], xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
         ax.set_xlabel(r"$k_0$")
         if i == 0: 
             ax.set_ylabel(r"$k_1$")
@@ -205,9 +206,10 @@ if __name__ == "__main__":
         
         ax = axes[3]
         ax.plot(projection_timesteps, projections[i], label = fr"$\mathbf{{v}}_{{{i+1}}}$", color = colors[i])
-        ax.legend()
+        ax.legend(loc = "center right", frameon = False)
         ax.semilogx()
-        ax.set_title("(d): Projection of simulation state onto eigenvectors")
+        ax.set_title("Projection of simulation state onto eigenvectors")
+        ax.annotate("(d)", xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
     
 
     
@@ -225,7 +227,10 @@ if __name__ == "__main__":
     final_window = n_steps
     C = get_dist(TS, final_window, k_max)
     final = ax.imshow(C / C.sum(), cmap = "Greys", interpolation = "none", vmin = 0, origin = "lower")
-    ax.set_title(f"(e): Final simulation state")
+    ax.set_title(f"Final simulation state")
+    
+    ax.annotate("(e)", xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+    
     
     ax.set_xlabel(r"$k_0$")
     ax.set_ylabel(r"$k_1$")
@@ -240,7 +245,8 @@ if __name__ == "__main__":
     
     ax = axes[0]
     im = ax.imshow(gaps, cmap = "inferno", interpolation = "none", origin = "lower")
-    ax.set_title("(a): Spectral gap")
+    ax.set_title("Spectral gap")
+    ax.annotate("(a)", xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
     ax.set_xlabel(r"$\eta_+$")
     ax.set_ylabel(r"$\eta_-$")
     ax.set_xticks(range(grid_resolution))
@@ -250,6 +256,7 @@ if __name__ == "__main__":
     ax.grid(False)
     
     fig.colorbar(im, ax = ax, format = "%.2f")
+    
     
     
 

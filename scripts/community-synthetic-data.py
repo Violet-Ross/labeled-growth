@@ -125,7 +125,7 @@ def run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LA
         simulated_annealing_labels = simulated_annealing(g, guessed_theta)
         simulated_annealing_ari = adjusted_rand_score(g.get_labels(), simulated_annealing_labels)
 
-        gradient_descent_ari = gradient_descent(g, guessed_theta)
+        # gradient_descent_ari = gradient_descent(g, guessed_theta)
         
         df = pd.DataFrame(
             {
@@ -137,7 +137,7 @@ def run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LA
                 "lambda_minus"            : theta[5],
                 "spectral_ari"            : spectral_ari, 
                 "simulated_annealing_ari" : simulated_annealing_ari, 
-                "gradient_descent_ari"    : gradient_descent_ari,
+                # "gradient_descent_ari"    : gradient_descent_ari,
                 "condition"               : condition
             }, index = [0]
         )
@@ -178,12 +178,12 @@ if __name__ == "__main__":
   
     
     FIXED_PARAMETERS = {
-        "ETA_PLUS" : [0.9],
-        "ETA_MINUS" : [0.1],
-        "GAMMA_PLUS" : [0.2],
-        "GAMMA_MINUS" : [0.1],
+        "ETA_PLUS" : [0.8],
+        "ETA_MINUS" : [0.15],
+        "GAMMA_PLUS" : [0.7],
+        "GAMMA_MINUS" : [0.2],
         "LAMBDA_PLUS" : [0.8],
-        "LAMBDA_MINUS" : [0.3]
+        "LAMBDA_MINUS" : [0.5]
     }
     
     tex_dict = {
@@ -202,14 +202,11 @@ if __name__ == "__main__":
         for key, value in tex_dict.items():
             f.write(f"\\newcommand{{{key}}}{{{value}}}\n")
     
-    
-    
-    
     for run in range(runs):
         
         # vary copy parameter eta
-        ETA_PLUS     = np.linspace(0.5, .95, resolution)
-        ETA_MINUS    = np.linspace(0.05, 0.5, resolution)
+        ETA_PLUS     = np.linspace(0.5, .95, 2*resolution+1)
+        ETA_MINUS    = FIXED_PARAMETERS["ETA_MINUS"]
         GAMMA_PLUS   = FIXED_PARAMETERS["GAMMA_PLUS"]
         GAMMA_MINUS  = FIXED_PARAMETERS["GAMMA_MINUS"]
         LAMBDA_PLUS  = FIXED_PARAMETERS["LAMBDA_PLUS"]
@@ -227,8 +224,8 @@ if __name__ == "__main__":
         ETA_MINUS    = FIXED_PARAMETERS["ETA_MINUS"]
         GAMMA_PLUS   = FIXED_PARAMETERS["GAMMA_PLUS"]
         GAMMA_MINUS  = FIXED_PARAMETERS["GAMMA_MINUS"]
-        LAMBDA_PLUS  = np.linspace(1.1, 2, resolution)
-        LAMBDA_MINUS = np.linspace(0.1, 1, resolution)
+        LAMBDA_PLUS  = np.linspace(0.05, 2, 2*resolution+1)
+        LAMBDA_MINUS = FIXED_PARAMETERS["LAMBDA_MINUS"]
         
         run_experiment(ETA_PLUS, ETA_MINUS, GAMMA_PLUS, GAMMA_MINUS, LAMBDA_PLUS, LAMBDA_MINUS, timesteps, fpath = f"throughput/community/synthetic/{job}.csv", guessed_theta = None, run = run, vary = "lambda")
         
@@ -237,8 +234,8 @@ if __name__ == "__main__":
         # vary novel parameter gamma
         ETA_PLUS     = FIXED_PARAMETERS["ETA_PLUS"]
         ETA_MINUS    = FIXED_PARAMETERS["ETA_MINUS"]
-        GAMMA_PLUS   = np.linspace(0.05, 0.5, resolution)
-        GAMMA_MINUS  = np.linspace(0.05, 0.5, resolution)
+        GAMMA_PLUS   = np.linspace(0.05, 1.0, 2*resolution+1)
+        GAMMA_MINUS  = FIXED_PARAMETERS["GAMMA_MINUS"]
         LAMBDA_PLUS  = FIXED_PARAMETERS["LAMBDA_PLUS"]
         LAMBDA_MINUS = FIXED_PARAMETERS["LAMBDA_MINUS"]
         
