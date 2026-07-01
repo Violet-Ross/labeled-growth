@@ -40,12 +40,14 @@
 
 \date{\today}
 \begin{abstract}
-    We study a mechanistic model of growing hypergraphs in which edge formation is tuned by homophily between binary node attributes. 
+    There are many extant models of hypergraphs with interactions governed by some form of homophily or assortativity, but almost all of these assume independence between edges conditional on node parameters. 
+    Relaxing this strong assumption, we study a mechanistic model of growing hypergraphs in which edge formation is influenced by the realization of previous edges and is tuned by homophily between binary node attributes. 
     Edges form in this model as noisy copies of previous edges, where the transmission of nodes from one edge to the next depends on the labels.
     We derive a power law for the degree distribution in this model and describe the long-term dynamics of the joint distribution of labels contained in edges. 
-    This model defines a likelihood over a labeled hypergraph, allowing us to use standard maximum-likelihood techniques to motivate algorithms. 
+    This model defines a likelihood over a labeled hypergraph, allowing us to use standard maximum-likelihood techniques to structure algorithms. 
     We estimate the model parameters on synthetic and real data via (stochastic) expectation maximization, allowing us to statistically quantify the signature of homophily in empirical polyadic systems. 
     We also demonstrate an approach to community detection via simulated annealing which, though computationally expensive, achieves competitive results on certain data sets known to be challenging to standard community detection techniques.
+    Our findings highlight the benefits of moving beyond edge-independence assumptions in modeling and data analysis, and point to several directions of future work. 
 \end{abstract}
 
 \maketitle
@@ -90,39 +92,29 @@
     % Phil prewriting got down to here.
 
     In this paper, we introduce a model of binary node-labeled hypergraphs in which edges form via a noisy copying interaction which depends the labels. 
+    We refer to this model as \Model{} (\model{}).
     Our work is organized as follows. 
-    In \Cref{sec:model-description}, we describe our model and derive limiting descriptions of the joint distribution of node labels within a given edge, as well as the degree distribution of the hypergraph.
+    In \Cref{sec:model-description}, we describe \model{} and derive limiting descriptions of the joint distribution of node labels within a given edge, as well as the degree distribution of the hypergraph.
     Evaluating the likelihood of our model requires marginalizing over a set of latent variables governing the noisy copy mechanism, which is computationally expensive. 
     To estimate our model's parameters when node labels are known, we therefore describe a stochastic expectation-maximization algorithm in which each iteration has sublinear cost in the number of edges for sparse hypergraphs.
-    We also describe a community detection algorithm for estimating node labels via simulated annealing. 
+    We also describe a community detection algorithm for estimating node labels via simulated annealing on the \model{} likelihood. 
     In \Cref{sec:results} we demonstrate our algorithms on synthetic and empirical data. 
-    We show that, on synthetic data sampled from our model, our stochastic expectation maximization algorithm is both consistent and scalable, and that our simulated annealing algorithm for community detection, though computationally expensive, outperforms other standard methods. 
+    We show that, on synthetic data sampled from \model{}, our stochastic expectation maximization algorithm is both consistent and scalable, and that our simulated annealing algorithm for community detection, though computationally expensive, outperforms other standard methods in certain parameter regimes. 
     On empirical data, our parameter estimatates yield insight into the mechanisms governing edge formation
     Our community detection achieves competitive recovery of observed metadata labels on some data sets known to be challenging to other community detection methods.
     We conclude with some discussion of future directions for models of node-labeled hypergraphs with edge-dependence. 
 
-\section{Model Description} \label{sec:model-description}
+\section{\model{} Model Description} \label{sec:model-description}
 
-\begin{figure}
-    \includegraphics[width=0.48\textwidth]{../fig/community-structure-sims-combined.png}
-        \caption{
-            Suite of model simulations illustrating the dependence of community structure, as measured by clique-projection modularity $Q$, on the model's parameters. 
-            The parameters $\opp{\extantrate} = 0.5$ $\same{\novelrate{}} = 0.2$, and $\opp{\novelrate{}} = 0.1$ are held fixed. 
-            Each line corresponds to a different value of $\same{\extantrate{}}$ indicated by the legend.
-            Along the horizontal axis, we vary $\same{\copyrate{}}$ and set $\opp{\copyrate{}} = 1 - \same{\copyrate{}}$. 
-            Each parameter combination is simulated $10^2$ times for $10^3$ timesteps. 
-            On either side of the plot we show small hypergraphs sampled from parameter combinations indicated by the square markers. 
-        }\label{fig:community-structure-illustration}
-    \end{figure}
 
-    Our model builds on the Hyperedge Copy Model (HCM) of He et al. \cite{heEdgeCorrelationsLink2025}. 
-    In their model, edges form through a combination of three distinct steps: a copy step, in which a previous edge is sampled and imperfectly copied; an extant node addition step, in which new nodes are added to the new edge from the existing node set; and a new node addition step, in which new nodes are added to the new edge from outside the existing node set.
-    Our model replicates these mechanisms but adds label-aware parameters to regulate each. 
+    The \Model{} (\model{}) is a generative model for growing hypergraphs with binary node labels. 
+    \model{} is an extension of the Hyperedge Copy Model (HCM) of He et al. \cite{heEdgeCorrelationsLink2025}. 
+    In their HCM, edges form through a combination of three distinct steps: a copy step, in which a previous edge is sampled and imperfectly copied; an extant node addition step, in which new nodes are added to the new edge from the existing node set; and a new node addition step, in which new nodes are added to the new edge from outside the existing node set.
+    \model{} replicates these mechanisms but adds label-aware parameters to regulate each. 
 
-    Formally, a state of our model at time $t$ is a hypergraph $\at{\hypergraph}{t} = \paren{\at{\nodes}{t}, \at{\edges}{t}}$, where $\nodes$ is the set of nodes and $\edges$ is the set of hyperedges. 
-    Each node $\node \in \nodes$ has a binary label $z_{\node} \in \{0, 1\}$.
+    Formally, a \model{} state at time $t$ is a hypergraph $\at{\hypergraph}{t} = \paren{\at{\nodes}{t}, \at{\edges}{t}}$, where $\nodes$ is the set of nodes and $\edges$ is the set of hyperedges, as well as a binary label vector $\vz \in \{0, 1\}^{|\at{\nodes}{t}|}$ which assigns to each node a label of either 0 or 1.
     We let $\bar{z} = 1 - z$ denote the opposite label of $z$.
-    At timestep $t$, add edge $\newedge$ to $\at{\edges}{t}$ to obtain $\at{\edges}{t+1}$, where $\newedge$ is formed according to the following three-step process:
+    At timestep $t$, we add edge $\newedge$ to $\at{\edges}{t}$ to obtain $\at{\edges}{t+1}$, where $\newedge$ is formed according to the following three-step process:
     \begin{itemize}
         \item 
             \textbf{Edge-Copying}: An edge $\seededge$ is sampled uniformly at random from $\at{\edges}{t - 1}$, and a node $\focalnode$ is sampled uniformly at random from $\seededge$. 
@@ -133,10 +125,23 @@
         \item \textbf{Novel Node Addition}: We sample $\novelnodesinedge_{z_\focalnode}$ new nodes with label $z_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_z$ is a Poisson random variable with mean $\same{\novelrate{}}$.
             We similarly sample $\novelnodesinedge_{\bar{z}_\focalnode}$ new nodes with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\opp{\novelrate{}}$.   
     \end{itemize}
-    In our simulations we initialize $\at{\hypergraph}{0}$ with a single edge containing one node of each label, but any combination of hypergraph and node labels can be used as an initial condition. 
     Both our simulations and our statistical inference techniques (described below) were carried using the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
 
-     \Cref{fig:community-structure-illustration} illustrates role of the model parameters in tuning the community structure of realized hypergraphs. 
+
+\begin{figure}
+    \includegraphics[width=0.48\textwidth]{../fig/community-structure-sims-combined.png}
+        \caption{
+            Suite of model simulations illustrating the dependence of community structure, as measured by clique-projection modularity $Q$, on the \model{} parameters. 
+            The parameters $\opp{\extantrate} = 0.5$ $\same{\novelrate{}} = 0.2$, and $\opp{\novelrate{}} = 0.1$ are held fixed. 
+            Each line corresponds to a different value of $\same{\extantrate{}}$ indicated by the legend.
+            Along the horizontal axis, we vary $\same{\copyrate{}}$ and set $\opp{\copyrate{}} = 1 - \same{\copyrate{}}$. 
+            Each parameter combination is simulated $10^2$ times for $10^3$ timesteps. 
+            On either side of the plot we show small hypergraphs sampled from parameter combinations indicated by the square markers. 
+        }\label{fig:community-structure-illustration}
+    \end{figure}
+
+
+    \Cref{fig:community-structure-illustration} illustrates role of the model parameters in tuning the community structure of realized hypergraphs. 
     We measure community structure by computing Newman-Girvan modularity \cite{newman2004finding} on the clique-projection of the hypergraph. 
     For fixed $\opp{\extantrate}$, $\same{\novelrate{}}$, and $\opp{\novelrate{}}$, increasing the difference $\same{\copyrate{}} - \opp{\copyrate{}}$ leads to higher modularity, as does increasing $\same{\extantrate{}}$.
     Hypergraphs sampled from models with high values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have  label-homogeneous cores of densely-overlapping hyperedges, which are weakly connected to one another by edges with more heterogeneous label compositions.
@@ -166,8 +171,8 @@
         \label{fig:dynamics-eigenvectors}
     \end{figure*}
 
-    The asymptotics of this model can be described in terms of the joint distribution $p_{K_0, K_1}(k_0, k_1)$ of nodes of labels 0 and 1 in a uniformly random edge. 
-    This joint distribution can be obtained as the leading eigenvector of a linear map. 
+    Many asymptotic properties of our \model{} model can be described in terms of the joint distribution $p_{K_0, K_1}(k_0, k_1)$ of nodes of labels 0 and 1 in a uniformly random edge. 
+    This joint distribution can be obtained as the leading eigenvector of a linear map, as we now describe. 
     Let $\at{\jointdist}{t}(k_0, k_1)$ be the joint distribution of label counts in a uniformly random edge after $t$ timesteps. 
     Then, the probability $q(k_0', k_1')$ of realizing an edge with $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 at time $t+1$ is given by 
     \begin{align*}
@@ -199,28 +204,28 @@
     \begin{align*}
         T(k_0', k_1' | k_0, k_1) = t(k_0' | k_0, k_1) t(k_1' | k_0, k_1) \;.
     \end{align*}
-    In \Cref{fig:dynamics-eigenvectors}, we study the dynamics of our model through the matrix $T$. 
+    In \Cref{fig:dynamics-eigenvectors}, we study the dynamics of our \model{} model as described by the matrix $T$. 
     For fixed values of the parameters $\same{\extantrate{}}$, $\opp{\extantrate{}}$, $\same{\novelrate{}}$ and $\opp{\novelrate{}}$, the spectral gap $1 - \lambda_2$ of $T$ is highest when $\opp{\copyrate}$ is large and $\same{\copyrate}$ is small. 
     High values of the spectral gap correspond to fast convergence to the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ given by the Perron eigenvector $\mathbf{v}_1$ of $T$ with eigenvalue $1$ (panel (b)). 
     We instead illustrate an alternative regime of relatively slow convergence in which $\same{\copyrate}$ is large and $\opp{\copyrate}$ is small.
-    In this regime, the simulation may maintain transient dynamics in the direction of the second eigenvector $\mathbf{v}_2$ of $T$ with eigenvalue $\lambda_2 < 1$ (panel (c)) for relatively long periods of time before converging to the stationary distribution.
-    We illustrate this behavior in panel (d), where the system converges relatively slowly to the leading eigenvector $\mathbf{v}_1$, resulting in a final simulation that matches it closely (panel (e)).
-
-
+    In this regime, the simulation may maintain transient dynamics in the direction of the second eigenvector $\mathbf{v}_2$ of $T$ with eigenvalue $\lambda_2 < 1$ (panel (c)) for relatively long periods of time before converging to the stationary distribution. 
+    We illustrate this behavior in panel (d), where the system converges relatively slowly to the leading eigenvector $\mathbf{v}_1$ and away from the transient component $\mathbf{v}_2$. 
+    The resulting final simulation state matches the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ relatively closely (panel (e)).
 
     \Cref{fig:dynamics-eigenvectors} shows that, when $\same{\copyrate{}}$ is sufficiently large, the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ is concentrated on edges in which typical edges have large majorities of nodes with the same label (panel b), thus displaying a form of higher-order homophily \cite{laber2026guide}. 
-    The stationary distribution is symmetric, implying that neither node label is favored in the long-run. 
-    The second eigenvector $v_2$ (panel c), however,  is antisymmetric, describing a transient in which one a single label tends to dominate most edges. 
+    The second eigenvector $v_2$ (panel c), however,  is antisymmetric, describing a transient in which one a single label group tends to dominate most edges. 
     When $\same{\copyrate{}}$ is sufficiently large, the spectral gap $1 - \lambda_2$ is small (panel a), indicating that this transient decays slowly and that the system may be dominated by edges with a single majority label for relatively long periods of time before equilibrating to the leading eigenvector (panels d and e).
+    This behavior suggests that, although the \model{} model ultimately converges to a stationary state with symmetry between the two node labels, it can also serve through its transients as a reasonable generative model of systems with label asymmetry. 
 
     
 
 \subsubsection{Degree Distribution} \label{sec:degree-distribution}
 
 
-    The degree distribution of a hypergraph generated from our model follows an asymptotic power law with an exponent which can be computed in closed form from the model parameters and the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$. 
-    Our derivation follows that of He et al. \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by Mitzenmacher \cite{mitzenmacherBriefHistoryGenerative2004}. 
-    To carry out the argument, we require a mean-field assumption that, when a node $v$ is selected from edge $f$ in the edge-sampling step, the degree $d$ of $v$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
+    The degree distribution of a hypergraph generated from the \model{} model follows an asymptotic power law with an exponent which can be computed in closed form from the model parameters and the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$. 
+    Our derivation is similar to that of He et al. \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by Mitzenmacher \cite{mitzenmacherBriefHistoryGenerative2004}. 
+    The argument requires a mean-field assumption: 
+    when a node $\focalnode$ is selected from edge $\seededge$ in the edge-sampling step, the degree $d$ of $\focalnode$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
     
     Under this assumption, it is possible to show that the degree distribution follows a power law with exponent
     \begin{align}
@@ -233,13 +238,16 @@
     
 \section{Model Inference}
 
+    In this section, we consider the problems of \emph{parameter inference} (learning $\paramvector$ given $\hypergraph$ and $\vz$) and \emph{community detection} (learning $\vz$ given $\hypergraph$ and $\paramvector$). 
+
+
 \subsection{Parameter Estimation via Stochastic EM} \label{sec:sem}
 
     We first consider the problem of learning the parameter vector $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed hypergraph $\hypergraph$ with sequential edge indices and known node labels $\vz$.
     We aim to do this via maximum-likelihood estimation. 
     Computing the complete data likelihood requires marginalizing over the model latent variables, which in this case are the edge $f$ and node $u$ selected at each timestep of the growth model to form the new edge $e$. 
     For $\newedge \in \edges$, let $t_\newedge$ denote the time at which $\newedge$ was added to the hypergraph.
-    We say that $f \prec e$ if $t_f < t_e$. 
+    We say that $\seededge \prec \newedge$ if $t_{\seededge} < t_{\newedge}$. 
     Then, the complete data likelihood can be written 
     \begin{align}
         \prob(\hypergraph, \vz | \paramvector) = \prod_{\newedge \in \edges} \sum_{\seededge \prec \newedge} \sum_{\focalnode \in \seededge} p(\newedge | \seededge, \focalnode, \vz, \paramvector) p(\seededge,\focalnode| \edges_{t - 1}, \vz, \paramvector) \;. \label{eq:likelihood}
@@ -265,26 +273,25 @@
 To initialize the SEM algorithm, we initialize a vector $\at{\sufficientstatsvec}{0}$ of sufficient statistics to arbitrary values; in our model there is a sufficient statistic for each parameter. 
 We then update a moving average of $\sufficientstatsvec$ as follows. 
 In each algorithmic step $\ell$, we pick an edge $e$ uniformly at random from $\hypergraph$. 
-Then, given current estimates $\at{\hat{\paramvector}}{\ell}$, we form a belief distribution over the latent identities of $f \in \edges$ and $u \in f$ which could have been selected in the edge-copying step to form $e$. 
-Given $e$, the probability that $f$ and $u$ were selected can be computed in closed form. 
+Then, given current estimates $\at{\hat{\paramvector}}{\ell}$, we form a belief distribution over the latent identities of $\seededge \in \edges$ and $\focalnode \in \seededge$ which could have been selected in the edge-copying step to form $\newedge$. 
+Given $\newedge$, the probability that $\seededge$ and $\focalnode$ were selected can be computed in closed form. 
 Let $\at{m}{t-1}$ denote the size of the edge set at time $t - 1$.
-
 
 We have 
 \begin{align*}
-    p(f, u | \at{\edges}{t-1}, \vz, \at{\hat{\paramvector}}{\ell}) = \frac{1}{\abs{f}\at{m}{t-1}} \triangleq r_{t-1}(f) \;,
+    p(\seededge, \focalnode | \at{\edges}{t-1}, \vz, \at{\hat{\paramvector}}{\ell}) = \frac{1}{\abs{\seededge}\at{m}{t-1}} \triangleq r_{t-1}(\seededge) \;,
 \end{align*}
 so Bayes' rule gives 
 \begin{align}
-    p(f,u | e, \at{\hat{\paramvector}}{\ell}) = \frac{p(e | f, u, \vz, \at{\hat{\paramvector}}{\ell}) r_{t-1}(f)}{\sum_{f' \prec e} \sum_{u' \in f'} p(e | f', u', \vz, \at{\hat{\paramvector}}{\ell}) r_{t-1}(f') } \;. \label{eq:bayes}
+    p(\seededge,\focalnode | \newedge, \at{\hat{\paramvector}}{\ell}) = \frac{p(\newedge | \seededge, \focalnode, \vz, \at{\hat{\paramvector}}{\ell}) r_{t-1}(\seededge)}{\sum_{\seededge' \prec \newedge} \sum_{\focalnode' \in \seededge'} p(\newedge | \seededge', \focalnode', \vz, \at{\hat{\paramvector}}{\ell}) r_{t-1}(\seededge') } \;. \label{eq:bayes}
 \end{align}
-A helpful note for computation is that $p(e|f, u, \vz, \at{\hat{\paramvector}}{\ell}) = 0$ if either $u \notin e\cap f$ or $f\not\prec e$. 
+A helpful note for computation is that $p(\newedge|\seededge, \focalnode, \vz, \at{\hat{\paramvector}}{\ell}) = 0$ if either $\focalnode \notin \newedge\cap \seededge$ or $\seededge\not\prec \newedge$. 
 We then form the vector of expected sufficient statistics 
 \begin{align}
-    s' = \sum_{f \prec e} \sum_{u \in f\cap e} p(f, u | e, \at{\hat{\paramvector}}{\ell}) \sigma(e, f, u, \vz) \;, \label{eq:sufficient-stats-update}
+    s' = \sum_{\seededge \prec \newedge} \sum_{\focalnode \in \seededge\cap \newedge} p(\seededge, \focalnode | \newedge, \at{\hat{\paramvector}}{\ell}) \sigma(\newedge, \seededge, \focalnode, \vz) \;, \label{eq:sufficient-stats-update}
 \end{align}
-where $\sigma(e, f, u, \vz)$ is the vector of sufficient statistics for the parameters $\paramvector$ given $e$, $f$, $u$, and $\vz$.
-The entries of $\sigma(e, f, u, \vz)$ can be computed as functions of the node labels in $e$ and $f$; we supply explicit formulae in \Cref{sec:sufficient-statistics}. 
+where $\sigma(\newedge, \seededge, \focalnode, \vz)$ is the vector of sufficient statistics for the parameters $\paramvector$ given $\newedge$, $\seededge$, $\focalnode$, and $\vz$.
+The entries of $\sigma(\newedge, \seededge, \focalnode, \vz)$ can be computed as functions of the node labels in $\newedge$ and $\seededge$; we supply explicit formulae in \Cref{sec:sufficient-statistics}. 
 We then perform the update 
 \begin{align*}
     \at{\sufficientstatsvec}{\ell+1} = (1 - \lr^{(\ell)}) \at{\sufficientstatsvec}{\ell} + \lr^{(\ell)} \sufficientstatsvec' \;,
@@ -297,17 +304,17 @@ Our version of the algorithm uses an online computation of $\sufficientstatsvec'
 
 
 \begin{algorithm}[H]
-    \caption{SEM Update Step}\label{alg:sem}
+    \caption{\model{} SEM Update Step}\label{alg:sem}
     \begin{algorithmic}
     \Require $\hypergraph = \paren{\nodes, \edges}$, $\vz$, $\at{\hat{\paramvector}}{\ell}$, $\at{\sufficientstatsvec}{\ell}$
     \State $e \gets \text{Uniform}(\edges)$
     \State $a \gets \vzero$
     \State $b \gets \vzero$
-    \For{$f \in \edges$}
-        \If{$f\prec e$}
-            \For{$u \in e\cap f$}
-                \State $a \gets a + p(f, u | e, \at{\hat{\paramvector}}{\ell}) \sigma(e, f, u, \vz)$
-                \State $b \gets b + p(f, u | e, \at{\hat{\paramvector}}{\ell})$
+    \For{$\seededge \in \edges$}
+        \If{$\seededge \prec \newedge$}
+            \For{$\focalnode \in \newedge \cap \seededge$}
+                \State $a \gets a + p(\seededge, \focalnode | \newedge, \at{\hat{\paramvector}}{\ell}) \sigma(\newedge, \seededge, \focalnode, \vz)$
+                \State $b \gets b + p(\seededge, \focalnode | \newedge, \at{\hat{\paramvector}}{\ell})$
             \EndFor
         \EndIf
     \EndFor
@@ -322,9 +329,11 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
 
 \subsection{Community Detection via MLE} \label{sec:community-detection}
 
-\Cref{eq:likelihood} defines a likelihood function over both the parameter vector $\paramvector$ and the node labels $\vz$.
+    We also consider the community detection problem of learning the node labels $\vz$ given an observed hypergraph $\hypergraph$ and a fixed parameter vector $\paramvector$.
+
+    \Cref{eq:likelihood} defines a likelihood function over both the parameter vector $\paramvector$ and the node labels $\vz$.
     This allows us to attempt to also learn $\vz$ via maximum-likelihood estimation.
-    Unlike in stochastic blockmodel variants in which there are several heuristics with favorable computational properties \cite{newman2016equivalence,chodrowGenerativeHypergraphClustering2021,chodrowNonbacktrackingSpectralClustering2023,ruggeriCommunityDetectionLarge2023,kritschgauCommunityDetectionHypergraphs2024,hood2026broad,li2026higher}, the dependence structure encoded by our model makes it difficult to apply standard efficient heuristics; the development of such heuristics would be an important direction of future work. 
+    Unlike in stochastic blockmodel variants in which there are several heuristics with favorable computational properties \cite{newman2016equivalence,chodrowGenerativeHypergraphClustering2021,chodrowNonbacktrackingSpectralClustering2023,ruggeriCommunityDetectionLarge2023,kritschgauCommunityDetectionHypergraphs2024,hood2026broad,li2026higher}, the dependence structure encoded by \model{} makes it difficult to apply standard efficient heuristics; the development of such heuristics would be an important direction of future work. 
     In this study, we therefore attempt to learn $\vz$ via simulated annealing \cite{kirkpatrickOptimizationSimulatedAnnealing1983}, which is a general-purpose optimization algorithm that can be used to approximately maximize the likelihood over $\vz$.
     Our primary aim is to demonstrate that likelihood maximization in this model can detect label structure in at least some circumstances where more standard community detections may fail, thereby motivating the development of more efficient optimization heuristics in future work. 
     
@@ -333,20 +342,22 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
     This includes edges in which node $i$ does not participate, implying that we must perform $O(m^2)$ computations even to evaluate the change in likelihood under a proposed change to $z_i$.
     
     
-    To mitigate the computational burden, we use an intersection-based approximation to the likelihood of forming edge $e$ in which we only sum over candidate copied edges $f$ such that $f = \argmax_{f' \in \edges} \abs{f' \cap e}$.
-    To justify this approximation, we start by observing that, if $f$ is the edge sampled to form $e$, then the number of extant nodes required to form $e$ is $x = \abs{e} - \abs{e\cap f} - \abs{e \setminus \nodes}$. 
-    We'll argue that, when the number of nodes $n$ is large, $p(e|f, u, \vz, \paramvector) \in O(n^{-x})$, which implies that edges $f$ which do not maximize $\abs{f \cap e}$ will have negligible contributions to the likelihood.
-    The essence of the argument is that forming $x$ extant nodes requires $x$ independent samples from the sets $\nodes_0\setminus f$ and $\nodes_1\setminus f$, each of which have size scaling linearly with $n$. 
+    To mitigate the computational burden, we use an intersection-based approximation to the likelihood of forming edge $\newedge$ in which we only sum over candidate copied edges $\seededge$ such that $\seededge = \argmax_{\seededge' \in \edges} \abs{\seededge' \cap \newedge}$.
+    To justify this approximation, we start by observing that, if $\seededge$ is the edge sampled to form $\newedge$, then the number of extant nodes required to form $\newedge$ is $x = \abs{\newedge} - \abs{\newedge\cap \seededge} - \abs{\newedge \setminus \nodes}$. 
+    We'll argue that, when the number of nodes $n$ is large, $p(\newedge|\seededge, \focalnode, \vz, \paramvector) \in O(n^{-x})$, which implies that edges $\seededge$ which do not maximize $\abs{\seededge \cap \newedge}$ will have negligible contributions to the likelihood.
+    The essence of the argument is that forming $x$ extant nodes requires $x$ independent samples from the sets $\nodes_0\setminus \seededge$ and $\nodes_1\setminus \seededge$, each of which have size scaling linearly with $n$. 
     So, each independent sample has probability $O(n^{-1})$, and the probability of forming a given set of $x$ extant nodes is $O(n^{-x})$.
     We detail this argument in \Cref{sec:simulated-annealing-approximation}.
 
     In our application of simulated annealing, we run the algorithm for $A\times n$ steps where $A$ represents the number of epochs.
-    In each step, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random and evaluating the change in likelihood of "flipping" the binary node label ($\vz_j = 1 - \vz_j$).  
+    In each step, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random and evaluating the change in likelihood of "flipping" the binary node label ($z_j \gets 1 - z_j$).  
+    \phil{We need to at least be able to put \Cref{eq:sa-approx} and say what it means in the main text; the justification can stay in the appendix.}
     If the proposal increases \Cref{eq:sa-approx}, it is accepted.
     However, if the proposal decreases the likelihood, we accept it with a probability that decreases as the epochs increase.
-    When evaluating this change in likelihood, we implement custom data structures that allow us to compute only the change in likelihood from the prior state by storing the components of the prior likelihood calculation, resulting in a $30$ times decrease in compute time on real world datasets at the expense of memory.  
+    When evaluating this change in likelihood, we implement custom data structures that allow us to compute only the change in likelihood from the prior state by storing the components of the prior likelihood calculation 
+    This results in a roughly 30-fold reduction in compute time on our empirical data sets (described in \Cref{sec:experiments}) at the expense of increasing memory requirements. 
     
-    
+    \phil{Haven't done a style pass over the below yet.}
     In simulated annealing applications, it is important accept proposals that decrease the value of the objective function with a probability that decreases gradually as the algorithm runs.
     Similarly, proposals that slightly lower the objective function should be accepted more frequently than proposals causing large objective function decreases.
     A balance must be struck, both accepting enough proposals decreasing the objective function to avoid becoming stuck in local optima and not accepting too many to allow convergence to a maxima.  
@@ -365,14 +376,8 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
 
 \section{Results} \label{sec:results}
 
-How did we do on real and synthetic data? 
+    We now test the ability of our proposed \model{} model to recover parameters (via SEM) and node labels (via simulated annealing) on both synthetic and empirical data sets.
 
-We evaluate our methods on several data sets. 
-
-Contact high school: \cite{mastrandrea2015contact,bensonSimplicialClosureHigherorder2018}
-Contact primary school: \cite{stehle2011high,gemmetto2014mitigation,bensonSimplicialClosureHigherorder2018}
-Senate bills: \cite{fowler2006connecting,fowler2006legislative,bensonSimplicialClosureHigherorder2018}
-Coauthorship: \cite{agarwal2016women}
 
 
 \subsection{Parameter Estimation on Synthetic Data}
@@ -381,30 +386,26 @@ Coauthorship: \cite{agarwal2016women}
     \includegraphics[width=\textwidth]{../fig/sem_convergence_heatmap.png}
     \caption{
         Performance of SEM on synthetic hypergraphs. 
-        Each entry in the heatmap corresponds to a set of parameters $\paramvector$, which can be found in Appendix \ref{sec:SEM-appendix}.        
-        For each set of parameters, five indepedent hypergraphs are generated according to the model and SEM is performed independently on each. \phil{Violet, can we feasibly increase this to roughly 20 independent repetitions? We should also say how many simulation steps were used to generate each hypergraph.}
-        The Kullback-Leibler (KL) divergence between the true and estimated parameters is then computed for each of the five estimated parameter vectors $\hat{\paramvector}_i$ generated by SEM.
-        The color of an entry in the heatmap represents the mean KL divergence over the five simulations for that set of parameters.
-        The parameter estimates over iterations of SEM are plotted for the underlying parameters which produced the lowest mean KL divergence (top row)
-        and the parameters that produced the highest mean divergence (bottom row).
+        Each entry in the heatmap (panel (a)) corresponds to a set of parameters $\paramvector$, which can be found in Appendix \ref{sec:SEM-appendix}.        
+        For each set of parameters, 20 indepedent hypergraphs are generated according to the model  and SEM is performed independently on each. \phil{Violet, for how many simulation steps?}
+        We then compute the Kullback-Leibler (KL) divergence of the estimated parameters from the true ones (\cref{eq:kl-divergence}) and average the results to obtain a value in a pixel. 
+        The parameter estimates over iterations of SEM are plotted for the underlying parameters which produced the lowest mean KL divergence (copy parameters in panel (b) and addition parameters in panel (c)), 
+        and similarly for the parameters that produced the highest mean KL divergence in panels (d) and (e).
     }
     \label{fig:synthetic_sem}
 \end{figure*}
 
-
-We first illustrate the ability of SEM to recover true parameters from synthetic data in \Cref{fig:synthetic_sem}.
-In the lefthand panel, show simulation results from [NUM REPETITIONS]
-
-Each synthetic hypergraph is generated using our model (\violet{should the model have a name?} \phil{Yes, an ideal name will have an acronym which is fun in some way.}) and a known parameter vector $\paramvector$.
+\Cref{fig:synthetic_sem} illustrates the behavior of SEM in recovering parameters from synthetic hypergraphs generated by the \model{} model.
+Each synthetic hypergraph is generated using our model and a known parameter vector $\paramvector$.
 We performed SEM on a set of hypergraphs which were generated with varying amounts of homophily across each of the three growth mechanisms: the edge copy step, the external node addition step, and the novel node addition step.
 We also varied the expected number of nodes added to $e$ in each of these steps.
 To measure the success of a parameter recovery, we compute the Kullback-Leibler (KL) divergence between the true and estimated distributions described by each of the six parameters, and add the results. 
 Using standard results, our measure of error then becomes
-\begin{align*}
-    D[p_{\paramvector} || \hat{p}_{\paramvector{}}] &= \phantom{+}\sum_{* \in \{+, -\}} c_*\left( \copyrate_{*} \log \frac{\copyrate_{*}}{\hat{\copyrate}_{*}} +  (1 - \copyrate_{*}) \log \frac{1 - \copyrate_{*}}{1 - \hat{\copyrate}_{*}} \right) \\ 
-    &\phantom{=} + \sum_{* \in \{+, -\}} \left( \extantrate_{*} \log \frac{\extantrate_{*}}{\hat{\extantrate}_{*}} - \extantrate_* + \hat{\extantrate}_{*} \right) \\ 
-    &\phantom{=} + \sum_{* \in \{+, -\}} \left( \novelrate_{*} \log \frac{\novelrate_{*}}{\hat{\novelrate}_{*}} - \novelrate_* + \hat{\novelrate}_{*} \right)\;, 
-\end{align*}
+\begin{align}
+    D[p_{\paramvector} || \hat{p}_{\paramvector{}}] &= \phantom{+}\sum_{* \in \{+, -\}} c_*\left( \copyrate_{*} \log \frac{\copyrate_{*}}{\hat{\copyrate}_{*}} +  (1 - \copyrate_{*}) \log \frac{1 - \copyrate_{*}}{1 - \hat{\copyrate}_{*}} \right) \nonumber\\ 
+    &\phantom{=} + \sum_{* \in \{+, -\}} \left( \extantrate_{*} \log \frac{\extantrate_{*}}{\hat{\extantrate}_{*}} - \extantrate_* + \hat{\extantrate}_{*} \right) \label{eq:kl-divergence} \\ 
+    &\phantom{=} + \sum_{* \in \{+, -\}} \left( \novelrate_{*} \log \frac{\novelrate_{*}}{\hat{\novelrate}_{*}} - \novelrate_* + \hat{\novelrate}_{*} \right)\;, \nonumber
+\end{align}
 where $c$ is a factor describing, in expectation, how many nodes of each label are selected in the copy step. 
 For the purposes of of this analysis, we set $c_* = 1$ for both labels.
 
@@ -415,13 +416,14 @@ That said, even in the least successful cases for estimation with high KL diverg
 \subsection{Parameter Estimation on Empirical Data} \label{sec:sem-empirical}
 
 We also used our method to infer parameters for six standard empirical hypergraph datasets described in \Cref{tab:datasets}. 
+Although many labeled hypergraph data sets are now available for community detection, relatively few have natively binary node labels. 
 The \texttt{senate-bills} and \texttt{house-bills} datasets \cite{fowler2006connecting,fowler2006legislative} are hypergraphs of cosponsorships of bills in the U.S. Senate and House of Representatives, respectively, with node labels corresponding to the political party of each legislator; we use the version of these data sets used in \cite{chodrowGenerativeHypergraphClustering2021}.
 The \texttt{high-school} and \texttt{primary-school} datasets \cite{gemmetto2014mitigation,stehle2011high,mastrandrea2015contact} are hypergraphs of social interactions between students in a high school and primary school, respectively, with node labels corresponding to the gender of each student; these data sets were collected through the SocioPatterns project.
-To prevent redundancy, we treat an interaction that persists across sequential timesteps as one hyperedge.
-Finally, we inferred parameters for the \texttt{coauthorship} data set \cite{agarwal2016women}, which contains publishing records for 81 computer science conferences from 2000 to 2015, with a binary gender label for each author.
+Due to the high temporal resolution of these data, we consider a sequence of interactions to correspond to a single hyperedge of those interactions are identical and temporally contiguous. 
+Finally, we considered a \texttt{coauthorship} data set \cite{agarwal2016women} which contains publishing records for 81 computer science conferences from 2000 to 2015, with a binary gender label for each author.
 
 \begin{table*}
-    \caption{Data sets used for parameter estimation. We show the number of nodes $n$, edges $m$, average degree $\langle d \rangle$, and average edge size $\langle k \rangle$ for each dataset.}\label{tab:datasets}
+    \caption{Data sets used in this paper. We show the number of nodes $n$, edges $m$, average degree $\langle d \rangle$, and average edge size $\langle k \rangle$ for each dataset.}\label{tab:datasets}
         \begin{tabular}{lrrrrrrr}
         % \toprule
         & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Nodes are & Edges are & Labels represent\\
@@ -435,7 +437,7 @@ Finally, we inferred parameters for the \texttt{coauthorship} data set \cite{aga
         \bottomrule
         \end{tabular}
 \end{table*}
-\Cref{fig:empirical_sem} shows our parameter estimates for each of the empirical data sets. 
+\Cref{fig:empirical_sem} shows our parameter estimates for each of the empirical data sets under the \model{} model. 
 In each panel, we plot the same-label and opposite-label parameter estimates on opposing axes. 
 Some data sets, like the gendered primary school contact network, appear on or near the line of equality in all three panels, suggesting that there is little selection in network evolution with respect to the chosen binary labels. 
 The coauthorship data, meanwhile, falls on the line of equality for the edge copy and external node addition mechanisms, but there is a difference in the novel node addition parameters: $\same{\hat{\novelrate}} > \opp{\hat{\novelrate}}$.
@@ -491,6 +493,7 @@ Often, an email is precipated by an existing conversation between that set of us
         The ``default'' parameter vector used is $\paramvector = (\same{\copyrate}, \opp{\copyrate}, \same{\extantrate}, \opp{\extantrate}, \same{\novelrate}, \opp{\novelrate}) = (\synthfixedetaplus,\synthfixedetaminus, \synthfixedlambdaplus, \synthfixedlambdaminus,\synthfixedgammaplus, \synthfixedgammaminus)$. 
         In each of the three panels, a single one of these parameters is varied while the others are held fixed at their default values. 
         Each point gives the mean ARI over 500 independent model simulations, each of which were simulated for 200 timesteps. 
+        \phil{Is this figure legible or is text too small?}
     } \label{fig:community-synthetic}
 \end{figure}
 
@@ -504,14 +507,14 @@ In each panel of \Cref{fig:community-synthetic}, we show the performance of each
 Unsurprisingly, simulated annealing under the Nishimori condition outperforms simulated annealing under the fixed condition. 
 For high levels of homophily (larger values of the varied parameter), simulated annealing under the Nishimori condition can nevertheless be outperformed by Laplacian spectral clustering. 
 Notably, however, there are regions of parameter space, especially those with low levels of homophily (smaller values of the varied parameter) in which both simulated annealing under the fixed condition and under the Nishimori condition outperform Laplacian spectral clustering. 
-This result is in some sense unsurprising, since we perform our experiment on synthetic samples drawn directly from our proposed model. 
-These experiments do suggest, however, that there exist classes of hypergraphs in which community structure can be more reliably detected via likelihood maximization under our model than at least this standard graph method. 
+This result is in some sense unsurprising, since we perform our experiment on synthetic samples drawn directly from the \model{} model. 
+These experiments do suggest, however, that there exist classes of hypergraphs in which community structure can be more reliably detected via likelihood maximization under \model{} than at least this standard graph method. 
 
 We can see this phenomenon in experiments on empirical data as well. 
 We evaluate our simulated annealing algorithm on a subset of our empirical data sets: \texttt{senate-bills}, \texttt{primary-school}, and \texttt{high-school}; the poor scaling of simulated annealing with the number of nodes $n$ made it computationally prohibitive to run on the larger \texttt{house-bills}, \texttt{enron-emails}, and \texttt{coauthorship} data sets.
 We use the class membership of the students in \texttt{primary-school} and \texttt{high-school} as the ground truth labels in this section instead of gender because community structure has been previously detected with these labels \cite{chodrowGenerativeHypergraphClustering2021}.  
 Since in data analysis contexts the labels $\vz$ (and therefore parameter estimates $\hat{\paramvector}$) are not available, we instead use a single, fixed parameter vector for each of these three experiments: $\hat{\paramvector} = (0.9, 0.1, 1.0, 0.25, 0.001, 0.001)$.
-All of these datasets have small $\novelrate$ under our model due to their large number of edges compared to small number of nodes.  
+All of these datasets are appropriately modeled with very small values of $\same{\novelrate}$ and $\opp{\novelrate}$ under our model due to their large number of edges compared to small number of nodes.  
 Since in these three data sets many of the nodes exist in the system before data collection, for the purposes of community detection we ignore the novel node addition step, assuming instead that all nodes are present in the system and eligible to be added via the extant node addition step. 
 We evaluate our method against baseline methods Laplacian spectral clustering \cite{luxburg2007tutorial} and greedy modularity \cite{clauset2004finding}.   
 
@@ -523,7 +526,7 @@ We evaluate our method against baseline methods Laplacian spectral clustering \c
     \label{fig:community-empirical}
 \end{figure}
 
-In \Cref{fig:community-empirical}, we observe that simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
+In \Cref{fig:community-empirical}, we observe that \model{} simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
 On the primary school dataset, simulated annealing performs comparably in ARI to the competitor methods, with a slightly lower average ARI compared to spectral clustering and greedy modularity's results.  
 However, simulated annealing performs worse on the high school dataset in ARI compared to its competitors.
 While the computational performance of simulated annealing presents a difficulty in its application, the detection of communities via the maximization of likelihood provides evidence that the formations of these datasets, especially senate-bills, can be modeled via our proposed method.  
@@ -549,27 +552,24 @@ While the computational performance of simulated annealing presents a difficulty
 
 \section{Discussion}
 
-    We have proposed a simple model of binary-labeled hypergraph formation in which edges are formed through noisy copies of previous edges, combined with the addition of extant and novel nodes. 
-    Our model incorporates label homophily through each of the three edge formation mechanisms. 
+    We have proposed \Model{} (\model{}), a generative model for the formation of binary-labeled hypergraphs in which edges form as noisy copies of previous edges, combined with the addition of extant and novel nodes.
+    The copying, extant, and novel node addition steps are all tuned by node labels and parameters which control the strength of homophily or heterophily in each of these steps.
+    We have demonstrated efficient parameter inference in the \model{} model via stochastic expectation maximization (SEM). 
+    We have also demonstrated that, in some circumstances, maximum-likelihood inference of node labels $\vz$ via simulated annealing can outperform standard community detection methods on both synthetic and empirical data sets.
     
-    \phil{More discussion}
-
     There are several directions for future work. 
-    Most obviously, although our results show that maximum-likelihood inference is a reasonable approach for community detection in this model, the simulated annealing method we have used is impractically expensive on data sets of even relatively modest size. 
-    Developing more efficient heuristics for maximizing the likelihood over $\vz$ will be an important direction for scalable application of our proposed model. 
-
-    There are also opportunities to extend the model to more realistic settings and more diverse data sets. 
-    One obvious extension is to nonbinary node-labels, which would enable multiway community detection algorithms. 
-    Another approach is to relax the assumption in our model that \emph{every} edge is formed through the edge-copying mechanism; one could instead allow some edges to form spontaneously without copying an earlier edge. 
-    A final obvious extension is to incorporate recency-bias \cite{bensonSequencesSets2018} into the copy mechanism, so that more recent edges are more likely to be copied while edges which are sufficiently old may cease to be copied at all. 
-
-    We note that \cite{chodrowNonbacktrackingSpectralClustering2023} proposed an algorithm which obtained an ARI of approximately 0.25 on the \texttt{senate-bills} data set, higher than our proposed simulated annealing method. 
+    Most obviously, although our results show that maximum-likelihood inference is a theoretically reasonable approach for community detection in this model, the simulated annealing method we have used is impractically expensive on data sets of even relatively modest size. 
+    Developing more efficient heuristics for maximizing the likelihood over $\vz$ will be an important direction for scalable application the \model{} model for community detection. 
+    Scalability may also imply opportunities for improved performance.
+    We note, for example,  that \cite{chodrowNonbacktrackingSpectralClustering2023} proposed an algorithm which obtained an ARI of approximately 0.25 on the \texttt{senate-bills} data set, higher than our proposed simulated annealing method. 
     Their algorithm requires alternating between parameter estimation and community detection phases. 
     In principle, we could attempt a similar alternating procedure in our model, but the computational cost of simulated annealing makes this approach infeasible in practice.
     Future work to develop more efficient heuristics for community detection under our model could in principle enable such an alternating algorithm, with potentially improved performance. 
 
-     
-
+    There are also opportunities to extend \model{} to more realistic settings and more diverse data sets. 
+    One obvious extension is to nonbinary node labels, which would enable multiway community detection algorithms. 
+    Another approach is to relax the assumption that \emph{every} edge is formed through the edge-copying mechanism; one could instead allow some edges to form spontaneously without copying an earlier edge. 
+    A final possible extension is to incorporate recency-bias \cite{bensonSequencesSets2018} into the copy mechanism, so that more recent edges are more likely to be copied while edges which are sufficiently old may cease to be copied at all. 
 
 \begin{acknowledgments}
     PSC acknowledges support from the National Science Foundation under DMS-2407058.
@@ -671,8 +671,9 @@ While the computational performance of simulated annealing presents a difficulty
         &= 1 - \frac{1}{d} \paren{1 + \frac{\novelrate{}}{\expectedcopiednodes{} / \brackets{d}}}  \\ 
         &= 1 - \frac{1}{d} \paren{1 + \frac{\brackets{k}}{\expectedcopiednodes{} }}\;. 
     \end{align*}
-    a relation which corresponds to a power law with exponent $\zeta = 1 + \frac{\brackets{k}}{\expectedcopiednodes{}}$. 
-    Explicitly calculating this exponent requires the moments $\brackets{k}$, $\rho_{00}$, $\rho_{11}$, and $\rho_{01}$, which can be computed from the stationary joint distribution $\jointdist \paren{k_1,k_2}$. 
+    a relation which corresponds to a power law with exponent $\zeta = 1 + \frac{\brackets{k}}{\expectedcopiednodes{}}$.
+    Expanding out $\expectedcopiednodes{}$ yields \Cref{eq:power-law-exponent} in the main text.
+    Explicitly calculating this exponent requires the moments $\brackets{k}$, $\rho_{00}$, $\rho_{11}$, and $\rho_{01}$, which can be computed from the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_1,k_2}$. 
 
 
     \begin{figure}[t]
