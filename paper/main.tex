@@ -29,7 +29,7 @@
 
 \begin{document}
 
-\title{Growing Hypergraphs with Node Labels}
+\title{Growing Hypergraphs with Homophily}
 \author{Violet Ross}
 \affiliation{Department of Computer Science, University of Colorado at Boulder, Boulder, CO, USA}
 \author{Francis Cataldo}
@@ -60,6 +60,8 @@
 
 
 % \def\thefootnote{*}\footnotetext{These authors contributed equally to this work}\def\thefootnote{\arabic{footnote}}
+
+\phil{Must make parameter names consistent between text and figures.}
 
 \section{Introduction}
 
@@ -325,7 +327,7 @@ Our version of the algorithm uses an online computation of $\sufficientstatsvec'
     \end{algorithmic}
 \end{algorithm}
 
-The SEM algorithm continues iterating until the stopping criterion is met. In our experiments, the stopping criterion is met when each of the current parameter estimates $\at{\hat{\paramvector}}{\ell}$ is within [THRESH] of the [LENGTH] preceding estimates of the corresponding parameter.
+The SEM algorithm continues iterating until the stopping criterion is met. In our experiments, the stopping criterion is met when each of the current parameter estimates $\at{\hat{\paramvector}}{\ell}$ is within [THRESH] of the [LENGTH] preceding estimates of the corresponding parameter. \phil{Violet, can you fill these in?}
 
 \subsection{Community Detection via MLE} \label{sec:community-detection}
 
@@ -493,7 +495,6 @@ Often, an email is precipated by an existing conversation between that set of us
         The ``default'' parameter vector used is $\paramvector = (\same{\copyrate}, \opp{\copyrate}, \same{\extantrate}, \opp{\extantrate}, \same{\novelrate}, \opp{\novelrate}) = (\synthfixedetaplus,\synthfixedetaminus, \synthfixedlambdaplus, \synthfixedlambdaminus,\synthfixedgammaplus, \synthfixedgammaminus)$. 
         In each of the three panels, a single one of these parameters is varied while the others are held fixed at their default values. 
         Each point gives the mean ARI over 500 independent model simulations, each of which were simulated for 200 timesteps. 
-        \phil{Is this figure legible or is text too small?}
     } \label{fig:community-synthetic}
 \end{figure}
 

@@ -42,7 +42,8 @@ titles = {
     "spectral_ari_guess": "Spectral\nclustering", 
 }
 
-fig, axarr = plt.subplots(1, 3, figsize=(11, 3), sharey=True)
+fig, axarr = plt.subplots(2, 2, figsize=(8, 7.2))
+fig.subplots_adjust(wspace=0.08, hspace=0.4)
 
 color_palette = [fs.palette[0], fs.lighten(fs.palette[0]),  "darkgrey"]
 markers = ["o", "s", "^"]
@@ -57,28 +58,54 @@ for i, vary in enumerate(["eta", "lambda", "gamma"]):
         sub = sub.sort_values(by=[f"{vary}_plus"])
         sub = sub.groupby([f"{vary}_plus"])["value"].mean().reset_index()
         
-        axarr[i].plot(sub[f"{vary}_plus"], sub["value"], label=titles[metric], color=color_palette[j], linewidth=2, linestyle=linestyles[j])
-        axarr[i].scatter(sub[f"{vary}_plus"], sub["value"], color=color_palette[j], s=40, label = titles[metric], marker=markers[j])
-        axarr[i].set_xlabel(fr"$\{vary}_+$", fontsize=14)
+        ax = axarr.ravel()[i]
+        
+        ax.plot(sub[f"{vary}_plus"], sub["value"], label=titles[metric], color=color_palette[j], linewidth=2, linestyle=linestyles[j])
+        ax.scatter(sub[f"{vary}_plus"], sub["value"], color=color_palette[j], s=40, label = titles[metric], marker=markers[j])
+        ax.set_xlabel(fr"$\{vary}_+$", fontsize=16)
+        ax.set_title(fr"Varying $\{vary}_+$", fontsize=16)
+        ax.tick_params(axis='both', which='major', labelsize=14)
+        # ax.set_xticklabels(ax.get_xticks(), fontsize=16)
+        # ax.set_yticklabels(ax.get_yticks(), fontsize=16)
     
-    axarr[i].annotate(labs[i], xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+    ax.annotate(labs[i], xy=(0.07, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+    ax.set_ylabel("ARI", fontsize=14)
+
+axarr[1,0].set_xlim(0.0, 1.01)
+axarr[0,0].set_xlim(0.47, 1)
 
 # axarr[i].set_ylim(0, None)
         
-handler, labeler = axarr[0].get_legend_handles_labels()
+handler, labeler = axarr[0,0].get_legend_handles_labels()
 handler = [(handler[0],handler[1]),
        (handler[2],handler[3]), 
        (handler[4],handler[5])]
 labeler = labeler[::2]
 
-plt.legend(handler, labeler, loc="lower center", bbox_to_anchor=(-0.7, -0.6), ncol=3, frameon=False, handletextpad=0.5, columnspacing=1.5, fontsize=14)
+ax_legend = axarr[1, 1]
+ax_legend.set_axis_off()
+ax_legend.legend(
+    handler, labeler,
+    loc="center",
+    frameon=False,
+    framealpha=0.9,
+    fontsize=16,
+    markerscale=1.0,
+    handlelength=2.0,
+    handletextpad=0.8,
+    borderpad=1.2,
+    labelspacing=0.9,
+)
+
+
+# plt.legend(handler, labeler, loc="lower center", bbox_to_anchor=(-0.7, -0.6), ncol=3, frameon=False, handletextpad=0.5, columnspacing=1.5, fontsize=14)
 
 
 # axarr[2].legend(handler, labeler, loc="center left", bbox_to_anchor=(1, 0.5))
 
 
 
-axarr[0].set_ylabel("ARI", fontsize=14)
+
 plt.tight_layout()
 
 plt.savefig("fig/community-synthetic-data-viz-line.png", dpi=300, bbox_inches="tight")
