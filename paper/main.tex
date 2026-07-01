@@ -161,6 +161,7 @@
             (d): Euclidean projections of the simulated joint distribution $\at{\jointdist}{t} \paren{k_0, k_1}$ onto the eigenvectors $\mathbf{v}_1$ and $\mathbf{v}_2$ during a simulation run with $10^7$ timesteps. 
             At each time point, we aggregate the most recent $1,000$ edges to compute the joint distribution in order to approximate an ``instantaneous'' simulation state. 
             (e): Empirical joint distribution $\at{\jointdist}{t} \paren{k_0, k_1}$ aggregated across $10^7$ timesteps. 
+            \phil{Frannie and Violet both, I'd like some feedback from you on whether this figure and accompanying discussion seem valuable in proportion to the space they occupy in the paper so far.}
         }
         \label{fig:dynamics-eigenvectors}
     \end{figure*}
@@ -414,6 +415,7 @@ That said, even in the least successful cases for estimation with high KL diverg
 We also used our method to infer parameters for six standard empirical hypergraph datasets described in \Cref{tab:datasets}. 
 The \texttt{senate-bills} and \texttt{house-bills} datasets \cite{fowler2006connecting,fowler2006legislative} are hypergraphs of cosponsorships of bills in the U.S. Senate and House of Representatives, respectively, with node labels corresponding to the political party of each legislator; we use the version of these data sets used in \cite{chodrowGenerativeHypergraphClustering2021}.
 The \texttt{high-school} and \texttt{primary-school} datasets \cite{gemmetto2014mitigation,stehle2011high,mastrandrea2015contact} are hypergraphs of social interactions between students in a high school and primary school, respectively, with node labels corresponding to the gender of each student; these data sets were collected through the SocioPatterns project. 
+\phil{Frannie or Violet (can't remember which one of you did this), please briefly describe how you did the filtering in the \texttt{primary-school} and \texttt{high-school} datasets to remove edges. I think it was that you removed identical edges observed within the minimum time resolution of data collection, but please confirm and describe.}
 Finally, we created the \texttt{coauthorship} data set by... \phil{Violet, can you fill this in?}
 
 \begin{table*}
@@ -439,8 +441,6 @@ Our model presents a simplified picture of the process of collaboration formatio
 Our findings suggest that of these mechanisms, only the latter (the recruitment of novices) displays substantial gender homophily, with novices who share the gender of the focal scientist more likely to be recruited to the collaboration. 
 This effect may be partially due to gender homophily between PhD students and their advisors, a known phenomenon in several scientific areas \cite{schwartz2022impact}. 
 
-\violet{begin NEW: discuss congressional data SEM}
-
 The \texttt{senate-bills} dataset appears to have slight homophily in the estimates of the edge copy and external node addition parameters.
 Because new senators are elected far less frequently than bills are cosponsored, the novel node addition parameters are both nearly 0. 
 The analogous \texttt{house-bills} data set has edge copy parameter estimates which are relatively similar to those of \texttt{senate-bills}, but which suggest a small tendency towards heterophily rather than homophily in edge-copying \phil{Violet, we need to say something about why this might be, or sorta acknowledge the mystery of it. Thoughts?}
@@ -450,8 +450,6 @@ These estimates suggest the operation of similar levels of party homophily in th
 These estimates reflect the higher mean edge size of \texttt{house-bills}, where a bill is co-sponsored by a mean of over 20 congresspersons, as opposed to the mean of 8 in \texttt{senate-bills}. 
 % That is, a bill in the House of Representatives has on average more cosponsors than a bill in the Senate, and since only about half of $\seededge$ is copied to $\newedge$, and $\opp{\novelrate}$ and $\same{\novelrate}$ are close to zero, the external node parameters will grow proportionally to the mean edge size.
 
-\violet{end NEW}
-\phil{Made minor revisions and a comment in the section above}
     
 The emails hypergraph falls in the heterophilic region of the edge copy panel.
 This is a feature of the sampling strategy.
@@ -479,7 +477,13 @@ Often, an email is precipated by an existing conversation between that set of us
 
 \subsection{Community Detection via Simulated Annealing}
 
-We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic} \phil{repopulate this}. 
+
+\begin{figure}
+    \includegraphics[width=\columnwidth]{../fig/community-synthetic-data-viz-line.png}
+    \caption{Test caption} \label{fig:community-synthetic}
+\end{figure}
+
+We evaluate our simulated annealing algorithm on a range of small synthetic data sets under two conditions, shown in \Cref{fig:community-synthetic} \phil{Phil needs to repopulate this}. 
 Under the Nishimori condition \cite{decelle2011asymptotic}, we generate a synthetic hypergraph according to a parameter vector $\paramvector$ and then attempt to learn $\vz$ via simulated annealing using the same parameter vector $\paramvector$. 
 Under the ``fixed'' condition, which simulates a more realistic data analysis scenario, we always use the same parameter vector $\paramvector'$ to learn $\vz$ via simulated annealing, regardless of the true parameter vector $\paramvector$ used to generate the synthetic data. 
 In this condition, we use $\paramvector' = \thetaguess$, which is the same parameter vector used in \Cref{fig:dynamics-eigenvectors} and which we found to be a reasonable default for learning $\vz$ across a range of synthetic data sets generated with different parameters.
@@ -501,10 +505,10 @@ Since in these three data sets many of the nodes exist in the system before data
     \label{fig:community-empirical}
 \end{figure}
 
-
-\frannie{Ref greedy-modularity and spectral clustering} Spectral \cite{luxburg2007tutorial}, modularity \cite{clauset2004finding}. 
-\frannie{Ref ARI?} \cite{hubert1985comparing}
-\frannie{Talk about how the datasets were parsed? No duplicated hyperedges for the same interaction} \phil{That would belong in the place where we are introducing the data sets, roughly \Cref{sec:sem-empirical}}
+\phil{
+    Frannie, you can incorporate these references into your discussion: 
+    Spectral clustering: \cite{luxburg2007tutorial}, modularity: \cite{clauset2004finding}, ARI: \cite{hubert1985comparing}. 
+}
 
 In \Cref{fig:community-empirical}, we observe that simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
 On the primary school dataset, simulated annealing performs comparably in ARI to the competitor methods, with a slightly lower average ARI compared to spectral clustering and greedy modularity's results.  
@@ -558,10 +562,12 @@ While the computational performance of simulated annealing presents a difficulty
     The code used to generate the results in this paper is available at \url{https://github.com/Violet-Ross/labeled-growth}.
     The empirical data sets analyzed in this paper are available at the following links:
     \begin{itemize}
-        \item Contact high school: 
-        \item Contact primary school: 
-        \item Senate bills: 
-        \item Coauthorship: 
+        \item \texttt{senate-bills}: 
+        \item \texttt{house-bills}:
+        \item \texttt{primary-school}: 
+        \item \texttt{high-school}: 
+        \item \texttt{coauthorship}: 
+        \item \texttt{enron-emails}:
     \end{itemize}
 
 \bibliographystyle{apsrev4-2}
