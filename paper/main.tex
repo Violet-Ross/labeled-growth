@@ -465,7 +465,6 @@ Consider some bill $\newedge$, where $\focalnode$ is a cosponsor of both bill $\
 If $\focalnode$ is a Democrat, for instance, and the primary sponsor of $\seededge$ is a Republican, then $\focalnode$ was a ``bipartisan'' cosponsor of $\seededge$.
 Then reciprocity of bipartisan cosponsorship suggests that the Republican cosponsors of $\seededge$ may also cosponsor $\newedge$ to ``return the favor.''
 However, the other Democratic cosponsors of $\seededge$ are not indebted in the same way to $\focalnode$, perhaps making them less likely to cosponsor $\newedge.$
-
 \phil{This seems helpful but I think we still owe an explanation if possible for why house and senate might be different. Possibly here? \cite{harbridge2023bipartisan}.}
 
 
@@ -509,7 +508,7 @@ Often, an email is precipated by an existing conversation between that set of us
         Comparison of community detection methods on synthetic data. 
         We compare our simulated annealing algorithm under the Nishimori condition and with a fixed parameter vector $\paramvector' = \thetaguess$ against a baseline of Laplacian spectral clustering on the weighted clique projection of the hypergraph. 
         The ``default'' parameter vector used is $\paramvector = (\same{\copyrate}, \opp{\copyrate}, \same{\extantrate}, \opp{\extantrate}, \same{\novelrate}, \opp{\novelrate}) = (\synthfixedetaplus,\synthfixedetaminus, \synthfixedlambdaplus, \synthfixedlambdaminus,\synthfixedgammaplus, \synthfixedgammaminus)$. 
-        In each of the three panels, a single one of these parameters is varied while the others are held fixed at their default values. 
+        In each of the three panels (a-c), a single one of these parameters is varied while the others are held fixed at their default values. 
         Each point gives the mean ARI over 500 independent model simulations, each of which were simulated for 200 timesteps. 
     } \label{fig:community-synthetic}
 \end{figure}
@@ -533,25 +532,31 @@ We use the class membership of the students in \texttt{primary-school} and \text
 Since in data analysis contexts the labels $\vz$ (and therefore parameter estimates $\hat{\paramvector}$) are not available, we instead use a single, fixed parameter vector for each of these three experiments: $\hat{\paramvector} = (0.9, 0.1, 1.0, 0.25, 0.001, 0.001)$.
 All of these datasets are appropriately modeled with very small values of $\same{\novelrate}$ and $\opp{\novelrate}$ under our model due to their large number of edges compared to small number of nodes.  
 Since in these three data sets many of the nodes exist in the system before data collection, for the purposes of community detection we ignore the novel node addition step, assuming instead that all nodes are present in the system and eligible to be added via the extant node addition step. 
-We evaluate our method against baseline methods Laplacian spectral clustering \cite{luxburg2007tutorial} and greedy modularity \cite{clauset2004finding}.   
+We compare \model{} SEM against several competitors. 
+The all-or-nothing hypergraph modularity of \cite{chodrowGenerativeHypergraphClustering2021} does not allow the user to specify a desired number of clusters, but because it returns a binary partition on \texttt{senate-bills}, we can compare directly on this data set. 
+Belief-propagation nonbacktracking spectral clustering \cite{chodrowNonbacktrackingSpectralClustering2023} allows the user to specify the number of clusters, and the authors report results for binary clustering. 
+We therefore compare our method against the reported results from these two articles.\footnote{The authors of \cite{chodrowNonbacktrackingSpectralClustering2023} did not perform the data filtering on \texttt{high-school} and \texttt{primary-school} described in \Cref{sec:sem-empirical}, so our direct comparison with their results should be interpreted with some caution.}
+Notably, both hypergraph modularity maximization and nonbacktracking spectral clustering are based on generative models which assume conditional edge independence, the assumption relaxed by \model{}.
+We also include as comparisons two dyadic methods, implemented on the weighted clique projection of the hypergraph, that allow the user to specify the number of clusters: Laplacian spectral clustering \cite{luxburg2007tutorial} and greedy modularity maximization \cite{clauset2004finding}.
 
 \begin{figure}
     \includegraphics[width=\columnwidth]{../fig/community_detection_boxplot.png}
-    \caption{Community detection results on three selected empirical datasets.  Box plots describe the distribution of the ARI of simulated annealing on the selected data set across 10 separate runs. 
+    \caption{Community detection results on three selected empirical datasets.  
+    Box plots describe the distribution of the ARI of \model{} SEM on the selected data set across 10 separate runs. 
     The single label set achieving the highest likelihood under simulated annealing is highlighted. 
-    We compare these results with the ARI of the labels generated via normalized spectral clustering and greedy modularity maximization.}
+    We compare these results with the ARI of the labels generated via several comparisons: hypergraph modularity \cite{chodrowGenerativeHypergraphClustering2021} (only for \texttt{senate-bills}), belief-propagation nonbacktracking spectral clustering \cite{chodrowNonbacktrackingSpectralClustering2023}, greedy dyadic modularity maximization \cite{clauset2004finding}, and dyadic Laplacian spectral clustering \cite{luxburg2007tutorial}; the latter two dyadic methods are denoted by hollow markers.  
+    Values for hypergraph modularity maximization and nonbacktracking spectral clustering are reported in \cite{chodrowGenerativeHypergraphClustering2021} and \cite{chodrowNonbacktrackingSpectralClustering2023}, respectively.
+    }
     \label{fig:community-empirical}
 \end{figure}
 
-In \Cref{fig:community-empirical}, we observe that \model{} simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
-On the primary school dataset, simulated annealing performs comparably in ARI to the competitor methods, with a slightly lower average ARI compared to spectral clustering and greedy modularity's results.  
-However, simulated annealing performs worse on the high school dataset in ARI compared to its competitors.
-While the computational performance of simulated annealing presents a difficulty in its application, the detection of communities via the maximization of likelihood provides evidence that the formations of these datasets, especially senate-bills, can be modeled via our proposed method.  
-
-\frannie{Unsure of the assumptions behind spectral clustering, tried to google but couldn't find.  If assumption of edge independence, could say something about that}
-
-\phil{Good idea to look on this. Spectral clustering is not a generative (probabilistic model-based) method, but many of its standard justifications do rely on stochastic blockmodels which have the independence assumption. The best citation is probably this one: \cite{lei2015consistency}}. 
-
+We show our results in \Cref{fig:community-empirical}.
+We observe that across each of these three data sets, none of the compared methods consistently outperforms the others; this is directionally aligned to ``no free lunch'' results in community detection \cite{peel2017ground}. 
+\model{} SEM is perhaps the most consistent of the methods, achieving relatively high ARIs and not failing completely on any of the three data sets. 
+Hypergraph modularity maximization is outperformed by both \model{} SEM and nonbacktracking spectral clustering on \texttt{senate-bills}. 
+Hypergraph modularity maximization was reported to achieve an ARI of 1.0 on both \texttt{primary-school} and \texttt{high-school}, reflecting perfect recovery, but this result cannot be directly compared to other since this required nonbinary partitions. 
+Nonbacktracking spectral clustering achieves the highest of all ARIs on \texttt{senate-bills} and is competitive on \texttt{primary-school}, but appears to completely fail on \texttt{high-school}. 
+The two dyadic methods perform similarly to each other throughout, failing on \texttt{senate-bills} and achieving relatively high ARIs on \texttt{primary-school} and \texttt{high-school}. 
 
 
 
@@ -572,10 +577,12 @@ While the computational performance of simulated annealing presents a difficulty
     We have proposed \Model{} (\model{}), a generative model for the formation of binary-labeled hypergraphs in which edges form as noisy copies of previous edges, combined with the addition of extant and novel nodes.
     The copying, extant, and novel node addition steps are all tuned by node labels and parameters which control the strength of homophily or heterophily in each of these steps.
     We have demonstrated efficient parameter inference in the \model{} model via stochastic expectation maximization (SEM). 
-    We have also demonstrated that, in some circumstances, maximum-likelihood inference of node labels $\vz$ via simulated annealing can outperform standard community detection methods on both synthetic and empirical data sets.
+    We have also demonstrated that, in some circumstances, maximum-likelihood inference of node labels $\vz$ via simulated 
+    annealing can outperform both dyadic and polyadic community detection algorithms that proceed from the assumption of conditional edge independence. 
+    We interpret this latter result as proof-of-concept that explicitly modeling edge-dependence can be a useful framework for community detection in hypergraphs. 
     
     There are several directions for future work. 
-    Most obviously, although our results show that maximum-likelihood inference is a theoretically reasonable approach for community detection in this model, the simulated annealing method we have used is impractically expensive on data sets of even relatively modest size. 
+    Most obviously, although our results show that maximum-likelihood inference in the \model{} model is promising for detecting certain kinds of community structure, the simulated annealing method we have used is impractically expensive on data sets of even relatively modest size. 
     Developing more efficient heuristics for maximizing the likelihood over $\vz$ will be an important direction for scalable application the \model{} model for community detection. 
     Scalability may also imply opportunities for improved performance.
     We note, for example,  that \cite{chodrowNonbacktrackingSpectralClustering2023} proposed an algorithm which obtained an ARI of approximately 0.25 on the \texttt{senate-bills} data set, higher than our proposed simulated annealing method. 
