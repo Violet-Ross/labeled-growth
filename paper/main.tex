@@ -455,7 +455,13 @@ This effect may be partially due to gender homophily between PhD students and th
 
 The \texttt{senate-bills} dataset appears to have slight homophily in the estimates of the edge copy and external node addition parameters.
 Because new senators are elected far less frequently than bills are cosponsored, the novel node addition parameters are both nearly 0. 
-The analogous \texttt{house-bills} data set has edge copy parameter estimates which are relatively similar to those of \texttt{senate-bills}, but which suggest a small tendency towards heterophily rather than homophily in edge-copying 
+The analogous \texttt{house-bills} data set has edge copy parameter estimates which are relatively similar to those of \texttt{senate-bills}, but which suggest a small tendency towards heterophily rather than homophily in edge-copying. 
+The slight heterophily in the copy step of \texttt{house-bills} may be related to reciprocity in bipartisan cosponsorship, a phenomenon that has been observed in U.S. legislative bodies \cite{harbridge2023bipartisan,dobson2026selective}.
+We illustrate the connection between reciprocity and edge copy parameters through the following example.
+Consider some bill $\newedge$, where $\focalnode$ is a cosponsor of both bill $\newedge$ and bill $\seededge$.
+If $\focalnode$ is a Democrat, for instance, and the primary sponsor of $\seededge$ is a Republican, then $\focalnode$ was a ``bipartisan'' cosponsor of $\seededge$.
+Then reciprocity of bipartisan cosponsorship suggests that the Republican cosponsors of $\seededge$ may also cosponsor $\newedge$ to ``return the favor.''
+However, the other Democratic cosponsors of $\seededge$ are not indebted in the same way to $\focalnode$, perhaps making them less likely to cosponsor $\newedge.$
 \phil{Violet, we need to say something about why this might be, or sorta acknowledge the mystery of it. Thoughts?}
 
 
