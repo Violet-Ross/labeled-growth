@@ -727,11 +727,10 @@ While the computational performance of simulated annealing presents a difficulty
     
     \subsection{Implementation Details}
 
-
-        For all runs of SEM, the initial learning rate was $\lr^{(0)} = 0.01$, which exponentially decayed over iterations according to the exponent 0.001.
-        \phil{Violet, can we make this a bit more mathematical?}
+        We used an exponentially decaying learning rate for SEM, which has the form $\lr^{(t)} = \lr^{(0)} \cdot e^{-ct}$.
+        The initial learning rate was $\lr^{(0)} = 0.01$ and the exponent was $c = 0.001$.
         We initialized the vector of sufficient statistics $\sufficientstatsvec^{(0)} = (1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5)$.
-
+        
 
         
 
