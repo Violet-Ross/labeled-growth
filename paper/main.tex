@@ -852,9 +852,9 @@ This is because the baseline methods, greedy modularity and spectral clustering,
                             \State $B$ $\gets$ 1
                             \State $\zeta_a$ $\gets$ $\Delta E/\sigma_\hypergraph$
                             \If{$1 \leq \epoch \leq 4$}
-                                \State Sample $B$ $\sim $ Normal($\zeta_a|\mu = 0, \sigma=2$)
+                                \State $B$ $\gets$ Normal($\zeta_a|\mu = 0, \sigma=2$)
                             \ElsIf{5 $\leq \epoch$}
-                                \State Sample $B$ $\sim $ Normal($\zeta_a|\mu = 0, \sigma=2(1 - \frac{\epoch}{A}))$
+                                \State $B$ $\gets$ Normal($\zeta_a|\mu = 0, \sigma=2(1 - \frac{\epoch}{A}))$
                             \EndIf
                             \State Sample $x \sim \text{Uniform}(0,1)$
                             \If{$B > x$} 
@@ -867,8 +867,6 @@ This is because the baseline methods, greedy modularity and spectral clustering,
             \end{algorithmic}
         \end{algorithm}
 
-        \phil{Frannie, is something a bit off in this algorithm? If I understand correctly $B$ should be an evaluation of a normal quantile (i.e. the value of the CDF) rather than a simple from a normal distribution. 
-        That way it's guaranteed to be a probability and therefore comparable with $x$. Am I missing something?}
 
         Here, 
         \begin{align}
