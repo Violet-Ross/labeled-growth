@@ -327,7 +327,13 @@ Our version of the algorithm uses an online computation of $\sufficientstatsvec'
     \end{algorithmic}
 \end{algorithm}
 
-The SEM algorithm continues iterating until the stopping criterion is met. In our experiments, the stopping criterion is met when each of the current parameter estimates $\at{\hat{\paramvector}}{\ell}$ is within [THRESH] of the [LENGTH] preceding estimates of the corresponding parameter. \phil{Violet, can you fill these in?}
+\violet{Look over this paragraph}
+The SEM algorithm continues iterating until the stopping criterion is met. 
+In our experiments, the stopping criterion is met when each of the current parameter estimates in $\at{\hat{\paramvector}}{\ell}$ is ``close'' to all of the 800 preceding estimates of the corresponding parameter. 
+We define ``close'' using both a relative and absolute tolerance. 
+A parameter estimate $\hat{\copyrate_+}^{(\ell)}$ is close to the preceding estimate $\hat{\copyrate_+}^{(\ell - 1)}$ if $|\hat{\copyrate_+}^{(\ell)} - \hat{\copyrate_+}^{(\ell - 1)}| \leq \text{tol}_{(\text{absolute})} + \text{tol}_{(\text{relative})} * \hat{\copyrate_+}^{(\ell - 1)}$.
+The absolute tolerance ensures that the criterion can be met even when the values of the estimates are near zero.
+For all runs of SEM we used $\text{tol}_{(\text{absolute})} = 0.01$ and $\text{tol}_{(\text{absolute})} = 0.015$.
 
 \subsection{Community Detection via MLE} \label{sec:community-detection}
 
@@ -389,7 +395,7 @@ The SEM algorithm continues iterating until the stopping criterion is met. In ou
     \caption{
         Performance of SEM on synthetic hypergraphs. 
         Each entry in the heatmap (panel (a)) corresponds to a set of parameters $\paramvector$, which can be found in Appendix \ref{sec:SEM-appendix}.        
-        For each set of parameters, 20 indepedent hypergraphs are generated according to the model  and SEM is performed independently on each. \phil{Violet, for how many simulation steps?}
+        For each set of parameters, 20 indepedent 2000-edge hypergraphs are generated according to the model and SEM is performed independently on each. \phil{Violet, for how many simulation steps?}
         We then compute the Kullback-Leibler (KL) divergence of the estimated parameters from the true ones (\cref{eq:kl-divergence}) and average the results to obtain a value in a pixel. 
         The parameter estimates over iterations of SEM are plotted for the underlying parameters which produced the lowest mean KL divergence (copy parameters in panel (b) and addition parameters in panel (c)), 
         and similarly for the parameters that produced the highest mean KL divergence in panels (d) and (e).
