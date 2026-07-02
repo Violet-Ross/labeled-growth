@@ -142,8 +142,8 @@ x_bracket_groups = [
 
 # ── 4. Load CSV results and compute average KL divergence across iterations ───
 
-INPUT_DIR = "throughput"
-N_ITERS = 5
+INPUT_DIR = "throughput/synthetic_results"
+N_ITERS = 20
 
 n_rows, n_cols = 10, 4
 kl_values = np.full((n_rows, n_cols), np.nan)
@@ -169,7 +169,7 @@ for graph_idx, true_theta in enumerate(true_thetas, start=1):
 
     iter_kls = []
     for j in range(1, N_ITERS + 1):
-        csv_path = os.path.join(INPUT_DIR, f"graph{graph_idx}_sem_ests_iter{j}.csv")
+        csv_path = os.path.join(INPUT_DIR, f"graph{graph_idx}_rep{j}_sem_ests_extended.csv")
         if not os.path.exists(csv_path):
             print(f"  [WARNING] Missing: {csv_path}")
             continue
@@ -376,7 +376,7 @@ for k in range(2):
     if k == 0: 
         lil_ax.set_xticklabels([])
         
-    lil_ax.annotate(labs[2*k], xy=(0.05, 0.9), xycoords='axes fraction', fontsize=16, fontweight='bold')
+    lil_ax.annotate(labs[2*k], xy=(0.05, 0.7), xycoords='axes fraction', fontsize=16, fontweight='bold')
     
     
     
@@ -410,7 +410,7 @@ for k in range(2):
     if k == 0: 
         lil_ax.set_xticklabels([])
 
-    lil_ax.annotate(labs[2*k+1], xy=(0.05, 0.9), xycoords='axes fraction', fontsize=16, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+    lil_ax.annotate(labs[2*k+1], xy=(0.05, 0.8), xycoords='axes fraction', fontsize=16, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
 
 output_path = "fig/sem_convergence_heatmap.png"
 plt.savefig(output_path, dpi=300, bbox_inches="tight")

@@ -1,3 +1,4 @@
+import os
 import xgi
 from src.algorithms.sem import sem_functions
 import numpy as np
@@ -10,6 +11,8 @@ s_intial = np.array([1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5])
 initial_rate = 0.01
 constant = 0.001
 iteration_limit = 8000
+n_replicates = 20
+n_nodes = 2000
 
 base = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
 
@@ -104,10 +107,36 @@ true_thetas = [g1, g2, g3, g4, g5,
                g31, g32, g33, g34, g35,
                g36, g37, g38, g39, g40]
 
-for i, true_theta in enumerate(true_thetas, start=1):
+
+def run_one(i, true_theta):
+    """Generate n_replicates independent hypergraphs for parameter set i,
+    run SEM on each, and write each replicate's estimates to its own CSV."""
     print(f"Graph {i}")
-    GH = sem.generate_hypergraph(true_theta, 2000)
-    estimates = sem.SEM_without_likelihood(GH, s_intial, iteration_limit, initial_rate, constant)
-    with open(f'throughput/graph{i}_sem_ests_extended.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerows(estimates)
+    for rep in range(1, n_replicates + 1):
+        print(f"  Replicate {rep}/{n_replicates}")
+        GH = sem.generate_hypergraph(true_theta, n_nodes)
+        estimates = sem.SEM_without_likelihood(
+            GH, s_intial, iteration_limit, initial_rate, constant
+        )
+        out_path = f"throughput/synthetic_results/graph{i}_rep{rep}_sem_ests_extended.csv"
+        with open(out_path, "w", newline="") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(estimates)
+
+
+if __name__ == "__main__":
+    task_id = os.environ.get("SLURM_ARRAY_TASK_ID")
+
+    if task_id is not None:
+        # Running as one task of a SLURM job array: process only the
+        # parameter set corresponding to this array index (1-based, matches
+        # g1..g40 / --array=1-40).
+        idx = int(task_id)
+        true_theta = true_thetas[idx - 1]
+        run_one(idx, true_theta)
+    else:
+        # Fallback for local/interactive runs: process every parameter set
+        # sequentially (useful for testing, but slow — prefer the job array
+        # on the HPCC).
+        for i, true_theta in enumerate(true_thetas, start=1):
+            run_one(i, true_theta)
