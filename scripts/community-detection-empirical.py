@@ -109,7 +109,7 @@ order = ["senate-bills", "primary-school", "high-school"]
 
 
 
-fig, ax = plt.subplots(figsize=(6.5, 2.0))
+fig, ax = plt.subplots(figsize=(6.5, 3.0))
 
 # Boxplot
 sns.boxplot(
@@ -120,7 +120,7 @@ sns.boxplot(
     color="0.85",
     width=0.55,
     linewidth=1,
-    fliersize=2,
+    fliersize=7,
     ax=ax, 
     boxprops=dict(alpha=0.5), 
     flierprops=dict(alpha = 0.5),
@@ -135,14 +135,27 @@ line_length = 0.25
 # Overlay algorithm results
 for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
     
+    
+    ax.scatter(
+        best_likelihoods[best_likelihoods["Dataset"] == dataset]["ARI"].values[0],
+        i,
+        color=fs.lighten(fs.palette[0]),
+        s=100,
+        zorder=5,
+        label="Simulated annealing\n(highest likelihood)" if i == 0 else None,
+        edgecolors="black",
+        linewidth=1,
+        marker = "o"
+    )
+    
     # modularity
     ax.scatter(
         modularity_ari[dataset],
         i,
         color=fs.lighten(fs.palette[2]),
-        s=50,
+        s=100,
         zorder=50000,
-        label="Greedy modularity" if i == 0 else None,
+        label="Greedy\nmodularity" if i == 0 else None,
         edgecolors="black",
         linewidth=1,
         marker = "^"
@@ -152,36 +165,32 @@ for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
         spectral_ari[dataset],
         i,
         color=fs.lighten(fs.palette[1]),
-        s=50,
+        s=100,
         zorder=5,
-        label ="Spectral clustering" if i == 0 else None,
+        label ="Spectral\nclustering" if i == 0 else None,
         edgecolors="black",
         linewidth=1,
         marker = "s"
     )
     
-    ax.scatter(
-        best_likelihoods[best_likelihoods["Dataset"] == dataset]["ARI"].values[0],
-        i,
-        color=fs.lighten(fs.palette[0]),
-        s=50,
-        zorder=5,
-        label="Simulated annealing\n(highest likelihood)" if i == 0 else None,
-        edgecolors="black",
-        linewidth=1,
-        marker = "o"
-    )
 
 # Labels
 ax.set_ylabel("")
-ax.set_xlabel("Adjusted Rand Index", fontsize=12)
+ax.set_xlabel("Adjusted Rand Index (ARI)", fontsize=12)
 
 # Remove unnecessary spines
 # sns.despine(ax=ax)
 
-# Legend on side of plot
+# Legend beneath plot
 
-ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), frameon=False, fancybox=False, edgecolor="0.8", framealpha=1)
+ax.legend(
+    loc="upper center",
+    bbox_to_anchor=(0.5, -0.4),
+    ncol=3,
+    frameon=False,
+    fontsize=12
+)
+
 
 plt.tight_layout()
 plt.savefig("fig/community_detection_boxplot.pdf", dpi=300, bbox_inches="tight")
