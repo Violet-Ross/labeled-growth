@@ -46,7 +46,7 @@
     We derive a power law for the degree distribution in this model and describe the long-term dynamics of the joint distribution of labels contained in edges. 
     This model defines a likelihood over a labeled hypergraph, allowing us to use standard maximum-likelihood techniques to structure algorithms. 
     We estimate the model parameters on synthetic and real data via (stochastic) expectation maximization, allowing us to statistically quantify the signature of homophily in empirical polyadic systems. 
-    We also demonstrate an approach to community detection via simulated annealing which, though computationally expensive, achieves competitive results on certain data sets known to be challenging to standard community detection techniques.
+    We also demonstrate an approach to community detection via simulated annealing which, though computationally expensive, achieves competitive results on certain data sets known to be challenging to standard community detection techniques derived from models that assume edge independence.
     Our findings highlight the benefits of moving beyond edge-independence assumptions in modeling and data analysis, and point to several directions of future work. 
 \end{abstract}
 
@@ -358,26 +358,26 @@ In our experiments we used $\epsilon_\mathrm{rel} = 0.01$ and $\epsilon_\mathrm{
     We'll argue that, when the number of nodes $n$ is large, $p(\newedge|\seededge, \focalnode, \vz, \paramvector) \in O(n^{-x})$, which implies that edges $\seededge$ which do not maximize $\abs{\seededge \cap \newedge}$ will have negligible contributions to the likelihood.
     The essence of the argument is that forming $x$ extant nodes requires $x$ independent samples from the sets $\nodes_0\setminus \seededge$ and $\nodes_1\setminus \seededge$, each of which have size scaling linearly with $n$. 
     So, each independent sample has probability $O(n^{-1})$, and the probability of forming a given set of $x$ extant nodes is $O(n^{-x})$.
-    We detail this argument in \Cref{sec:simulated-annealing-approximation}.
-
-    In our application of simulated annealing, we run the algorithm for $A\times n$ steps where $A$ represents the number of epochs.
-    In each step, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random and evaluating the change in likelihood of "flipping" the binary node label ($z_j \gets 1 - z_j$).  
-    \phil{We need to at least be able to put \Cref{eq:sa-approx} and say what it means in the main text; the justification can stay in the appendix.}
-    If the proposal increases \Cref{eq:sa-approx}, it is accepted.
-    However, if the proposal decreases the likelihood, we accept it with a probability that decreases as the epochs increase.
-    When evaluating this change in likelihood, we implement custom data structures that allow us to compute only the change in likelihood from the prior state by storing the components of the prior likelihood calculation 
+    We detail this argument in \Cref{sec:simulated-annealing-approximation}, obtaining an approximate objective function for simulated annealing 
+    \begin{align*}
+        \tilde{\cL}(\vz) = \log \tilde{\prob}(\hypergraph, \vz | \paramvector) \;,
+    \end{align*}
+    where $\tilde{\prob}(\hypergraph, \vz | \paramvector)$ is the likelihood of $\hypergraph$ and $\vz$ under the intersection-based approximation.
+    To run simulated annealing for a single epoch, we perform $n$ individual update steps. 
+    In each step, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random (without replacement) and evaluating the change in likelihood of "flipping" the binary node label ($z_j \gets \bar{z}_j$).  
+    \phil{Frannie, is the ``without replacement'' correct here?}
+    If the proposal increases $\tilde{\cL}(\vz)$, it is accepted.
+    If the proposal decreases $\tilde{\cL}(\vz)$, however, we may also accept it with an acceptance probability $a(\ell)$ that decreases with the epoch $\ell$.
+    It is possible to store computational components required to evaluate $\tilde{\cL}(\vz)$ in a data structure that allows us to compute the change in likelihood from the prior state without recomputing the entire likelihood.
     This results in a roughly 30-fold reduction in compute time on our empirical data sets (described in \Cref{sec:experiments}) at the expense of increasing memory requirements. 
     
-    \phil{Haven't done a style pass over the below yet.}
-    In simulated annealing applications, it is important accept proposals that decrease the value of the objective function with a probability that decreases gradually as the algorithm runs.
-    Similarly, proposals that slightly lower the objective function should be accepted more frequently than proposals causing large objective function decreases.
-    A balance must be struck, both accepting enough proposals decreasing the objective function to avoid becoming stuck in local optima and not accepting too many to allow convergence to a maxima.  
-    However, the change in log-likelihood of a proposal in our application changes significantly depending on the size of the hypergraph considered.  
-    Thus, traditional annealing schedules struggle to accept an effective balance of proposals that decrease the likelihood on varying sized hypergraphs.  
-    For example, on datasets with large $m$, the logged form of \Cref{eq:sa-approx} have orders of magnitude larger changes compared to hypergraphs with small $m$.  
-    Thus, we implement a custom annealing schedule based on the idea of z-scores.  
-    Breaking the runtime into epochs, the algorithm's first epoch accepts all proposals while storing the changes in log-likelihood and, at the end of the first epoch, calculating its standard deviation, $\sigma_\hypergraph$.
-    For the rest of the steps of the algorithm, the acceptance probability of a proposal that decreases the likelihood is determined by the change in log-likelihood of the proposal divided by $\sigma_\hypergraph$, interpreting the change in likelihood in context of the specific hypergraph. 
+    We use a custom acceptance schedule $a(\ell)$ for our simulated annealing implementation.
+    Our custom approach is motivated by the observation that, in our application, the change in the objective $\tilde{\cL}$ of a proposal can vary significantly depending on the size of the hypergraph under study.
+    Thus, in our early experiments, traditional annealing schedules such as harmonic or exponential decay struggled to still occasionally accept proposals that decrease $\tilde{\cL}$. 
+    Our custom implementation instead takes an adaptive approach based on the distribution of proposals previously observed. 
+    In the first epoch, we accept \emph{all} proposals, while storing the changes the objective $\tilde{\cL}$ produced by those proposals. 
+    At the end of the epoch, we compute the standard deviation $\sigma(\Delta \tilde{\cL})$ of the changes in $\tilde{\cL}$ observed during the epoch.
+    For the remaining epochs, we accept proposals that decrease $\tilde{\cL}$ by an amount $\Delta \tilde{\cL}$ stochastically by evaluating quantiles of a Gaussian distribution with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$ which decays with epoch. 
     A full specification of the algorithm is provided in \Cref{sec:simulated-annealing-algorithm-spec}.
 
 
@@ -490,7 +490,10 @@ Often, an email is precipated by an existing conversation between that set of us
 
 \begin{figure}[t]
     \includegraphics[width=0.5\textwidth]{../fig/empirical_sem.png}
-    \caption{Model parameters inferred via SEM for six empirical higher-order networks.}
+    \caption{
+        Model parameters inferred via SEM for six empirical higher-order networks.
+        The line of equality is shown as a guide for the eye.
+        }
      \label{fig:empirical_sem}
 \end{figure}
 
@@ -550,7 +553,6 @@ We also include as comparisons two dyadic methods, implemented on the weighted c
     \label{fig:community-empirical}
 \end{figure}
 
-<<<<<<< HEAD
 We show our results in \Cref{fig:community-empirical}.
 We observe that across each of these three data sets, none of the compared methods consistently outperforms the others; this is directionally aligned to ``no free lunch'' results in community detection \cite{peel2017ground}. 
 \model{} SEM is perhaps the most consistent of the methods, achieving relatively high ARIs and not failing completely on any of the three data sets. 
@@ -558,19 +560,6 @@ Hypergraph modularity maximization is outperformed by both \model{} SEM and nonb
 Hypergraph modularity maximization was reported to achieve an ARI of 1.0 on both \texttt{primary-school} and \texttt{high-school}, reflecting perfect recovery, but this result cannot be directly compared to other since this required nonbinary partitions. 
 Nonbacktracking spectral clustering achieves the highest of all ARIs on \texttt{senate-bills} and is competitive on \texttt{primary-school}, but appears to completely fail on \texttt{high-school}. 
 The two dyadic methods perform similarly to each other throughout, failing on \texttt{senate-bills} and achieving relatively high ARIs on \texttt{primary-school} and \texttt{high-school}. 
-=======
-In \Cref{fig:community-empirical}, we observe that \model{} simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
-On the primary school dataset, simulated annealing performs comparably in ARI to the competitor methods, with a slightly lower average ARI compared to spectral clustering and greedy modularity's results.  
-However, simulated annealing performs worse on the high school dataset in ARI compared to its competitors.
-While the computational performance of simulated annealing presents a difficulty in its application, the detection of communities via the maximization of likelihood provides evidence that the formations of these datasets, especially senate-bills, can be simulated via our proposed model $\model$.
-Further, the success of our model in comparison to spectral clustering and greedy modularity provides evidence challenging the assumption of edge independence within \texttt{senate-bills}.
-This is because the baseline methods, greedy modularity and spectral clustering, are frequently justified via the stochastic block model \cite{lei2015consistency, newman2016equivalence}, which relies on the assumption of edge indpenece, where our method explicitly utilizes dependent hyperedges.
-
-% \frannie{Unsure of the assumptions behind spectral clustering, tried to google but couldn't find.  If assumption of edge independence, could say something about that}
-
-% \phil{Good idea to look on this. Spectral clustering is not a generative (probabilistic model-based) method, but many of its standard justifications do rely on stochastic blockmodels which have the independence assumption. The best citation is probably this one: \cite{lei2015consistency}}. 
-
->>>>>>> 6957237ca39485658bd5a449ad4227ae3c21cf5e
 
 
 
@@ -618,16 +607,8 @@ This is because the baseline methods, greedy modularity and spectral clustering,
 \section*{Data Availability}
 
     The code used to generate the results in this paper is available at \url{https://github.com/Violet-Ross/labeled-growth}.
-    The empirical data sets analyzed in this paper are available at the following links:
-    \begin{itemize}
-        \item \texttt{senate-bills}: 
-        \item \texttt{house-bills}:
-        \item \texttt{primary-school}: 
-        \item \texttt{high-school}: 
-        \item \texttt{coauthorship}: 
-        \item \texttt{enron-emails}:
-    \end{itemize}
-
+    Data sets are publicly available through the papers cited in \Cref{tab:datasets}.
+    
 \bibliographystyle{apsrev4-2}
 \bibliography{refs} 
 
@@ -893,6 +874,7 @@ This is because the baseline methods, greedy modularity and spectral clustering,
             \includegraphics[width=1.0\textwidth]{../fig/community-detection-learning-progress.png}
             \caption{
                 Illustrative run of simulated annealing for community detection in a hypergraph generated from our model.
+                Dashed line on the right shows the ARI achieved by Laplacian spectral clustering applied to the weighted dyadic graph projection.  
             }
         \end{figure*}
 
