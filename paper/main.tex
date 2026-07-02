@@ -327,13 +327,16 @@ Our version of the algorithm uses an online computation of $\sufficientstatsvec'
     \end{algorithmic}
 \end{algorithm}
 
-\violet{Look over this paragraph}
-The SEM algorithm continues iterating until the stopping criterion is met. 
-In our experiments, the stopping criterion is met when each of the current parameter estimates in $\at{\hat{\paramvector}}{\ell}$ is ``close'' to all of the 800 preceding estimates of the corresponding parameter. 
-We define ``close'' using both a relative and absolute tolerance. 
-A parameter estimate $\hat{\copyrate_+}^{(\ell)}$ is close to the preceding estimate $\hat{\copyrate_+}^{(\ell - 1)}$ if $|\hat{\copyrate_+}^{(\ell)} - \hat{\copyrate_+}^{(\ell - 1)}| \leq \text{tol}_{(\text{absolute})} + \text{tol}_{(\text{relative})} * \hat{\copyrate_+}^{(\ell - 1)}$.
-The absolute tolerance ensures that the criterion can be met even when the values of the estimates are near zero.
-For all runs of SEM we used $\text{tol}_{(\text{absolute})} = 0.01$ and $\text{tol}_{(\text{absolute})} = 0.015$.
+\violet{Look over this paragraph}\phil{Made revisions. Happy with it but need a small comment to say why 800 (and why not 100, or 1,000, which would have been obvious default choices).}
+We perform SEM by repeating \Cref{alg:sem} until a stopping criterion is met. 
+We define the function 
+\begin{align*}
+    h(\at{\hat{\paramvector}}{\ell}, \at{\hat{\paramvector}}{\ell'}) = \min_{i} \left\{\abs{\at{\hat{\param}_i}{\ell} - \at{\hat{\param}_i}{\ell'}} - \epsilon_\mathrm{rel} - \epsilon_\mathrm{abs} \at{\hat{\param}_i}{\ell'}\right\} \;.
+\end{align*}
+The function $h$ here can be viewed as combining absolute and relative error tolerances, enabling the algorithm to declare convergence even in cases when the parameter estimates are near zero. 
+In our implementation, we declare convergence at timestep $\ell$ when $h(\at{\hat{\paramvector}}{\ell}, \at{\hat{\paramvector}}{\ell'}) \geq 0$ for all $\ell'$ in the most recent 800 iterations of the algorithm.
+In our experiments we used $\epsilon_\mathrm{rel} = 0.01$ and $\epsilon_\mathrm{abs} = 0.015$.
+
 
 \subsection{Community Detection via MLE} \label{sec:community-detection}
 
@@ -733,9 +736,10 @@ While the computational performance of simulated annealing presents a difficulty
     
     \subsection{Implementation Details}
 
-        We used an exponentially decaying learning rate for SEM, which has the form $\lr^{(t)} = \lr^{(0)} \cdot e^{-ct}$.
-        The initial learning rate was $\lr^{(0)} = 0.01$ and the exponent was $c = 0.001$.
+        We use an exponentially decaying learning rate for SEMwith form $\lr^{(t)} = \lr^{(0)} \cdot e^{-ct}$.
+        The initial learning rate is $\lr^{(0)} = 0.01$ and the exponent is $c = 0.001$.
         We initialized the vector of sufficient statistics $\sufficientstatsvec^{(0)} = (1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5)$.
+        Other reasonable choices of hyperparameters did not substantially change the results of our experiments.
         
 
         
