@@ -550,6 +550,7 @@ We also include as comparisons two dyadic methods, implemented on the weighted c
     \label{fig:community-empirical}
 \end{figure}
 
+<<<<<<< HEAD
 We show our results in \Cref{fig:community-empirical}.
 We observe that across each of these three data sets, none of the compared methods consistently outperforms the others; this is directionally aligned to ``no free lunch'' results in community detection \cite{peel2017ground}. 
 \model{} SEM is perhaps the most consistent of the methods, achieving relatively high ARIs and not failing completely on any of the three data sets. 
@@ -557,6 +558,19 @@ Hypergraph modularity maximization is outperformed by both \model{} SEM and nonb
 Hypergraph modularity maximization was reported to achieve an ARI of 1.0 on both \texttt{primary-school} and \texttt{high-school}, reflecting perfect recovery, but this result cannot be directly compared to other since this required nonbinary partitions. 
 Nonbacktracking spectral clustering achieves the highest of all ARIs on \texttt{senate-bills} and is competitive on \texttt{primary-school}, but appears to completely fail on \texttt{high-school}. 
 The two dyadic methods perform similarly to each other throughout, failing on \texttt{senate-bills} and achieving relatively high ARIs on \texttt{primary-school} and \texttt{high-school}. 
+=======
+In \Cref{fig:community-empirical}, we observe that \model{} simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
+On the primary school dataset, simulated annealing performs comparably in ARI to the competitor methods, with a slightly lower average ARI compared to spectral clustering and greedy modularity's results.  
+However, simulated annealing performs worse on the high school dataset in ARI compared to its competitors.
+While the computational performance of simulated annealing presents a difficulty in its application, the detection of communities via the maximization of likelihood provides evidence that the formations of these datasets, especially senate-bills, can be simulated via our proposed model $\model$.
+Further, the success of our model in comparison to spectral clustering and greedy modularity provides evidence challenging the assumption of edge independence within \texttt{senate-bills}.
+This is because the baseline methods, greedy modularity and spectral clustering, are frequently justified via the stochastic block model \cite{lei2015consistency, newman2016equivalence}, which relies on the assumption of edge indpenece, where our method explicitly utilizes dependent hyperedges.
+
+% \frannie{Unsure of the assumptions behind spectral clustering, tried to google but couldn't find.  If assumption of edge independence, could say something about that}
+
+% \phil{Good idea to look on this. Spectral clustering is not a generative (probabilistic model-based) method, but many of its standard justifications do rely on stochastic blockmodels which have the independence assumption. The best citation is probably this one: \cite{lei2015consistency}}. 
+
+>>>>>>> 6957237ca39485658bd5a449ad4227ae3c21cf5e
 
 
 
