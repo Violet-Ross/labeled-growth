@@ -546,11 +546,13 @@ We evaluate our method against baseline methods Laplacian spectral clustering \c
 In \Cref{fig:community-empirical}, we observe that \model{} simulated annealing outperforms both greedy-modularity and spectral clustering on senate bills in all 10 runs in ARI.  
 On the primary school dataset, simulated annealing performs comparably in ARI to the competitor methods, with a slightly lower average ARI compared to spectral clustering and greedy modularity's results.  
 However, simulated annealing performs worse on the high school dataset in ARI compared to its competitors.
-While the computational performance of simulated annealing presents a difficulty in its application, the detection of communities via the maximization of likelihood provides evidence that the formations of these datasets, especially senate-bills, can be modeled via our proposed method.  
+While the computational performance of simulated annealing presents a difficulty in its application, the detection of communities via the maximization of likelihood provides evidence that the formations of these datasets, especially senate-bills, can be simulated via our proposed model $\model$.
+Further, the success of our model in comparison to spectral clustering and greedy modularity provides evidence challenging the assumption of edge independence within \texttt{senate-bills}.
+This is because the baseline methods, greedy modularity and spectral clustering, are frequently justified via the stochastic block model \cite{lei2015consistency, newman2016equivalence}, which relies on the assumption of edge indpenece, where our method explicitly utilizes dependent hyperedges.
 
-\frannie{Unsure of the assumptions behind spectral clustering, tried to google but couldn't find.  If assumption of edge independence, could say something about that}
+% \frannie{Unsure of the assumptions behind spectral clustering, tried to google but couldn't find.  If assumption of edge independence, could say something about that}
 
-\phil{Good idea to look on this. Spectral clustering is not a generative (probabilistic model-based) method, but many of its standard justifications do rely on stochastic blockmodels which have the independence assumption. The best citation is probably this one: \cite{lei2015consistency}}. 
+% \phil{Good idea to look on this. Spectral clustering is not a generative (probabilistic model-based) method, but many of its standard justifications do rely on stochastic blockmodels which have the independence assumption. The best citation is probably this one: \cite{lei2015consistency}}. 
 
 
 
