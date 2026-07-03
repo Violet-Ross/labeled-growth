@@ -352,8 +352,8 @@ for k in range(2):
     
     lil_ax = fig.add_subplot(gs[k, 1])
     lil_ax.set_ylabel(f"Parameter value")
-    lil_ax.plot(df.iloc[:,1], color=fs.palette[0], label=r"$\rho_{+}$", linewidth = 3)
-    lil_ax.plot(df.iloc[:,2], color=fs.lighten(fs.palette[0]), label=r"$\rho_{-}$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,1], color=fs.palette[0], label=rf"$\{fs.theta['copy']}_+$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,2], color=fs.lighten(fs.palette[0]), label=rf"$\{fs.theta['copy']}_-$", linewidth = 3)
     lines_1, labs_1 = lil_ax.get_legend_handles_labels()
     
     lil_ax.plot([0, n_steps], [true_theta[0], true_theta[0]], color=fs.palette[0], linestyle='--')
@@ -371,7 +371,7 @@ for k in range(2):
     
     if k == 1:
         # two column legend
-        lil_ax.legend(lines_1, labs_1, loc='upper right', fontsize=11, ncol=2)
+        lil_ax.legend(lines_1, labs_1, loc='center right', fontsize=11, ncol=2)
         
     if k == 0: 
         lil_ax.set_xticklabels([])
@@ -381,10 +381,10 @@ for k in range(2):
     
     
     lil_ax = fig.add_subplot(gs[k, 2])
-    lil_ax.plot(df.iloc[:,3], color=fs.palette[1], label = r"$\gamma_{+}$", linewidth = 3)
-    lil_ax.plot(df.iloc[:,5], color=fs.palette[2], label = r"$\eta_{+}$", linewidth = 3)
-    lil_ax.plot(df.iloc[:,4], color=fs.lighten(fs.palette[1]), label = r"$\gamma_{-}$", linewidth = 3)
-    lil_ax.plot(df.iloc[:,6], color=fs.lighten(fs.palette[2]), label = r"$\eta_{-}$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,3], color=fs.palette[1], label = rf"$\{fs.theta['extant']}_+$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,5], color=fs.palette[2], label = rf"$\{fs.theta['novel']}_+$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,4], color=fs.lighten(fs.palette[1]), label = rf"$\{fs.theta['extant']}_-$", linewidth = 3)
+    lil_ax.plot(df.iloc[:,6], color=fs.lighten(fs.palette[2]), label = rf"$\{fs.theta['novel']}_-$", linewidth = 3)
 
     lil_ax.plot([0, n_steps], [true_theta[2], true_theta[2]], color=fs.palette[1], linestyle='--')
     lil_ax.plot([0, n_steps], [true_theta[3], true_theta[3]], color=fs.lighten(fs.palette[1]), linestyle='--')

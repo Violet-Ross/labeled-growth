@@ -28,7 +28,14 @@ def set_fonts(extra_params={}):
         params[key] = value
     pylab.rcParams.update(params)
     
+
+theta = {
+    "copy" : "rho", 
+    "extant" : "gamma", 
+    "novel" : "eta"
+}
     
+
 # import matplotlib.font_manager
 # fpaths = matplotlib.font_manager.findSystemFonts()
 

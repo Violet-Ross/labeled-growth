@@ -149,33 +149,36 @@ plt.rcParams.update({
 
 PANELS = [
     {
-        "title":  "Edge copy",
-        "xlabel": r"$\hat{\rho}_-$",
-        "ylabel": r"$\hat{\rho}_+$",
+        "title":  "Edge copying",
+        "xlabel": rf"$\hat{{\{fs.theta['copy']}}}_-$",
+        "ylabel": rf"$\hat{{\{fs.theta['copy']}}}_+$",
         "xkey":   "p",
         "ykey":   "q",
     },
     {
-        "title":  "External node addition",
-        "xlabel": r"$\hat{\gamma}_-$",
-        "ylabel": r"$\hat{\gamma}_+$",
+        "title":  "Extant node addition",
+        "xlabel": rf"$\hat{{\{fs.theta['extant']}}}_-$",
+        "ylabel": rf"$\hat{{\{fs.theta['extant']}}}_+$",
         "xkey":   "gam_eu",
         "ykey":   "gam_er",
     },
     {
         "title":  "Novel node addition",
-        "xlabel": r"$\hat{\eta}_{-}$",
-        "ylabel": r"$\hat{\eta}_+$",
+        "xlabel": rf"$\hat{{\{fs.theta['novel']}}}_-$",
+        "ylabel": rf"$\hat{{\{fs.theta['novel']}}}_+$",
         "xkey":   "gam_nu",
         "ykey":   "gam_nr",
     },
 ]
+
+labs = ["(a)", "(b)", "(c)"]
 
 fig, axs = plt.subplots(2, 2, figsize=(10, 9))
 fig.subplots_adjust(wspace=0.08, hspace=0.4)
 
 panel_axes = [axs[0, 0], axs[0, 1], axs[1, 0]]
 
+i = 0
 for ax, panel in zip(panel_axes, PANELS):
     ax.set_title(panel["title"], pad=10)
 
@@ -220,6 +223,9 @@ for ax, panel in zip(panel_axes, PANELS):
     
     # make the axis tick labels larger
     ax.tick_params(axis='both', which='major', labelsize=14)
+    ax.annotate(labs[i], xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+    i += 1
+
 
 # Homophily / heterophily arrows on panel 0 (top-left)
 axs[0, 0].annotate(
