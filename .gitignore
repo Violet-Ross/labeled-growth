@@ -19,3 +19,9 @@ env
 
 **/__pycache__/
 **/*.pyc
+
+*.dvi
+*.tdo
+
+paper/arxiv
+paper/arxiv.zip
