@@ -109,7 +109,7 @@ order = ["senate-bills", "primary-school", "high-school"]
 
 
 
-fig, ax = plt.subplots(figsize=(6.5, 2.0))
+fig, ax = plt.subplots(figsize=(7.5, 5.0))
 
 # Boxplot
 sns.boxplot(
@@ -120,7 +120,7 @@ sns.boxplot(
     color="0.85",
     width=0.55,
     linewidth=1,
-    fliersize=2,
+    fliersize=7,
     ax=ax, 
     boxprops=dict(alpha=0.5), 
     flierprops=dict(alpha = 0.5),
@@ -130,58 +130,121 @@ sns.boxplot(
     
 )
 
+prior_methods = {"senate_bills" : {
+    "nonbacktracking" : 0.25, 
+    "hmod" : 0.09
+},
+                 "primaryschool" : {
+    "nonbacktracking" : 0.15,
+    "hmod" : np.nan
+},
+                 "highschool" : {
+    "nonbacktracking" : 0.0,
+    "hmod": np.nan
+}
+}
+
+
+
 
 line_length = 0.25
 # Overlay algorithm results
 for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
     
+    
+    ax.scatter(
+        best_likelihoods[best_likelihoods["Dataset"] == dataset]["ARI"].values[0],
+        i,
+        color=fs.lighten(fs.palette[0]),
+        s=100,
+        zorder=500,
+        label="CHILL SEM\n(highest likelihood)" if i == 0 else None,
+        edgecolors="black",
+        linewidth=1.5,
+        marker = "o"
+    )
+    
+    
+    if dataset == "senate_bills":
+        ax.scatter(
+            prior_methods[dataset]["hmod"],
+            i,
+            color=fs.lighten(fs.palette[1]),
+            s=100,
+            zorder=5,
+            label="Hypergraph\nmodularity" if i == 0 else None,
+            edgecolors="black",
+            linewidth=1.5,
+            marker = "P"
+        )
+    
+    ax.scatter(
+        prior_methods[dataset]["nonbacktracking"],
+        i,
+        color=fs.lighten(fs.palette[2]),
+        s=100,
+        zorder=5,
+        label="Nonbacktracking\nspectral clustering" if i == 0 else None,
+        edgecolors="black",
+        linewidth=1.5,
+        marker = "D"
+    )
+    
     # modularity
     ax.scatter(
         modularity_ari[dataset],
         i,
-        color=fs.lighten(fs.palette[2]),
-        s=50,
+        facecolor="none",
+        s=100,
         zorder=50000,
-        label="Greedy modularity" if i == 0 else None,
+        label="Greedy\nmodularity" if i == 0 else None,
         edgecolors="black",
-        linewidth=1,
+        linewidth=2,
         marker = "^"
     )
     # spectral 
     ax.scatter(
         spectral_ari[dataset],
         i,
-        color=fs.lighten(fs.palette[1]),
-        s=50,
+        facecolor="none",
+        s=100,
         zorder=5,
-        label ="Spectral clustering" if i == 0 else None,
+        label ="Spectral\nclustering" if i == 0 else None,
         edgecolors="black",
-        linewidth=1,
+        linewidth=2,
         marker = "s"
     )
     
-    ax.scatter(
-        best_likelihoods[best_likelihoods["Dataset"] == dataset]["ARI"].values[0],
-        i,
-        color=fs.lighten(fs.palette[0]),
-        s=50,
-        zorder=5,
-        label="Simulated annealing\n(highest likelihood)" if i == 0 else None,
-        edgecolors="black",
-        linewidth=1,
-        marker = "o"
-    )
+    
+    
 
 # Labels
 ax.set_ylabel("")
-ax.set_xlabel("Adjusted Rand Index", fontsize=12)
+ax.set_xlabel("Adjusted Rand Index (ARI)", fontsize=14)
 
 # Remove unnecessary spines
 # sns.despine(ax=ax)
 
-# Legend on side of plot
+# Legend beneath plot
 
-ax.legend(loc="center left", bbox_to_anchor=(1, 0.5), frameon=False, fancybox=False, edgecolor="0.8", framealpha=1)
+reorder = lambda l, nc: sum((l[i::nc] for i in range(nc)), [])
+h, l = ax.get_legend_handles_labels()
+h = reorder(h, 3)
+l = reorder(l, 3)
+
+ax.legend(h, l, 
+    loc="upper center",
+    bbox_to_anchor=(0.5, -0.4),
+    ncol=3,
+    frameon=False,
+    fontsize=14
+)
+
+# increase the fontsize of the y axis tick labels
+
+ax.tick_params(axis='y', labelsize=14)
+ax.tick_params(axis='x', labelsize=14)
+
 
 plt.tight_layout()
 plt.savefig("fig/community_detection_boxplot.pdf", dpi=300, bbox_inches="tight")
