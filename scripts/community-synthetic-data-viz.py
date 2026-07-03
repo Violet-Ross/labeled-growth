@@ -49,6 +49,13 @@ color_palette = [fs.palette[0], fs.lighten(fs.palette[0]),  "darkgrey"]
 markers = ["o", "s", "^"]
 linestyles = ["-", "--", "-"]
 labs = ["(a)", "(b)", "(c)"]
+
+param_mapper = {
+    "eta": "copy", 
+    "lambda": "extant",
+    "gamma": "novel"
+}
+
 # for i, vary in enumerate(["eta", "lambda", "gamma"]): 
 for i, vary in enumerate(["eta", "lambda", "gamma"]):
     for j, metric in enumerate(titles.keys()):
@@ -62,8 +69,8 @@ for i, vary in enumerate(["eta", "lambda", "gamma"]):
         
         ax.plot(sub[f"{vary}_plus"], sub["value"], label=titles[metric], color=color_palette[j], linewidth=2, linestyle=linestyles[j])
         ax.scatter(sub[f"{vary}_plus"], sub["value"], color=color_palette[j], s=40, label = titles[metric], marker=markers[j])
-        ax.set_xlabel(fr"$\{vary}_+$", fontsize=16)
-        ax.set_title(fr"Varying $\{vary}_+$", fontsize=16)
+        ax.set_xlabel(fr"$\{fs.theta[param_mapper[vary]]}_+$", fontsize=16)
+        ax.set_title(fr"Varying $\{fs.theta[param_mapper[vary]]}_+$", fontsize=16)
         ax.tick_params(axis='both', which='major', labelsize=14)
         # ax.set_xticklabels(ax.get_xticks(), fontsize=16)
         # ax.set_yticklabels(ax.get_yticks(), fontsize=16)

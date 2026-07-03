@@ -59,8 +59,8 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(1, 1, figsize = (6, 6))
     im = ax.imshow(gaps, cmap = "viridis", interpolation = "nearest", origin = "lower")
     ax.set_title("Spectral gap of linear map")
-    ax.set_xlabel(r"$\eta_+$")
-    ax.set_ylabel(r"$\eta_-$")
+    ax.set_xlabel(rf"$\{fs.theta['copy']}_+$")
+    ax.set_ylabel(rf"$\{fs.theta['copy']}_-$")
     ax.set_xticks(range(grid_resolution))
     ax.set_xticklabels([f"{x:.1f}" for x in np.linspace(0.1, 0.9, grid_resolution)])
     ax.set_yticks(range(grid_resolution))
@@ -127,6 +127,7 @@ if __name__ == "__main__":
     # SECOND: simulation with the same parameters
     
     n_steps = int(1e7)
+    # n_steps = int(1e4)
     num_projections = 20
     logspace = np.logspace(0, np.log10(n_steps+1), num_projections, dtype = int)
 
@@ -196,7 +197,7 @@ if __name__ == "__main__":
         im = ax.imshow(P, cmap = "BrBG", interpolation = "none", vmin = v_min, vmax = vmax, origin = "lower")
         ax.grid(False)
         ax.set_title(rf"$\mathbf{{v}}_{{{i+1}}}$ ($\lambda_{{{i+1}}} = {val:.2f}$)")
-        ax.annotate(letter_labels[i], xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+        ax.annotate(letter_labels[i], xy=(0.05, 0.87), xycoords='axes fraction', fontsize=14, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
         ax.set_xlabel(r"$k_0$")
         if i == 0: 
             ax.set_ylabel(r"$k_1$")
@@ -209,7 +210,7 @@ if __name__ == "__main__":
         ax.legend(loc = "center right", frameon = False)
         ax.semilogx()
         ax.set_title("Projection of simulation state onto eigenvectors")
-        ax.annotate("(d)", xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+        ax.annotate("(d)", xy=(0.05, 0.87), xycoords='axes fraction', fontsize=14, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
     
 
     
@@ -229,7 +230,7 @@ if __name__ == "__main__":
     final = ax.imshow(C / C.sum(), cmap = "Greys", interpolation = "none", vmin = 0, origin = "lower")
     ax.set_title(f"Final simulation state")
     
-    ax.annotate("(e)", xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+    ax.annotate("(e)", xy=(0.05, 0.87), xycoords='axes fraction', fontsize=14, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
     
     
     ax.set_xlabel(r"$k_0$")
@@ -246,9 +247,9 @@ if __name__ == "__main__":
     ax = axes[0]
     im = ax.imshow(gaps, cmap = "inferno", interpolation = "none", origin = "lower")
     ax.set_title("Spectral gap")
-    ax.annotate("(a)", xy=(0.03, 0.87), xycoords='axes fraction', fontsize=20, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
-    ax.set_xlabel(r"$\eta_+$")
-    ax.set_ylabel(r"$\eta_-$")
+    ax.annotate("(a)", xy=(0.05, 0.87), xycoords='axes fraction', fontsize=14, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+    ax.set_xlabel(rf"$\{fs.theta['copy']}_+$")
+    ax.set_ylabel(rf"$\{fs.theta['copy']}_-$")
     ax.set_xticks(range(grid_resolution))
     ax.set_xticklabels([f"{x:.1f}" for x in np.linspace(0.1, 0.9, grid_resolution)])
     ax.set_yticks(range(grid_resolution))
