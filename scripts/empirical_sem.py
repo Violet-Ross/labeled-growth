@@ -149,14 +149,14 @@ plt.rcParams.update({
 
 PANELS = [
     {
-        "title":  "Edge copy",
+        "title":  "Edge copying",
         "xlabel": rf"$\hat{{\{fs.theta['copy']}}}_-$",
         "ylabel": rf"$\hat{{\{fs.theta['copy']}}}_+$",
         "xkey":   "p",
         "ykey":   "q",
     },
     {
-        "title":  "External node addition",
+        "title":  "Extant node addition",
         "xlabel": rf"$\hat{{\{fs.theta['extant']}}}_-$",
         "ylabel": rf"$\hat{{\{fs.theta['extant']}}}_+$",
         "xkey":   "gam_eu",
