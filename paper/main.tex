@@ -357,8 +357,7 @@ In our experiments we used $\epsilon_\mathrm{rel} = 0.01$ and $\epsilon_\mathrm{
     \end{align*}
     where $\tilde{\prob}(\hypergraph, \vz | \paramvector)$ is the likelihood of $\hypergraph$ and $\vz$ under the intersection-based approximation.
     To run simulated annealing for a single epoch, we perform $n$ individual update steps. 
-    In each step, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random (without replacement) and evaluating the change in likelihood of "flipping" the binary node label ($z_j \gets \bar{z}_j$).  
-    \phil{Frannie, is the ``without replacement'' correct here?}
+    In each step, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random and evaluating the change in likelihood of "flipping" the binary node label ($z_j \gets \bar{z}_j$).  
     If the proposal increases $\tilde{\cL}(\vz)$, it is accepted.
     If the proposal decreases $\tilde{\cL}(\vz)$, however, we may also accept it with an acceptance probability $a(\ell)$ that decreases with the epoch $\ell$.
     It is possible to store computational components required to evaluate $\tilde{\cL}(\vz)$ in a data structure that allows us to compute the change in likelihood from the prior state without recomputing the entire likelihood.
