@@ -398,7 +398,8 @@ In our experiments we used $\epsilon_\mathrm{rel} = 0.01$ and $\epsilon_\mathrm{
     \caption{
         Performance of SEM on synthetic hypergraphs. 
         Each entry in the heatmap (panel (a)) corresponds to a set of parameters $\paramvector$, which can be found in Appendix \ref{sec:SEM-appendix}.        
-        For each set of parameters, 20 independent 2000-edge hypergraphs are generated according to the model and SEM is performed independently on each. 
+        For each set of parameters, 20 independent hypergraphs are simulated under the \model{} model for 2,000 simulation steps. 
+        We then perform SEM on each.  
         We then compute the Kullback-Leibler (KL) divergence of the estimated parameters from the true ones (\cref{eq:kl-divergence}) and average the results to obtain a value in a pixel. 
         The parameter estimates over iterations of SEM are plotted for the underlying parameters which produced the lowest mean KL divergence (copy parameters in panel (b) and addition parameters in panel (c)), 
         and similarly for the parameters that produced the highest mean KL divergence in panels (d) and (e).
