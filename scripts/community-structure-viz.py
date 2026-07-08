@@ -11,7 +11,7 @@ import networkx as nx
 from src.algorithms.sem import sem_functions
 import pandas as pd
 sem = sem_functions()
-import figure_settings as fs
+import scripts.figure_settings as fs
 
 
 
@@ -78,7 +78,7 @@ palette = sns.color_palette("viridis", n_colors=sub["theta_3"].nunique())
 
 sns.lineplot(data=sub, x="theta_1", y=col_to_plot, hue="theta_3", palette=palette, ax=ax, alpha = 0.8, legend = True, linewidth = 2.5, zorder = 100)
 ax.set_ylim(0, None)
-ax.set_xlabel(r"$\eta_+ = 1 - \eta_-$")
+ax.set_xlabel(rf"$\{fs.theta['copy']}_+ = 1 - \{fs.theta['copy']}_-$")
 ax.set_ylabel(r"$Q$")
 # change the legend title 
 # reverse the order of the legend items 
@@ -86,7 +86,7 @@ ax.set_ylabel(r"$Q$")
 handles, labels = ax.get_legend_handles_labels()
 handles, labels = reversed(handles), reversed(labels)
 
-new_labels = [f"$\\lambda_+$ = {label}" for label in labels]
+new_labels = [f"$\{fs.theta['extant']}_+$ = {label}" for label in labels]
 ax.legend(handles, 
           new_labels, 
           title = None)

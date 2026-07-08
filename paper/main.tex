@@ -1,7 +1,8 @@
 % /Users/philchodrow/.../main.tex
 % RevTeX 4.2 minimal starter document
 
-\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+\documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,12pt,onecolumn]{revtex4-2}
+\usepackage[margin=1.25in]{geometry}
 % \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib,draft]{revtex4-2}
 
 
@@ -40,13 +41,14 @@
 
 \date{\today}
 \begin{abstract}
-    There are many extant models of hypergraphs with interactions governed by some form of homophily or assortativity, but almost all of these assume independence between edges conditional on node parameters. 
-    Relaxing this strong assumption, we study a mechanistic model of growing hypergraphs in which edge formation is influenced by the realization of previous edges and is tuned by homophily between binary node labels. 
+    There are many extant models of hypergraphs with interactions governed by some form of homophily or assortativity, but most assume independence between edges conditional on node parameters. 
+    Relaxing this assumption, we study a mechanistic model of growing hypergraphs in which edge formation is influenced by the realization of previous edges and is tuned by homophily between binary node labels. 
     Edges form in this model as noisy copies of previous edges, where the transmission of nodes from one edge to the next depends on the labels.
     We derive a power law for the degree distribution in this model and describe the long-term dynamics of the joint distribution of labels contained in edges. 
     This model defines a likelihood over a labeled hypergraph, allowing us to use standard maximum-likelihood techniques to structure algorithms. 
-    We estimate the model parameters on synthetic and real data via (stochastic) expectation maximization, allowing us to statistically quantify the signature of homophily in empirical polyadic systems. 
-    We also demonstrate an approach to community detection via simulated annealing which, though computationally expensive, achieves competitive results on synthetic data generated from our model and certain empirical data sets known to be challenging to standard community detection techniques derived from models that assume edge independence.
+    We estimate the model parameters on synthetic and real data via (stochastic) expectation maximization. 
+    These estimates give statistically-principled descriptions of the operation of homophily in empirical polyadic systems. 
+    We also demonstrate an approach to community detection via simulated annealing which, though computationally expensive, achieves competitive results on both synthetic data and certain empirical data sets known to be challenging to community detection techniques based on the edge-independence assumption. 
     Our findings highlight the benefits of moving beyond edge-independence assumptions in modeling and data analysis, and point to several directions for future work. 
 \end{abstract}
 
@@ -56,96 +58,108 @@
 
 \def\thefootnote{*}\footnotetext{These authors contributed equally to this work}\def\thefootnote{\arabic{footnote}}
 
+
+\phil{clarify assortativity the structure vs. homophily the process throughout and say that's how we're using the terms.}
+
 \section{Introduction}
 
-    Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions, such as social interactions (both in-person \cite{mastrandrea2015contact} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship \cite{wu2022hypergraph}, and ecological systems \cite{levine2017beyond}. 
-    Much recent work has emphasized the importance of faithfully representing polyadic structure rather than reducing it to dyadic interactions \cite{battistonNetworksPairwiseInteractions2020,bick2023higher}, though recent work has shown that some purportedly higher-order dynamics can be faithfully represented on dyadic networks under appropriate models \cite{peixoto2026graphs}.
+    Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions. 
+    Systems naturally modeled as hypergraphs include social interaction networks (both in-person \cite{mastrandrea2015contact} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship neteworks, \cite{wu2022hypergraph}, and networks of ecological relations \cite{levine2017beyond}. 
+    Much recent work has emphasized the importance of faithfully representing polyadic structure rather than reducing it to dyadic interactions \cite{battistonNetworksPairwiseInteractions2020,bick2023higher} via graph projections.
 
 
-    % MORE HIGHER ORDER HERE
-    \frannie{Per existing comment, more higher order here}
-    Much attention in the theory of (hyper)graph mining has focused on developing novel techniques for community detection (also often called \emph{clustering} or \emph{partitioning}). 
-    Many, but not all, of these methods can be viewed as exact or approximate inference algorithms for stochastic generative models. 
-    A stochastic generative model is a parametrized probability distribution defined over hypergraphs. 
-    In one standard framework, a set $\nodes$ of $n$ nodes is initialized along with a vector $\vz \in [k]^n$ that assigns to each node one of $k$ community labels. 
-    One then forms the edge set $\edges$ iteratively by visiting each subset $R \subseteq \nodes$ and independently assigning $a_R$ (possibly repeated) edges to $R$ according to a distribution $p(a_R | \vz_R, \theta)$, where $\vz_R$ is the vector of labels of the nodes in $R$ and $\theta$ is a set of model parameters.
-    This results in a probability distribution over hypergraphs which can be factorized into a product of edge probabilities conditioned on the node labels and model parameters: 
+    Our focus on this work is on the mechanism of homophily---the tendency of nodes to interact with other nodes with similar attributes---in hypergraph data.
+    One way to model homophily in hypergraphs is via stochastic generative models, which define probability distributions over hypergraphs. 
+    In one standard framework, a set $\nodes$ of $n$ nodes is initialized along with a vector $\vz \in \{1,\ldots,k\}^n$ that assigns to each node one of $k$ community labels. 
+    One then forms the edge set $\edges$ iteratively by visiting each subset $R \subseteq \nodes$ and independently assigning $a_R \in \mathbb{N}$ (possibly repeated) edges to $R$ according to a distribution $p(a_R | \vz_R, \theta)$, where $\vz_R$ is the vector of labels of the nodes in $R$ and $\theta$ is a set of model parameters.
+    Independence of sampling results in a probability distribution over hypergraphs which can be factorized into a product of edge probabilities conditioned on the node labels and model parameters: 
     \begin{align}
         p(\hypergraph | \vz, \theta) = \prod_{R \subseteq \nodes} p(a_R | \vz_R, \theta) \;. \label{eq:edge-independence}
     \end{align}
-    Many generative models for community detection fall into this category, including hypergraph stochastic block models \cite{chodrowGenerativeHypergraphClustering2021,ruggeriCommunityDetectionLarge2023,kim2018stochastic} and some generalizations \cite{badalyanStructureInferenceHypergraphs2024,hood2026broad}.
-    The conditional independence property \cref{eq:edge-independence} is extremely useful for computation, as factorizability of the likelihood enables many efficiencies in various inference algorithms, including approximate maximum-likelihood estimation via direct optimization \cite{chodrowGenerativeHypergraphClustering2021} or expectation-maximization \cite{ruggeriCommunityDetectionLarge2023}; spectral methods \cite{chodrowNonbacktrackingSpectralClustering2023,fernandez2026achieving,li2026higher}; and message passing \cite{ruggeri2024message}. 
+    Many generative models fall into this broad scheme, including hypergraph stochastic block models \cite{chodrowGenerativeHypergraphClustering2021,ruggeriCommunityDetectionLarge2023,kim2018stochastic} and some of their generalizations \cite{badalyanStructureInferenceHypergraphs2024,hood2026broad}.
+
+    \phil{Need to standardize notation for likelihood: should it just be lowercase $p$ or something different and fancier?}
+
+
+    Models of this type often underly algorithms for hypergraph community detection (also called \emph{clustering} or \emph{partitioning}), in which one seeks to estimate the latent node labels $\vz$ given an observed hypergraph $\hypergraph$.
+    The conditional independence property \eqref{eq:edge-independence} is extremely useful for computation in this context.  
+    Factorizability of the likelihood enables many efficiencies in various inference algorithms, including approximate maximum-likelihood estimation via direct optimization \cite{chodrowGenerativeHypergraphClustering2021} or expectation-maximization \cite{ruggeriCommunityDetectionLarge2023}; spectral methods \cite{chodrowNonbacktrackingSpectralClustering2023,fernandez2026achieving,li2026higher}; and message passing \cite{ruggeri2024message}. 
     Another recent optimization-based approach \cite{kritschgauCommunityDetectionHypergraphs2024} is equivalent to a microcanonical version of the stochastic block model, which satisfies an asymptotic form of edge-independence in the large sparse limit.
-    Even a recent latent-space model \cite{yuModelingHypergraphsDiversity2025} treats edges as independent samples, albeit from a very differently stochastic generating process. 
+    Latent-space models (e.g. \cite{yuModelingHypergraphsDiversity2025}) also satisfy a form of edge independence, albeit in the context of a very different stochastic generating process.
     
     Edge independence, however, is a strong and often unrealistic assumption for modeling hypergraph data. 
-    A parallel line of work has found that polyadic data sets often contain significant edge correlations \cite{bensonSimplicialClosureHigherorder2018,landrySimplicialityHigherorderNetworks2024,leeHowHyperedgesOverlap2021}, typically in the form of \emph{similarity between interactions}.
+    A parallel line of work has found that polyadic data sets often contain significant edge correlations \cite{bensonSimplicialClosureHigherorder2018,landrySimplicialityHigherorderNetworks2024,leeHowHyperedgesOverlap2021}.
+    These correlations are often observed as \emph{similarity between interactions}.
     When an interaction occurs on a set $R \subseteq \nodes$, this increases the likelihood of observing a new interaction on a set $S \subseteq \nodes$ correlated with $R$ in the sense that $R\cap S$ is larger than would be expected by chance. 
     These overlaps can be shown to affect the kinds of dynamics which can unfold on the hypergraph \cite{maliziaHyperedgeOverlapDrives2025,lamata2025hyperedge}. 
-    Several generative models for the growth of hypergraphs with edge-dependence have been proposed \cite{bensonSequencesSets2018,avinRandomPreferentialAttachment2019,heEdgeCorrelationsLink2025,leeTHyMeTemporalHypergraph2021,leeTemporalHypergraphMotifs2023}. 
-    Several of these models express dependence through a copying or recombination mechanism, in which nodes collected from one or more existing hyperedges are gathered and noisily copied into a new edge as a block.  
+    Several generative models for the growth of hypergraphs with edge-dependence have been proposed \cite{bensonSequencesSets2018,avinRandomPreferentialAttachment2019,heEdgeCorrelationsLink2025,leeTHyMeTemporalHypergraph2021,leeTemporalHypergraphMotifs2023}, including several with explicit nodel labels \cite{giroirePreferentialAttachmentHypergraph2022,giroirePreferentialAttachmentHypergraph2022a,kaminski2023hypergraph}; see \cite{laber2026guide} for a recent review.  
+    We note that the above are all models \emph{of} hypergraph formation rather than models of dynamics \emph{on} hypergraphs; recent work argues that the latter may be better expressed via dyadic graph models \cite{peixoto2026graphs} but does not treat the former.
 
-    % Phil prewriting got down to here.
-
-    In this paper, we introduce a model of binary node-labeled hypergraphs in which edges form via a noisy copying interaction, which depends on the labels. 
+    Of the generative models of hypergraph growth with both edge-dependence and node labels, we are unaware of any which allow for statistically-motivated inference of either the dynamical parameters or the latent node labels.
+    In this paper, we aim to connect stochastic generative modeling of edge-dependent, node-labeled hypergraphs to inference algorithms. 
+    To this end, we introduce a model with binary labels in which edges form via a noisy edge copy process tuned by the node labels within the copied edge.
     We refer to this model as \Model{} (\model{}).
-    Our work is organized as follows. 
+    The paper proceeds as follows. 
     In \Cref{sec:model-description}, we describe \model{} and derive limiting descriptions of the joint distribution of node labels within a given edge, as well as the degree distribution of the hypergraph.
+    We turn to optimization-based inference methods in \Cref{sec:inference}, considering both parameter inference and community detection.
     Evaluating the likelihood of our model requires marginalizing over a set of latent variables governing the noisy copy mechanism, which is computationally expensive. 
-    To estimate our model's parameters when node labels are known, we therefore describe a stochastic expectation-maximization algorithm in which each iteration has sublinear cost in the number of edges for sparse hypergraphs.
-    We also describe a community detection algorithm for estimating node labels via simulated annealing on the \model{} likelihood. 
+    To estimate our model's parameters when node labels are known, we therefore describe a stochastic expectation-maximization algorithm with favorable scaling.
+    Community detection in this model is much more computationally challenging. 
+    As an early step in this direction,we describe a community detection algorithm for estimating node labels via simulated annealing on the \model{} likelihood. 
     In \Cref{sec:results}, we demonstrate our algorithms on synthetic and empirical data. 
     We show that, on synthetic data sampled from \model{}, our stochastic expectation maximization algorithm is both consistent and scalable, and that our simulated annealing algorithm for community detection, though computationally expensive, outperforms other standard methods in certain parameter regimes. 
     On empirical data, our parameter estimates yield insight into the mechanisms governing edge formation.
-    Our community detection achieves competitive recovery of observed metadata labels on some data sets known to be challenging to other community detection methods.
+    \model{} community detection achieves competitive recovery of observed metadata labels on some data sets known to be challenging to other recent community detection methods.
     We conclude with some discussion of future directions for models of node-labeled hypergraphs with edge-dependence. 
+    Our findings highlight the benefits of using explicit stochastic generative models to guide data analysis algorithms for studying homophily in polyadic systems.
 
-\section{\model{} Model Description} \label{sec:model-description}
+\section{The \model{} Model} \label{sec:model-description}
 
 
-    \Model{} (\model{}) is a generative model for growing hypergraphs with binary node labels. 
+    We propose \Model{} (\model{}), a generative model of growing hypergraphs with binary node labels. 
     \model{} is an extension of the Hyperedge Copy Model (HCM) of He et al. \cite{heEdgeCorrelationsLink2025}. 
-    In their HCM, edges form through a combination of three distinct steps: a copy step, in which a previous edge is sampled and imperfectly copied; an extant node addition step, in which new nodes are added to the new edge from the existing node set; and a new node addition step, in which new nodes are added to the new edge from outside the existing node set.
+    In the HCM, a new edge $\newedge$ is formed through a combination of three distinct steps: a copy step, in which a previous edge $\seededge$ is sampled and imperfectly copied into $\newedge$; an extant node addition step, in which new nodes in $\nodes \setminus \seededge$ are added to $\newedge$ from elsewhere in the node set; and a novel node addition step, in which nodes are added to both $e$ and $\nodes$ for the first time.
     \model{} replicates these mechanisms, but adds label-aware parameters to regulate each. 
 
-    Formally, a \model{} state at time $t$ is a hypergraph $\at{\hypergraph}{t} = \paren{\at{\nodes}{t}, \at{\edges}{t}}$, where $\nodes^t$ is the set of nodes and $\edges^t$ is the set of hyperedges, as well as a binary label vector $\vz^t \in \{0, 1\}^{|\at{\nodes}{t}|}$ which assigns to each node a label of either 0 or 1.
+    Formally, a \model{} state at time $t$ is a hypergraph $\at{\hypergraph}{t} = \paren{\at{\nodes}{t}, \at{\edges}{t}}$, where $\at{\nodes}{t}$ is the set of nodes and $\at{\edges}{t}$ is the set of hyperedges, as well as a binary label vector $\at{\vz}{t} \in \{0, 1\}^{|\at{\nodes}{t}|}$ which assigns to each node a label of either 0 or 1; $z_u$ denotes the label of node $u$.
     We let $\bar{z} = 1 - z$ denote the opposite label of $z$.
-    At timestep $t$, we add edge $\newedge$ to $\at{\edges}{t}$ to obtain $\at{\edges}{t+1}$, where $\newedge$ is formed according to the following three-step process:
+    At timestep $t+1$, we add edge $\newedge$ to $\at{\edges}{t}$ to obtain $\at{\edges}{t+1}$, where $\newedge$ is formed according to the following three-step process:
     \begin{itemize}
         \item 
             \textbf{Edge-Copying}: An edge $\seededge$ is sampled uniformly at random from $\at{\edges}{t}$, and a node $\focalnode$ is sampled uniformly at random from $\seededge$. 
             Then, each node $\node$ in $\seededge$ is included in $\newedge$ with probability $\same{\copyrate{}}$ if $z_{\node} = z_{\focalnode}$ and with probability $\opp{\copyrate{}}$ if $z_{\node} \neq z_{\focalnode}$.
         \item 
-            \textbf{Extant Node Addition}: We sample $\extantnodesinedge_{z_\focalnode}$ nodes from $\nodes^t \setminus \seededge$ with label $z_\focalnode$ and add them to $\newedge$, where $\extantnodesinedge_{z_\focalnode}$ is a Poisson random variable with mean $\same{\extantrate{}}$. 
-            We similarly sample $\extantnodesinedge_{\bar{z}_\focalnode}$ nodes from $\nodes^t \setminus \seededge$ with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\extantnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\opp{\extantrate{}}$.
-        \item \textbf{Novel Node Addition}: We sample $\novelnodesinedge_{z_\focalnode}$ new nodes with label $z_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_{z_\focalnode}$ is a Poisson random variable with mean $\same{\novelrate{}}$.
-            We similarly sample $\novelnodesinedge_{\bar{z}_\focalnode}$ new nodes with label $\bar{z}_\focalnode$ and add them to $\newedge$, where $\novelnodesinedge_{\bar{z}_\focalnode}$ is a Poisson random variable with mean $\opp{\novelrate{}}$.   
+            \textbf{Extant Node Addition}: We sample $\extantnodesinedge_{z_\focalnode} \sim \poisson{\same{\extantrate{}}}$ nodes from $\nodes^t \setminus \seededge$ with label $z_\focalnode$ and add them to $\newedge$. 
+            We similarly sample $\extantnodesinedge_{\bar{z}_\focalnode} \sim \poisson{\opp{\extantrate{}}}$ nodes from $\nodes^t \setminus \seededge$ with label $\bar{z}_\focalnode$ and add them to $\newedge$.
+        \item \textbf{Novel Node Addition}: We sample $\novelnodesinedge_{z_\focalnode} \sim \poisson{\same{\novelrate{}}}$ and add $\novelnodesinedge$ nodes with label $z_\focalnode$ to both $\newedge$ and $\nodes^{t+1}$. 
+        We similarly sample $\novelnodesinedge_{\bar{z}_\focalnode} \sim \poisson{\opp{\novelrate{}}}$ and add $\novelnodesinedge_{\bar{z}_\focalnode}$ nodes with label $\bar{z}_\focalnode$ to both $\newedge$ and $\nodes^{t+1}$. 
+        The associated labels are also added to $\at{\vz}{t}$ to form $\at{\vz}{t+1}$.
     \end{itemize}
-    \frannie{Do we want to add the addition of the new node's label to the label vector here when we add a novel node?}
-    Both our simulations and our statistical inference techniques (described below) were carried using the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
+    We let $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ denote the complete vector of model parameters. 
+    Formally, the probability of realizing a given hypergraph $\hypergraph$ with label vector $\vz$ under \model{} at time $t$ can be described as a time-dependent probability distribution $\at{p}{t}(\hypergraph, \vz ; \paramvector)$ over the space of hypergraphs with labeled nodes; we omit the time index when otherwise clear from context. 
+    Our implementation of \model{}, our simulations, and our other experiments were carried using the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
 
 
 \begin{figure}
-    \includegraphics[width=0.48\textwidth]{../fig/community-structure-sims-combined.png}
+    \includegraphics[width=0.49\textwidth]{../fig/community-structure-sims-combined.png}
         \caption{
             Suite of model simulations illustrating the dependence of community structure, as measured by clique-projection modularity $Q$, on the \model{} parameters. 
             The parameters $\opp{\extantrate} = 0.5$ $\same{\novelrate{}} = 0.2$, and $\opp{\novelrate{}} = 0.1$ are held fixed. 
             Each line corresponds to a different value of $\same{\extantrate{}}$ indicated by the legend.
             Along the horizontal axis, we vary $\same{\copyrate{}}$ and set $\opp{\copyrate{}} = 1 - \same{\copyrate{}}$. 
             Each parameter combination is simulated $100$ times for $1,000$ timesteps. 
-            On either side of the plot, we show small hypergraphs sampled from parameter combinations indicated by the square markers. 
+            On either side of the plot, we show small hypergraphs sampled from parameter combinations indicated by the square markers for illustration.
         }\label{fig:community-structure-illustration}
     \end{figure}
-\frannie{Labels within the figure use old notation.  $Eta_+$, $Eta_-$ and $\lambda_+$ need to be changed to current notation}
 
 
 
     \Cref{fig:community-structure-illustration} illustrates the role of the model parameters in tuning the community structure of realized hypergraphs. 
-    We measure community structure by computing Newman-Girvan modularity \cite{newman2004finding} on the clique-projection of the hypergraph. 
+    We measure community structure by computing Newman-Girvan modularity \cite{newman2004finding} on the weighted clique-projection of the hypergraph. 
+    We also show several sample hypergraphs at different parameter combinations for visual illustration. 
     For fixed $\opp{\extantrate}$, $\same{\novelrate{}}$, and $\opp{\novelrate{}}$, increasing the difference $\same{\copyrate{}} - \opp{\copyrate{}}$ leads to higher modularity, as does increasing $\same{\extantrate{}}$.
     Hypergraphs sampled from our model using high values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have label-homogeneous cores of densely overlapping hyperedges, which are weakly connected to one another by edges with more heterogeneous label compositions.
     Hypergraphs with lower values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have less-structured distributions of labels over hyperedges. 
-    \frannie{Do $\opp{\copyrate{}}$ and $\opp{\extantrate{}}$ matter here?  Is the difference what's important?}
 
 
 
@@ -157,8 +171,8 @@
         \centering
         \includegraphics[width=1\textwidth]{../fig/linear_map_eigenvectors.png}
         \caption{
-            Visualization of the long-run dynamics of our model, for parameters. 
-            (a): Spectral gap $1 - \lambda_2$ of the linear map $T$ as a function of $\same{\copyrate{}}$ and $\opp{\copyrate{}}$ for fixed parameter values $\same{\extantrate{}} = 0.5$, $\opp{\extantrate{}} = \opp{\novelrate{}}3$, $\same{\novelrate{}} = 0.4$ and $\opp{\novelrate{}} = 0.2$. 
+            Illustrative long-run dynamics of our model.
+            (a): Spectral gap $1 - \lambda_2$ of the linear map $T$ as a function of $\same{\copyrate{}}$ and $\opp{\copyrate{}}$ for fixed parameter values $\same{\extantrate{}} = 0.5$, $\opp{\extantrate{}} = 0.2$, $\same{\novelrate{}} = 0.4$ and $\opp{\novelrate{}} = 0.2$. 
             The highlighted values $\same{\copyrate{}} = 0.8$ and $\opp{\copyrate{}} = 0.1$ are used in the remainder of the visualization. 
             (b): Leading eigenvector $\mathbf{v}_1$ of $T$, describing the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ of label counts in edges.
             (c): Second eigenvector $\mathbf{v}_2$ of $T$. 
@@ -170,25 +184,23 @@
         }
         \label{fig:dynamics-eigenvectors}
     \end{figure*}
-    \frannie{Awkward sentence (visualization of the long-run dynamics of our model, for parameters) in caption.  Not sure what it is trying to say}
-    \frannie{Typo in caption of panel (a)?  $\opp{\extantrate{}} = \opp{\novelrate{}}3$?  }
 
-    Many asymptotic properties of our \model{} model can be described in terms of the joint distribution $p_{K_0, K_1}(k_0, k_1)$ of nodes of labels 0 and 1 in a uniformly random edge. 
-    This joint distribution can be obtained as the leading eigenvector of a linear map, as we now describe. 
-    Let $\at{\jointdist}{t}(k_0, k_1)$ be the joint distribution of label counts in a uniformly random edge after $t$ timesteps. 
-    Then, the probability $q(k_0', k_1')$ of realizing an edge with $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 at time $t+1$ is given by 
+    Many asymptotic properties of our \model{} model can be described in terms of the joint distribution $\jointdist(k_0, k_1)$ of node labels in an edge; here $\jointdist(k_0, k_1)$ gives the probability that an edge selected uniformly at random from $\edges$ contains exactly $k_0$ nodes of label 0 and $k_1$ nodes of label 1.
+    Under the $t\rightarrow \infty$ limit this joint distribution can be obtained as the leading eigenvector of a linear map. 
+    Let $\at{\jointdist}{t}(k_0, k_1)$ be the joint distribution of label counts in a uniformly random edge after $t$ timesteps, and let $\jointdist(k_0, k_1) = \at{\jointdist}{\infty} \paren{k_0, k_1}$ be the stationary distribution.
+    Then, the probability $r(k_0', k_1')$ of realizing an edge with $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 in timestep $t+1$ is given by 
     \begin{align*}
-        q(k_0', k_1') = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)\at{\jointdist}{t}(k_0, k_1)  \;,
+        r(k_0', k_1') = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)\at{\jointdist}{t}(k_0, k_1)  \;,
     \end{align*}
     where $T(k_0', k_1' | k_0, k_1)$ gives the probability that the edge $e$ realized in step $t+1$ has $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 given that the edge $f$ sampled to form $e$ has $k_0$ nodes of label 0 and $k_1$ nodes of label 1.
-    At stationarity, we must have $q(k_0', k_1') = \at{\jointdist}{t}(k_0', k_1') = \at{\jointdist}{t+1} \paren{k_0', k_1'}$, so the stationarity condition can be obtained by solving the linear system 
+    At stationarity, we must have $r(k_0', k_1') = \at{\jointdist}{t}(k_0', k_1') = \jointdist \paren{k_0', k_1'}$, so the stationarity condition can be obtained by solving the linear system 
     \begin{align*}
-        \at{\jointdist}{t+1} \paren{k_0', k_1'} = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)\at{\jointdist}{t} \paren{k_0, k_1}  \;.
+        \jointdist \paren{k_0', k_1'} = \sum_{k_0, k_1} T(k_0', k_1' | k_0, k_1)\jointdist \paren{k_0, k_1}  \;.
     \end{align*}
-    The stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ is therefore given by the leading eigenvector of the doubly-indexed matrix $T$ with entries $T(k_0', k_1' | k_0, k_1)$.
-    The entries of this matrix can be computed analytically. 
-    Conditional on choosing an edge $f$ with $k_0$ nodes of label 0 and $k_1$ nodes of label 1, a node of label $z$ is selected as the seed node $u$ with probability $\frac{k_z}{k_0 + k_1}$.
-    Then, the number of nodes of labels $z$ and $\bar{z}$ in $e$ have distributions
+    The stationary joint distribution $\jointdist \paren{k_0, k_1}$ is therefore given by the leading eigenvector of the doubly-indexed matrix $T$ with entries $T(k_0', k_1' | k_0, k_1)$. 
+    The entries of this matrix follow from the parametric probability descriptions used to define the \model{} model.
+    Conditional on choosing an edge $\seededge$ with $k_0$ nodes of label 0 and $k_1$ nodes of label 1, a node of label $z$ is selected as the focal node $\focalnode$ with probability $\frac{k_z}{k_0 + k_1}$.
+    Then, the number of nodes of labels $z$ and $\bar{z}$ in $\newedge$ have distributions
     \begin{align*}
         k_z' &\sim 1 + \text{Binom}\paren{k_z - 1, \same{\copyrate{}}} + \text{Poisson}(\same{\extantrate{}} + \same{\novelrate{}}) \;, \\
         k_{\bar{z}}' &\sim \text{Binom}\paren{k_{\bar{z}}, \opp{\copyrate{}}} + \text{Poisson}(\opp{\extantrate{}} + \opp{\novelrate{}}) \;.
@@ -207,38 +219,38 @@
         T(k_0', k_1' | k_0, k_1) = t(k_0' | k_0, k_1) t(k_1' | k_0, k_1) \;.
     \end{align*}
     In \Cref{fig:dynamics-eigenvectors}, we study the dynamics of our \model{} model as described by the matrix $T$. 
+    The spectral gap $1 - \lambda_2$ of $T$ is a measure of the rate of convergence to the stationary distribution $\jointdist \paren{k_0, k_1}$, where $\lambda_2$ is the second-largest eigenvalue of $T$.
     For fixed values of the parameters $\same{\extantrate{}}$, $\opp{\extantrate{}}$, $\same{\novelrate{}}$ and $\opp{\novelrate{}}$, the spectral gap $1 - \lambda_2$ of $T$ is highest when $\opp{\copyrate}$ is large and $\same{\copyrate}$ is small. 
-    High values of the spectral gap correspond to fast convergence to the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ given by the Perron eigenvector $\mathbf{v}_1$ of $T$ with eigenvalue $1$ (panel (b)). 
+    High values of the spectral gap correspond to fast convergence to the stationary distribution $\jointdist \paren{k_0, k_1}$ given by the Perron eigenvector $\mathbf{v}_1$ of $T$ with eigenvalue $1$ (panel (b)). 
     We instead illustrate an alternative regime of relatively slow convergence in which $\same{\copyrate}$ is large and $\opp{\copyrate}$ is small.
     In this regime, the simulation may maintain transient dynamics in the direction of the second eigenvector $\mathbf{v}_2$ of $T$ with eigenvalue $\lambda_2 < 1$ (panel (c)) for relatively long periods of time before converging to the stationary distribution. 
     We illustrate this behavior in panel (d), where the system converges relatively slowly to the leading eigenvector $\mathbf{v}_1$ and away from the transient component $\mathbf{v}_2$. 
-    The resulting final simulation state matches the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ relatively closely (panel (e)).
+    The resulting final simulation state matches the stationary distribution $\jointdist \paren{k_0, k_1}$ relatively closely (panel (e)).
 
-    \Cref{fig:dynamics-eigenvectors} shows that, when $\same{\copyrate{}}$ is sufficiently large, the stationary distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$ is concentrated on edges in which typical edges have large majorities of nodes with the same label (panel b), thus displaying a form of higher-order homophily \cite{laber2026guide}. 
+    \Cref{fig:dynamics-eigenvectors} shows that, when $\same{\copyrate{}}$ is sufficiently large, the stationary distribution $\jointdist \paren{k_0, k_1}$ is concentrated on edges in which typical edges have large majorities of nodes with the same label (panel b), the signature of higher-order structural assortativity.
+    This distribution is symmetric with respect to the two node labels, however, indicating that although local edges may have dominant majority labels, the long-run dynamics converge to equal global label populations.  
     The second eigenvector $v_2$ (panel c), however,  is antisymmetric, describing a transient in which a single label group tends to dominate most edges. 
-    When $\same{\copyrate{}}$ is sufficiently large, the spectral gap $1 - \lambda_2$ is small (panel a), indicating that this transient decays slowly and that the system may be dominated by edges with a single majority label for relatively long periods of time before equilibrating to the leading eigenvector (panels d and e).
+    When $\same{\copyrate{}}$ is sufficiently large, the spectral gap $1 - \lambda_2$ is small (panel a), indicating that this transient decays slowly and that the system may be dominated by edges with a single majority label for relatively long periods of time before equilibrating to the leading eigenvector (panels (d-e)).
     This behavior suggests that, although the \model{} model ultimately converges to a stationary state with symmetry between the two node labels, it can also serve through its transients as a reasonable generative model of systems with label asymmetry. 
 
     
 
 \subsubsection{Degree Distribution} \label{sec:degree-distribution}
 
-
-    The degree distribution of a hypergraph generated from the \model{} model follows an asymptotic power law with an exponent which can be computed in closed form from the model parameters and the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$. 
+    One model feature we can obtain from the stationary joint distribution $\jointdist \paren{k_0, k_1}$ is the asymptotic degree distribution generated from \model{}.
+    This asymptotic distribution a asymptotic power law with an exponent which can be computed in closed form from the model parameters and the stationary joint distribution $\jointdist \paren{k_0, k_1}$. 
     Our derivation is similar to that of He et al. \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by Mitzenmacher \cite{mitzenmacherBriefHistoryGenerative2004}. 
     The argument requires a mean-field assumption: 
     when a node $\focalnode$ is selected from edge $\seededge$ in the edge-sampling step, the degree $d$ of $\focalnode$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
-    
     Under this assumption, it is possible to show that the degree distribution follows a power law with exponent
     \begin{align}
-        \zeta &= 1 + \frac{\brackets{k}}{1 + \same{\copyrate{}}(\rho_{00} + \rho_{11} - 1) + 2\opp{\copyrate{}} \rho_{01}} \label{eq:power-law-exponent}\\ 
-        \rho_{ij} &= \brackets{\frac{k_i k_j}{k}} \;. \nonumber
+        \zeta &= 1 + \frac{\brackets{k_0} + \brackets{k_1}}{1 + \same{\copyrate{}}(\nu_{00} + \nu_{11} - 1) + 2\opp{\copyrate{}} \nu_{01}} \label{eq:power-law-exponent}\\ 
+        \nu_{ij} &= \brackets{\frac{k_i k_j}{k}} \;. \nonumber
     \end{align}
-    In the expression for $\rho_{ij}$ (and for $\brackets{k}$) the expectation is taken with respect to the stationary joint distribution $\at{\jointdist}{\infty} \paren{k_0, k_1}$.
-    Here, $\novelrate{}$ can be interpreted as the expected number of novel nodes added per new edge, while $\expectedcopiednodes{}$ can be interpreted as the expected number of nodes copied into a new edge from the sampled edge, normalized by the average degree of a node in the hypergraph.
-    A derivation of this result and a computational illustration are provided in \Cref{sec:degree-distribution-appendix} and \Cref{fig:degrees}. 
+    In the expression for $\nu_{ij}$ (and for $\brackets{k_i}$) the expectation is taken with respect to the stationary joint distribution $\jointdist \paren{k_0, k_1}$.
+    A derivation of this result and a computational illustration are provided in Appendix \Cref{sec:degree-distribution-appendix} and \Cref{fig:degrees}. 
     
-\section{Model Inference}
+\section{Model Inference} \label{sec:inference}
 
     In this section, we consider the problems of \emph{parameter inference} (learning $\paramvector$ given $\hypergraph$ and $\vz$) and \emph{community detection} (learning $\vz$ given $\hypergraph$ and $\paramvector$). 
 
