@@ -172,6 +172,7 @@ if __name__ == "__main__":
         "\simannvizmaxll": f"{sa.likelihoods_per_step[max_ll_index]/m:.2f}",
         "\simannvizmaxllari": f"{sa.aris_per_step[max_ll_index]:.2f}",
         "\simannvizmodularityari": f"{mod_ari:.2f}",
+        "\simannvizspectralari": f"{spectral_ari:.2f}",
         "\simannvizsamecopyrate": f"{eta_plus:.2f}",
         "\simannvizoppcopyrate": f"{eta_minus:.2f}",
         "\simannvizsameextantrate": f"{lambda_plus:.2f}",
