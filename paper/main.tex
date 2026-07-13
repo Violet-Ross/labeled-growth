@@ -760,64 +760,72 @@ The relatively consistent performance of \model{} simulated annealing across the
     \section{Synthetic SEM Parameter Values} \label{sec:SEM-appendix}
         In this section we give more details on the parameter values to demonstrate the performance of SEM on synthetic data in \Cref{fig:synthetic_sem}. 
         \phil{Violet, would be beneficial for you to organize a bit here as well to help the reader correspond values in tables to the figure.}
+        \violet{Curious what people think of this restructuring?}
 
-        \begin{table}[h]
-            \caption{Strength of Homophily in Edge Copying}
-            \begin{tabular}{r r r}
-                \toprule
-                & $\copyrate_+$ & $\copyrate_-$ \\
-                \midrule
-                Weak &  0.6 & 0.4 \\
-                Strong & 0.9 & 0.2 \\
-                \bottomrule
-            \end{tabular}
-        \end{table}
-
-        \setlength\tabcolsep{2.5mm}
-        \begin{table}[h] 
-            \caption{Strength of Homophily in Extant and Novel Node Addition}\label{tab:sem-heatmap-params}
-            \begin{tabular}{l r c c c c}
-                && $\extantrate_+$ & $\extantrate_-$ & $\novelrate_+$ & $ \novelrate_-$\\
-                \toprule
-                Extant node  & Strong & 1.0 & 0.8 & \nullnovsame{} & \nullnovopp{} \\
-                addition & Weak & 2.0 & 0.2 & \nullnovsame{} & \nullnovopp{} \\
-                \midrule
-                Novel node & Strong & \nullextsame{} & \nullextopp{} & 1.0 & 0.8 \\
-                addition & Weak & \nullextsame{} & \nullextopp{} & 2.0 & 0.2 \\
-                \midrule
-                Both & Strong & 1.0 & 0.8 & 1.0 & 0.8 \\
-                & Weak & 2.0 & 0.2 & 2.0 & 0.2 \\
-                \bottomrule
-            \end{tabular}
-        \end{table}
+    \begin{figure}[t]
+        \includegraphics[width=0.5\textwidth]{../fig/sem_true_params_heatmap.png}
+        \caption{The parameter values used to generate each pixel of \Cref{fig:synthetic_sem}.}
+        \label{fig:synthetic-params}
+    \end{figure}
 
 
-        \begin{table}[h]
-            \caption{Strength of Copy Mechanism}
-            \begin{tabular}{l r r}
-                \toprule
-                & $\copyrate_+$ & $\copyrate_-$ \\
-                \midrule
-                Weak &  0.1 & 0.1 \\
-                Strong & 0.9 & 0.9\\
-                \bottomrule
-            \end{tabular}
-        \end{table}
+        % \begin{table}[h]
+        %     \caption{Strength of Homophily in Edge Copying}
+        %     \begin{tabular}{r r r}
+        %         \toprule
+        %         & $\copyrate_+$ & $\copyrate_-$ \\
+        %         \midrule
+        %         Weak &  0.6 & 0.4 \\
+        %         Strong & 0.9 & 0.2 \\
+        %         \bottomrule
+        %     \end{tabular}
+        % \end{table}
 
-        \setlength\tabcolsep{2mm}
-        \begin{table}[h]
-            \caption{Strength of Extant and Novel Node Addition Mechanisms}
-            \begin{tabular}{l r r r r}
-                \toprule
-                & $\extantrate_+$ & $\extantrate_-$ & $\novelrate_+$ & $\novelrate_-$\\
-                \midrule
-                Both weak & 0.1 & 0.1 & 0.1 & 0.1 \\
-                Strong extant  node mechanism & 2.0 & 2.0 & \nullnovsame{} & \nullnovopp{} \\
-                Weak novel node mechanism & \nullextsame{} & \nullextopp{} & 2.0 & 2.0 \\
-                Both strong & 2.0 & 2.0 & 2.0 & 2.0 \\
-                \bottomrule
-            \end{tabular}
-        \end{table}
+        % \setlength\tabcolsep{2.5mm}
+        % \begin{table}[h] 
+        %     \caption{Strength of Homophily in Extant and Novel Node Addition}\label{tab:sem-heatmap-params}
+        %     \begin{tabular}{l r c c c c}
+        %         && $\extantrate_+$ & $\extantrate_-$ & $\novelrate_+$ & $ \novelrate_-$\\
+        %         \toprule
+        %         Extant node  & Strong & 1.0 & 0.8 & \nullnovsame{} & \nullnovopp{} \\
+        %         addition & Weak & 2.0 & 0.2 & \nullnovsame{} & \nullnovopp{} \\
+        %         \midrule
+        %         Novel node & Strong & \nullextsame{} & \nullextopp{} & 1.0 & 0.8 \\
+        %         addition & Weak & \nullextsame{} & \nullextopp{} & 2.0 & 0.2 \\
+        %         \midrule
+        %         Both & Strong & 1.0 & 0.8 & 1.0 & 0.8 \\
+        %         & Weak & 2.0 & 0.2 & 2.0 & 0.2 \\
+        %         \bottomrule
+        %     \end{tabular}
+        % \end{table}
+
+
+        % \begin{table}[h]
+        %     \caption{Strength of Copy Mechanism}
+        %     \begin{tabular}{l r r}
+        %         \toprule
+        %         & $\copyrate_+$ & $\copyrate_-$ \\
+        %         \midrule
+        %         Weak &  0.1 & 0.1 \\
+        %         Strong & 0.9 & 0.9\\
+        %         \bottomrule
+        %     \end{tabular}
+        % \end{table}
+
+        % \setlength\tabcolsep{2mm}
+        % \begin{table}[h]
+        %     \caption{Strength of Extant and Novel Node Addition Mechanisms}
+        %     \begin{tabular}{l r r r r}
+        %         \toprule
+        %         & $\extantrate_+$ & $\extantrate_-$ & $\novelrate_+$ & $\novelrate_-$\\
+        %         \midrule
+        %         Both weak & 0.1 & 0.1 & 0.1 & 0.1 \\
+        %         Strong extant  node mechanism & 2.0 & 2.0 & \nullnovsame{} & \nullnovopp{} \\
+        %         Weak novel node mechanism & \nullextsame{} & \nullextopp{} & 2.0 & 2.0 \\
+        %         Both strong & 2.0 & 2.0 & 2.0 & 2.0 \\
+        %         \bottomrule
+        %     \end{tabular}
+        % \end{table}
 
 
 
