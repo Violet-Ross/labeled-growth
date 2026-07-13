@@ -725,8 +725,8 @@ The relatively consistent performance of \model{} simulated annealing across the
         Then, the sufficient statistics for the parameters $\paramvector$ \cite{degrootProbabilityStatistics2012}  are given by
         \begin{align*}
             \vsigma(e, f, u, \vz) = \begin{pmatrix}
-                \abs{e_z \cap f_z} \\ 
-                \abs{f_z} \\ 
+                \abs{e_z \cap f_z} - 1 \\ 
+                \abs{f_z} - 1 \\ 
                 \abs{e_{\bar{z}} \cap f_{\bar{z}}} \\
                 \abs{f_{\bar{z}}}  \\ 
                 \abs{(e_z \setminus f_z) \cap \at{\nodes}{t}} \\ 
@@ -739,7 +739,7 @@ The relatively consistent performance of \model{} simulated annealing across the
         Then, the function $g$ which computes the maximum likelihood estimates of the parameters $\paramvector$ from $\sufficientstatsvec$ is given by
         \begin{align*}
             g(\sufficientstatsvec) = \paren{
-                \frac{s_1-1}{s_2-1}, 
+                \frac{s_1}{s_2}, 
                 \frac{s_3}{s_4}, 
                 s_5, 
                 s_6, 
@@ -896,7 +896,7 @@ The relatively consistent performance of \model{} simulated annealing across the
 
     \section{Simulated Annealing for Community Detection}\label{sec:simulated-annealing-algorithm-spec}
         We now describe the simulated annealing algorithm from \Cref{sec:community-detection} in greater detail. 
-        Our custom learning schedule uses the first epoch to set the absolute scale of the acceptance probability decay, which we therefore describe as a separate algorithm (\Cref{algocf:simulated_annealing_first_epoch}).
+        Our custom learning schedule uses the first epoch to set the absolute scale of the acceptance probability decay, and we therefore describe this epoch as a separate algorithm (\Cref{algocf:simulated_annealing_first_epoch}).
         We then proceed to the main simulated annealing algorithm (\Cref{algocf:simulated_annealing}), which uses the scale of acceptance probability decay $\sigma_\hypergraph$ computed in the first epoch to set the acceptance probability for label flips in subsequent epochs.
         We only allow the probability to begin to decay after the first four epochs in order to encourage exploration of the label space. 
         
@@ -974,7 +974,7 @@ The relatively consistent performance of \model{} simulated annealing across the
         \begin{align*}
             \paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}}) = (\simannvizsamecopyrate{}, \simannvizoppcopyrate{}, \simannvizsameextantrate{}, \simannvizoppextantrate{}, \simannvizsamenovelrate{}, \simannvizoppnovelrate{})\;.
         \end{align*}
-        For the purposes of this illustration we perform community detection under the Nishimori condition, using a guess $\hat{\paramvector}$ equal to the true parameters $\paramvector$ used to generate the hypergraph.
+        For the purposes of this illustration, we perform community detection under the Nishimori condition, using a guess $\hat{\paramvector}$ equal to the true parameters $\paramvector$ used to generate the hypergraph.
         
     
     \end{document}
