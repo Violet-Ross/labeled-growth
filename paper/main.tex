@@ -51,7 +51,7 @@
     We estimate the model parameters on synthetic and real data via (stochastic) expectation maximization. 
     These estimates give statistically-principled descriptions of the operation of homophily in empirical polyadic systems. 
     We also demonstrate an approach to community detection via simulated annealing which, though computationally expensive, achieves competitive results on both synthetic data and certain empirical data sets known to be challenging to community detection techniques based on the edge-independence assumption. 
-    Our findings highlight the benefits of moving beyond edge-independence assumptions in higher-order modeling and data analysis, and point to several directions for future work. 
+    Our findings highlight the benefits of incorporating edge- and label-dependence in higher-order modeling and data analysis, and point to several directions for future work. 
 \end{abstract}
 
 \maketitle
@@ -88,7 +88,7 @@
     When an interaction occurs on a set $R \subseteq \nodes$, this increases the likelihood of observing a new interaction on a set $S \subseteq \nodes$ correlated with $R$ in the sense that $R\cap S$ is larger than would be expected by chance. 
     \textcolor{red}{That is, new interactions are likely to have large overlap with the interactions we have already observed.}
     These overlaps can be shown to affect the kinds of dynamics which can unfold on the hypergraph \cite{maliziaHyperedgeOverlapDrives2025,lamata2025hyperedge}. 
-    Several generative models for the growth of hypergraphs with edge-dependence have been proposed \cite{bensonSequencesSets2018,avinRandomPreferentialAttachment2019,heEdgeCorrelationsLink2025,leeTHyMeTemporalHypergraph2021,leeTemporalHypergraphMotifs2023}, including several with explicit nodel labels \cite{giroirePreferentialAttachmentHypergraph2022,giroirePreferentialAttachmentHypergraph2022a,kaminski2023hypergraph} and corresponding homophilic mechanisms; see \cite{laber2026guide} for a recent review.  
+    Several generative models for the growth of hypergraphs with edge-dependence have been proposed \cite{bensonSequencesSets2018,avinRandomPreferentialAttachment2019,heEdgeCorrelationsLink2025,leeTHyMeTemporalHypergraph2021,leeTemporalHypergraphMotifs2023}, including several with explicit nodel labels and corresponding homophilic mechanisms \cite{giroirePreferentialAttachmentHypergraph2022,giroirePreferentialAttachmentHypergraph2022a,kaminski2023hypergraph}; see \cite{laber2026guide} for a recent review.  
     We note that the above are all models \emph{of} hypergraph formation rather than models of dynamics \emph{on} hypergraphs; recent work argues that the latter may be better expressed via dyadic graph models \cite{peixoto2026graphs} but does not treat the former.
 
     Of the generative models of hypergraph growth with both edge-dependence and node labels, we are unaware of any which allow for statistically-motivated inference of either the dynamical parameters or the latent node labels.
@@ -159,7 +159,7 @@
     For fixed $\opp{\extantrate}$, $\same{\novelrate{}}$, and $\opp{\novelrate{}}$, increasing the difference $\same{\copyrate{}} - \opp{\copyrate{}}$ leads to higher modularity, as does increasing $\same{\extantrate{}}$.
     Hypergraphs sampled from our model using high values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have label-homogeneous cores of densely overlapping hyperedges, which are weakly connected to one another by edges with more heterogeneous label compositions.
     Hypergraphs with lower values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have less-structured distributions of labels over hyperedges. 
-
+    The \model{} model can also be used to generate hypergraphs under heterophilic conditions.
 
 
 \subsection{Asymptotic Properties} \label{sec:asymptotics}
@@ -179,7 +179,6 @@
             (d): Euclidean projections of the simulated joint distribution $\at{\jointdist}{t} \paren{k_0, k_1}$ onto the eigenvectors $\mathbf{v}_1$ and $\mathbf{v}_2$ during a simulation run with $10^7$ timesteps. 
             At each time point, we aggregate the most recent $1,000$ edges to compute the joint distribution in order to approximate an ``instantaneous'' simulation state. 
             (e): Empirical joint distribution $\at{\jointdist}{t} \paren{k_0, k_1}$ aggregated across $10^7$ timesteps. 
-            \violet{What do the colors in panels (b) and (c) represent? The values of the entries in the eigenvector?}
         }
         \label{fig:dynamics-eigenvectors}
     \end{figure*}
@@ -399,9 +398,7 @@
         We then perform SEM on each.  
         Finally, we compute the Kullback-Leibler (KL) divergence of the estimated parameters from the true ones (\cref{eq:kl-divergence}) and average the results to obtain a value in a pixel. 
         The parameter estimates over iterations of SEM are plotted for the underlying parameters which produced the lowest mean KL divergence (copy parameters in panel (b) and addition parameters in panel (c)), 
-        and similarly for the parameters that produced the highest mean KL divergence in panels (d) and (e).
-        \phil{Violet, I think we need you to more closely tie the table to the specific tables in Appendix F. Which parts of plot for which tables?}
-    }
+        and similarly for the parameters that produced the highest mean KL divergence in panels (d) and (e).}
     \label{fig:synthetic_sem}
 \end{figure*}
 
@@ -428,7 +425,7 @@ That said, even in the least successful cases for estimation with high KL diverg
 
 \subsection{Parameter Estimation on Empirical Data} \label{sec:sem-empirical}
 
-We also used our method to infer parameters for six standard empirical hypergraph data sets described in \Cref{tab:datasets}. 
+We also used our method to infer parameters for six empirical hypergraph data sets described in \Cref{tab:datasets}. 
 Although many labeled hypergraph data sets are now available for community detection, relatively few have natively binary node labels. 
 The \texttt{senate-bills} and \texttt{house-bills} data sets \cite{fowler2006connecting,fowler2006legislative} are hypergraphs of cosponsorships of bills in the U.S. Senate and House of Representatives, respectively, with node labels corresponding to the political party of each legislator; we use the version of these data sets used in \cite{chodrowGenerativeHypergraphClustering2021}.
 The \texttt{high-school} and \texttt{primary-school} data sets \cite{gemmetto2014mitigation,stehle2011high,mastrandrea2015contact} are hypergraphs of social interactions between students in a high school and primary school, respectively, with node labels corresponding to the gender of each student; these data sets were collected through the SocioPatterns project.
@@ -476,10 +473,9 @@ The mechanisms of and motivations for bipartisan reciprocity vary between the Ho
 Further investigation of the relationship between reciprocity and edge copying in legislative cosponsorship is an interesting direction for future work.
 
 
-The novel node estimates for the congressional datasets are both very small. 
+The novel node estimates for both the congressional datasets are very small. 
 The largest difference in our estimates for these two systems is in the extant node addition parameter estimates; the \texttt{house-bills} data set has estimates $\same{\hat{\extantrate}}$ and $\opp{\hat{\extantrate}}$ which are each roughly three times larger than their values in the \texttt{senate-bills} data set.
-These estimates suggest the operation of similar levels of party homophily in the cosponsorship of bills via extant node addition, but with proportionally more of the legislators sponsoring a bill originating in the House having been previously uninvolved with a previous ``seeding'' bill.  
-These estimates reflect the higher mean edge size of \texttt{house-bills}, where a bill is co-sponsored by a mean of over 20 congresspersons, as opposed to the mean of 8 in \texttt{senate-bills}. 
+These estimates suggest the operation of similar levels of party homophily in the cosponsorship of bills via extant node addition, while reflecting the higher mean edge size of \texttt{house-bills}, where a bill is co-sponsored by a mean of over 20 congresspersons, as opposed to the mean of 8 in \texttt{senate-bills}. 
 % That is, a bill in the House of Representatives has on average more cosponsors than a bill in the Senate, and since only about half of $\seededge$ is copied to $\newedge$, and $\opp{\novelrate}$ and $\same{\novelrate}$ are close to zero, the extant node parameters will grow proportionally to the mean edge size.
 
     
@@ -540,7 +536,7 @@ Nevertheless, these experiments suggest that there exist classes of hypergraphs 
 Indeed, we observe relatively favorable performance of the \model{} model on empirical data as well. 
 We evaluate our simulated annealing algorithm on a subset of our empirical data sets: \texttt{senate-bills}, \texttt{primary-school}, and \texttt{high-school}; the poor scaling of simulated annealing with the number of nodes $n$ made it computationally prohibitive to run on the larger \texttt{house-bills}, \texttt{enron-emails}, and \texttt{coauthorship} data sets.
 We use the class membership of the students in \texttt{primary-school} and \texttt{high-school} as the ground truth labels in this section instead of gender because community structure has been previously detected with these labels \cite{chodrowGenerativeHypergraphClustering2021}.  
-\violet{Can we be more clear about whether we impose a binary labeling on the school data and what that labeling is?}
+\violet{@Frannie Can we be more clear about whether we impose a binary labeling on the school data and what that labeling is?}
 Since in the context of community detection the labels $\vz$ (and therefore parameter estimates $\hat{\paramvector}$) are not available, we instead use a single, fixed parameter vector for each of these three experiments: $\hat{\paramvector} = (0.90, 0.10, 1.00, 0.25, 0.001, 0.001)$.
 The zero values for the novel node addition parameters reflect a choice of algorithmic convenience. 
 All of these data sets are appropriately modeled with very small values of $\same{\novelrate}$ and $\opp{\novelrate}$ under our model due to their large number of edges compared to the small number of nodes.  
@@ -759,12 +755,10 @@ The relatively consistent performance of \model{} simulated annealing across the
 
     \section{Synthetic SEM Parameter Values} \label{sec:SEM-appendix}
         In this section we give more details on the parameter values to demonstrate the performance of SEM on synthetic data in \Cref{fig:synthetic_sem}. 
-        \phil{Violet, would be beneficial for you to organize a bit here as well to help the reader correspond values in tables to the figure.}
-        \violet{Curious what people think of this restructuring?}
 
     \begin{figure}[t]
         \includegraphics[width=0.5\textwidth]{../fig/sem_true_params_heatmap.png}
-        \caption{The parameter values used to generate each pixel of \Cref{fig:synthetic_sem}.}
+        \caption{The parameter values used to generate each pixel of \Cref{fig:synthetic_sem}, where the first value in each pair is the $+$ (in-group) parameter and the second value is the $-$ (out-group) parameter.}
         \label{fig:synthetic-params}
     \end{figure}
 
