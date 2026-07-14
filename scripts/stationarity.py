@@ -183,7 +183,8 @@ if __name__ == "__main__":
     
     # fig, ax = plt.subplots(1, 4, figsize = (18, 6))
     
-    colors = ["#055775", "darkgrey", "lightgrey"]
+    #colors = ["#055775", "darkgrey", "lightgrey"]
+    colors = ["#1B998B", "#B81365", "#E28413"]
     letter_labels = ["(b)", "(c)"]
     
     for i in range(2):

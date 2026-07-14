@@ -120,8 +120,7 @@ original_to_display_row = {
 }
 
 def fmt(v):
-    """Format a parameter value compactly (drop trailing .0)."""
-    return f"{v:g}"
+    return f"{v:.2f}"
 
 # text grid holds a formatted, multi-line string of (copy, extant, novel) params
 text_grid = np.empty((n_rows, n_cols), dtype=object)

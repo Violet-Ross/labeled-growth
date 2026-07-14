@@ -1,5 +1,5 @@
 import pylab
-palette = ["#2176AE",  "#B98E00", "#FE6847", "#0CCA4A"]
+palette = ["#1B998B",  "#B81365", "#E28413", "#A7ACD9"]
 linestyles = ["-", "--", "-.", ":"]
 
 
