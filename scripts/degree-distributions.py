@@ -92,7 +92,7 @@ y = offset[1]*y / y.sum()
 ax.plot(x, y, linestyle = "--", color = "black", zorder = -10, linewidth=1)
 ax.annotate(fr"$\zeta=${zeta:.2f}", xy = (x[0]*2, y[0]/2), size=12)
 
-ax.scatter(centers, heights, facecolors='none', edgecolors =  '#055775', linewidth = 2)
+ax.scatter(centers, heights, facecolors='none', edgecolors =  '#1B998B', linewidth = 2)
 ax.set_xscale("log")
 ax.set_yscale("log")
 ax.set_xlabel("Degree")
