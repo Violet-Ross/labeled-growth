@@ -136,14 +136,14 @@ if __name__ == "__main__":
     max_ll_index = np.argmax(sa.likelihoods_per_step)
 
     fig, axarr = plt.subplots(1, 2, figsize=(10, 4))
-    axarr[0].plot(np.array(sa.likelihoods_per_step)/m, color = "steelblue")
+    axarr[0].plot(np.array(sa.likelihoods_per_step)/m, color = "#1B998B")
     axarr[0].set_ylabel("Likelihood per edge")
     axarr[0].set_xlabel("Step")
 
     axarr[0].scatter(max_ll_index, sa.likelihoods_per_step[max_ll_index]/m, color='black', label='Max LL', zorder = 10)
     axarr[0].legend()
 
-    axarr[1].plot(sa.aris_per_step, color = "steelblue")
+    axarr[1].plot(sa.aris_per_step, color = "#1B998B")
     axarr[1].set_ylabel("Adjusted Rand Index (ARI)")
     axarr[1].set_xlabel("Step")
     axarr[1].scatter(max_ll_index, sa.aris_per_step[max_ll_index], color='black', label='Max LL', zorder = 10)
