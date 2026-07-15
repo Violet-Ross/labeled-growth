@@ -61,7 +61,8 @@
 
 \section{Introduction}
 
-    Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions. 
+    Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions.
+    \textcolor{red}{Such systems are often refered to as higher-order networks. }
     Systems naturally modeled as hypergraphs include social interaction networks (both in-person \cite{mastrandrea2015contact} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship neteworks, \cite{wu2022hypergraph}, and networks of ecological relations \cite{levine2017beyond}. 
     Much recent work has emphasized the importance of faithfully representing polyadic structure rather than reducing it to dyadic interactions \cite{battistonNetworksPairwiseInteractions2020,bick2023higher} via graph projections.
 
@@ -279,12 +280,13 @@
     We therefore use a stochastic expectation-maximization (SEM) algorithm \cite{cappeOnLineExpectationMaximization2009} to estimate the parameters $\paramvector$.
     Each iteration of SEM consists of two steps: the stochatic E-step, in which noisy exponentially weighted moving averages of the sufficient statistics are calculated using the current parameter estimates, and the stochastic M-step, in which the parameter estimates are updated using the expected sufficient statistics. 
 
-    To begin the SEM algorithm, we first initialize a vector $\atalg{\sufficientstatsvec}{0}$ of sufficient statistics to arbitrary values; in our model, there are two sufficient statistics per copy parameter and one sufficient statistic per each of the four addition parameters, so $\sufficientstatsvec$ has length $8$.
+    To begin the SEM algorithm, we initialize a vector $\atalg{\sufficientstatsvec}{0}$ of sufficient statistics to arbitrary values; in our model, there are two sufficient statistics per copy parameter and one sufficient statistic per each of the four addition parameters, so $\sufficientstatsvec$ has length $8$.
     \violet{didn't like ``initialize'' twice in this sentence, but feel free to change ``begin'', not sure if its the best choice here.}
     From $\atalg{\sufficientstatsvec}{0}$, we compute an initial estimate of the parameter vector $\atalg{\hat{\paramvector}}{0} = g(\atalg{\sufficientstatsvec}{0})$ via a function $g$ which maps sufficient statistics to parameter estimates; details on both the sufficient statistics $\sufficientstatsvec$ and the mapping $g$ are provided in \Cref{sec:sufficient-statistics}.
     We then update a moving average of $\sufficientstatsvec$ as follows. 
     In each algorithmic step $\ell$, we pick an edge $e$ uniformly at random from $\hypergraph$. 
-    Then, given current estimates $\atalg{\hat{\paramvector}}{\ell}$, we form a belief distribution over the latent identities of $\seededge \in \edges$ and $\focalnode \in \seededge$ which could have been selected in the edge-copying step to form $\newedge$. 
+    Then, given current estimates $\atalg{\hat{\paramvector}}{\ell}$, we form a belief distribution over the latent identities of $\seededge \in \edges$ and $\focalnode \in \seededge$ which could have been selected in the edge-
+    step to form $\newedge$. 
     Using Bayes' rule, this probability is 
     \begin{widetext}
     \begin{align}
@@ -293,10 +295,10 @@
     \end{widetext}
     We then form the vector of expected sufficient statistics 
     \begin{align}
-        s' = \sum_{\seededge \prec \newedge} \sum_{\focalnode \in \seededge\cap \newedge} \lik(\seededge, \focalnode | \newedge, \vz'_e; \atalg{\hat{\paramvector}}{\ell}) \vsigma(\newedge, \seededge, \focalnode, \vz) \;, \label{eq:sufficient-stats-update}
+        s' = \sum_{\seededge \prec \newedge} \sum_{\focalnode \in \seededge\cap \newedge} \lik(\seededge, \focalnode | \newedge, \vz'_e; \atalg{\hat{\paramvector}}{\ell}) \veta(\newedge, \seededge, \focalnode, \vz) \;, \label{eq:sufficient-stats-update}
     \end{align}
-    where $\vsigma(\newedge, \seededge, \focalnode, \vz)$ is the vector of sufficient statistics for the parameters $\paramvector$ given $\newedge$, $\seededge$, $\focalnode$, and $\vz$.
-    The entries of $\vsigma(\newedge, \seededge, \focalnode, \vz)$ can be computed as functions of the node labels in $\newedge$ and $\seededge$; we supply explicit formulae in \Cref{sec:sufficient-statistics}. 
+    where $\veta(\newedge, \seededge, \focalnode, \vz)$ is the vector of sufficient statistics for the parameters $\paramvector$ given $\newedge$, $\seededge$, $\focalnode$, and $\vz$.
+    The entries of $\veta(\newedge, \seededge, \focalnode, \vz)$ can be computed as functions of the node labels in $\newedge$ and $\seededge$; we supply explicit formulae in \Cref{sec:sufficient-statistics}. 
     We then perform the update 
     \begin{align*}
         \atalg{\sufficientstatsvec}{\ell+1} = (1 - \atalg{\lr}{\ell} )\atalg{\sufficientstatsvec}{\ell} + \atalg{\lr}{\ell} \sufficientstatsvec' \;,
@@ -318,7 +320,7 @@
         \For{$\seededge \in \edges$}
             \If{$\seededge \prec \newedge$}
                 \For{$\focalnode \in \newedge \cap \seededge$}
-                    \State $\vx \gets \vx + \lik(\seededge, \focalnode | \newedge; \atalg{\hat{\paramvector}}{\ell}) \vsigma(\newedge, \seededge, \focalnode, \vz)$
+                    \State $\vx \gets \vx + \lik(\seededge, \focalnode | \newedge; \atalg{\hat{\paramvector}}{\ell}) \veta(\newedge, \seededge, \focalnode, \vz)$
                     \State $\vy \gets \vy + \lik(\seededge, \focalnode | \newedge; \atalg{\hat{\paramvector}}{\ell})$
                 \EndFor
             \EndIf
@@ -715,12 +717,12 @@ The relatively consistent performance of \model{} simulated annealing across the
     \section{Additional Details on Stochastic Expectation-Maximization (SEM)} \label{sec:sufficient-statistics}
  
     \subsection{Sufficient Statistics}
-        We describe the function $\vsigma$ from \Cref{sec:sem} which computes the conditional sufficient statistics for the parameters $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed edge $e$, a candidate parent edge $f$, a candidate seed node $u$, and the node labels $\vz$. 
+        We describe the function $\veta$ from \Cref{sec:sem} which computes the conditional sufficient statistics for the parameters $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ given an observed edge $e$, a candidate parent edge $f$, a candidate seed node $u$, and the node labels $\vz$. 
         Let $z = z_u$ be the label of the seed node $u$. 
         Let $e_z$ be the set of nodes in $e$ with label $z$, and let $f_z$ be the set of nodes in $f$ with label $z$. 
         Then, the sufficient statistics for the parameters $\paramvector$ \cite{degrootProbabilityStatistics2012}  are given by
         \begin{align*}
-            \vsigma(e, f, u, \vz) = \begin{pmatrix}
+            \veta(e, f, u, \vz) = \begin{pmatrix}
                 \abs{e_z \cap f_z} - 1 \\ 
                 \abs{f_z} - 1 \\ 
                 \abs{e_{\bar{z}} \cap f_{\bar{z}}} \\
@@ -731,7 +733,7 @@ The relatively consistent performance of \model{} simulated annealing across the
                 \abs{e_{\bar{z}} \setminus \at{\nodes}{t}}
             \end{pmatrix}^\top \;.
         \end{align*}
-        As described in \Cref{sec:sem}, the vector $\sufficientstatsvec$ of expected sufficient statistics is computed as a weighted average of $\vsigma(e, f, u, \vz)$ over the belief distribution $\lik(f, u | e; \at{\hat{\paramvector}}{\ell})$ over the latent variables $f$ and $u$.
+        As described in \Cref{sec:sem}, the vector $\sufficientstatsvec$ of expected sufficient statistics is computed as a weighted average of $\veta(e, f, u, \vz)$ over the belief distribution $\lik(f, u | e; \at{\hat{\paramvector}}{\ell})$ over the latent variables $f$ and $u$.
         Then, the function $g$ which computes the maximum likelihood estimates of the parameters $\paramvector$ from $\sufficientstatsvec$ is given by
         \begin{align*}
             g(\sufficientstatsvec) = \paren{
@@ -756,11 +758,11 @@ The relatively consistent performance of \model{} simulated annealing across the
     \section{Synthetic SEM Parameter Values} \label{sec:SEM-appendix}
         In this section we give more details on the parameter values to demonstrate the performance of SEM on synthetic data in \Cref{fig:synthetic_sem}. 
 
-    \begin{figure}[t]
-        \includegraphics[width=0.5\textwidth]{../fig/sem_true_params_heatmap.png}
+    \begin{figure*}[t]
+        \includegraphics[width=\textwidth]{../fig/sem_true_params_heatmap.png}
         \caption{The parameter values used to generate each pixel of \Cref{fig:synthetic_sem}, where the first value in each pair is the $+$ (in-group) parameter and the second value is the $-$ (out-group) parameter.}
         \label{fig:synthetic-params}
-    \end{figure}
+    \end{figure*}
 
 
         % \begin{table}[h]
@@ -920,7 +922,7 @@ The relatively consistent performance of \model{} simulated annealing across the
             \end{algorithmic}
         \end{algorithm}
 
-        Here, $\sigma(\vdelta)$ is the empirical variance
+        Here, $\sigma(\vdelta)$ is the square root of the empirical variance
         \begin{align}
             \sigma(\vdelta) = \sqrt{\frac{\sum_{i = 1}^n \delta_i^2 - (\frac{1}{n}\sum_{i=1}^n \delta_i)^2}{n-1}}\;.
         \end{align}
