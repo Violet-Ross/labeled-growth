@@ -155,7 +155,7 @@ for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
     ax.scatter(
         best_likelihoods[best_likelihoods["Dataset"] == dataset]["ARI"].values[0],
         i,
-        color=fs.lighten(fs.palette[0]),
+        color=fs.palette[0],
         s=100,
         zorder=500,
         label="CHILL SEM\n(highest likelihood)" if i == 0 else None,
@@ -169,7 +169,7 @@ for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
         ax.scatter(
             prior_methods[dataset]["hmod"],
             i,
-            color=fs.lighten(fs.palette[1]),
+            color=fs.palette[1],
             s=100,
             zorder=5,
             label="Hypergraph\nmodularity" if i == 0 else None,
@@ -181,7 +181,7 @@ for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
     ax.scatter(
         prior_methods[dataset]["nonbacktracking"],
         i,
-        color=fs.lighten(fs.palette[2]),
+        color=fs.palette[2],
         s=100,
         zorder=5,
         label="Nonbacktracking\nspectral clustering" if i == 0 else None,
@@ -194,7 +194,7 @@ for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
     ax.scatter(
         modularity_ari[dataset],
         i,
-        facecolor="none",
+        facecolor="#A7ACD9",
         s=100,
         zorder=50000,
         label="Greedy\nmodularity" if i == 0 else None,
@@ -206,7 +206,7 @@ for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
     ax.scatter(
         spectral_ari[dataset],
         i,
-        facecolor="none",
+        facecolor="#A7ACD9",
         s=100,
         zorder=5,
         label ="Spectral\nclustering" if i == 0 else None,
