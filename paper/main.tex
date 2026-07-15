@@ -537,6 +537,7 @@ Indeed, we observe relatively favorable performance of the \model{} model on emp
 We evaluate our simulated annealing algorithm on a subset of our empirical data sets: \texttt{senate-bills}, \texttt{primary-school}, and \texttt{high-school}; the poor scaling of simulated annealing with the number of nodes $n$ made it computationally prohibitive to run on the larger \texttt{house-bills}, \texttt{enron-emails}, and \texttt{coauthorship} data sets.
 We use the class membership of the students in \texttt{primary-school} and \texttt{high-school} as the ground truth labels in this section instead of gender because community structure has been previously detected with these labels \cite{chodrowGenerativeHypergraphClustering2021}.  
 \violet{@Frannie Can we be more clear about whether we impose a binary labeling on the school data and what that labeling is?}
+\frannie{No binary labeling imposed, just calculating ARI against the multinary labels}
 Since in the context of community detection the labels $\vz$ (and therefore parameter estimates $\hat{\paramvector}$) are not available, we instead use a single, fixed parameter vector for each of these three experiments: $\hat{\paramvector} = (0.90, 0.10, 1.00, 0.25, 0.001, 0.001)$.
 The zero values for the novel node addition parameters reflect a choice of algorithmic convenience. 
 All of these data sets are appropriately modeled with very small values of $\same{\novelrate}$ and $\opp{\novelrate}$ under our model due to their large number of edges compared to the small number of nodes.  
