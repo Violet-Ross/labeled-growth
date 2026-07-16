@@ -5,6 +5,14 @@ import re
 
 arxiv_path = 'paper/arxiv'
 
+# remove the arxiv directory if it exists
+if os.path.exists(arxiv_path):
+    os.system(f'rm -rf {arxiv_path}')
+
+if os.path.exists('paper/arxiv-submission'):
+    os.system(f'rm -rf paper/arxiv-submission')
+
+
 # create directory paper/arxiv if it doesn't exist
 if not os.path.exists(arxiv_path):
     os.makedirs(arxiv_path)
@@ -41,10 +49,10 @@ with open(f'{arxiv_path}/main.tex', 'w') as f:
     
 # run latexmk on arxiv_path/main.tex 
 
-os.system(f'cd {arxiv_path} && latexmk -pdf main.tex')
+# os.system(f'cd {arxiv_path} && latexmk -pdf main.tex')
 
 # clean up (remove .pdf if you want to check the files before zipping)
-for suffix in ['.aux', '.fdb_latexmk', '.fls', '.log', '.out', '.synctex.gz', '.bib', '.tdo', '.blg', '.pdf']:
+for suffix in ['.aux', '.fdb_latexmk', '.fls', '.log', '.out', '.synctex.gz', '.tdo', '.blg', '.pdf']:
     # delete all files in arxiv_path with the suffix
     for f in os.listdir(arxiv_path):
         if f.endswith(suffix):
@@ -52,7 +60,16 @@ for suffix in ['.aux', '.fdb_latexmk', '.fls', '.log', '.out', '.synctex.gz', '.
             
 # zip the arxiv path directory
 
-os.system(f'cd {arxiv_path} && zip -r ../arxiv.zip *')
+os.system(f'cd {arxiv_path} && zip -r ../arxiv-submission.zip *')
+
+print("testing that the arxiv-submission.zip file can be unzipped and compiled correctly.")
+os.system(f'cd paper && unzip arxiv-submission.zip -d arxiv-submission-test')
+os.system(f'cd paper/arxiv-submission-test && latexmk -pdf main.tex')
+print("Please check the file arxiv-submission-test/main.pdf")
+print("If this file looks good, the zip file arxiv-submission.zip is likely ready for submission.")
+
+
+
 
 # delete the arxiv_path directory (optional, remove for troubleshooting)
 # os.system(f'rm -rf {arxiv_path}')
