@@ -16,6 +16,9 @@
 \usepackage{xcolor}
 \usepackage{makecell}
 \usepackage[colorinlistoftodos]{todonotes}
+\usepackage[english]{babel}
+\usepackage{underscore}
+\usepackage{pbalance}
 
 \newcommand{\algorithmautorefname}{Algorithm}
 
@@ -128,6 +131,7 @@
         \item 
             \textbf{Extant Node Addition}: We sample $\extantnodesinedge_{z_\focalnode} \sim \poisson{\same{\extantrate{}}}$ nodes from $\at{\nodes}{t} \setminus \seededge$ with label $z_\focalnode$ and add them to $\newedge$. 
             We similarly sample $\extantnodesinedge_{\bar{z}_\focalnode} \sim \poisson{\opp{\extantrate{}}}$ nodes from $\at{\nodes}{t} \setminus \seededge$ with label $\bar{z}_\focalnode$ and add them to $\newedge$.
+            In the event that there are not enough nodes with the required label in $\at{\nodes}{t} \setminus \seededge$, we add all available nodes with that label to $\newedge$.
         \item \textbf{Novel Node Addition}: We sample $\novelnodesinedge_{z_\focalnode} \sim \poisson{\same{\novelrate{}}}$ and add $\novelnodesinedge_{z_\focalnode}$ nodes with label $z_\focalnode$ to both $\newedge$ and $\at{\nodes}{t+1}$. 
         We similarly sample $\novelnodesinedge_{\bar{z}_\focalnode} \sim \poisson{\opp{\novelrate{}}}$ and add $\novelnodesinedge_{\bar{z}_\focalnode}$ nodes with label $\bar{z}_\focalnode$ to both $\newedge$ and $\at{\nodes}{t+1}$. 
         The associated labels are also added to $\at{\vz}{t}$ to form $\at{\vz}{t+1}$.
@@ -888,6 +892,9 @@ The relatively consistent performance of \model{} simulated annealing across the
         It is important to note that the batch normalization \cref{eq:sa-approx-2} tends to overestimate the likelihood, since we have restricted ourselves to an average of high-probability seed-edges. 
         For the purposes of simulated annealing, this is not a major problem since we are only interested in the relative likelihood of different labelings $\vz$ and not the absolute scale of likelihood.
 
+\raggedbottom
+
+
     \section{Simulated Annealing for Community Detection}\label{sec:simulated-annealing-algorithm-spec}
         We now describe the simulated annealing algorithm from \Cref{sec:community-detection} in greater detail. 
         Our custom learning schedule uses the first epoch to set the absolute scale of the acceptance probability decay, and we therefore describe this epoch as a separate algorithm (\Cref{algocf:simulated_annealing_first_epoch}).
@@ -952,7 +959,7 @@ The relatively consistent performance of \model{} simulated annealing across the
     
     \section{Simulated Annealing Illustration}
 
-        \begin{figure*}[h]
+        \begin{figure*}
             \includegraphics[width=1.0\textwidth]{../fig/community-detection-learning-progress.png}
             \caption{
                 Illustrative run of simulated annealing for community detection in a hypergraph generated from our model.
