@@ -120,7 +120,7 @@ original_to_display_row = {
 }
 
 def fmt(v):
-    return f"{v:.2f}"
+    return f"{v:.1f}"
 
 # text grid holds a formatted, multi-line string of (copy, extant, novel) params
 text_grid = np.empty((n_rows, n_cols), dtype=object)

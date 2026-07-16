@@ -109,7 +109,7 @@ order = ["senate-bills", "primary-school", "high-school"]
 
 
 
-fig, ax = plt.subplots(figsize=(7.5, 5.0))
+fig, ax = plt.subplots(figsize=(8.0, 5.0))
 
 # Boxplot
 sns.boxplot(
@@ -158,7 +158,7 @@ for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
         color=fs.palette[0],
         s=100,
         zorder=500,
-        label="CHILL SEM\n(highest likelihood)" if i == 0 else None,
+        label="CHILI SA\n(highest likelihood)" if i == 0 else None,
         edgecolors="black",
         linewidth=1.5,
         marker = "o"
@@ -194,24 +194,24 @@ for i, dataset in enumerate(["senate_bills", "primaryschool", "highschool"]):
     ax.scatter(
         modularity_ari[dataset],
         i,
-        facecolor="#A7ACD9",
+        facecolor="#B8B8B8",
         s=100,
         zorder=50000,
         label="Greedy\nmodularity" if i == 0 else None,
         edgecolors="black",
-        linewidth=2,
+        linewidth=1.5,
         marker = "^"
     )
     # spectral 
     ax.scatter(
         spectral_ari[dataset],
         i,
-        facecolor="#A7ACD9",
+        facecolor="#B8B8B8",
         s=100,
         zorder=5,
         label ="Spectral\nclustering" if i == 0 else None,
         edgecolors="black",
-        linewidth=2,
+        linewidth=1.5,
         marker = "s"
     )
     
