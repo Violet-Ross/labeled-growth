@@ -164,6 +164,12 @@
 
 
 \subsection{Asymptotic Properties} \label{sec:asymptotics}
+    
+    In order to contextualize the data analysis algorithms that we develop in \Cref{sec:inference}, we describe some of the macroscopic behaviors of the \model{} model in the long-time limit. 
+    As we show, the \model{} model asymptotically approaches a stationary regime in which (a) equal numbers of nodes of each label are present in the hypergraph and (b) the degree distribution is approximately power-law with an exponent that can be computed in closed form from the model parameters.
+    These considerations suggest that our inferential methods may be most appropriate for data sets which share these features. 
+
+    
 
     \subsubsection{Joint Distribution of Labels in Edges} \label{sec:joint-distribution}
 
@@ -184,7 +190,7 @@
         \label{fig:dynamics-eigenvectors}
     \end{figure*}
 
-    Many asymptotic properties of our \model{} model can be described in terms of the joint distribution $\jointdist(k_0, k_1)$ of node labels in an edge; here $\jointdist(k_0, k_1)$ gives the probability that an edge selected uniformly at random from $\edges$ contains exactly $k_0$ nodes of label 0 and $k_1$ nodes of label 1.
+    Several asymptotic properties of our \model{} model can be described in terms of the joint distribution $\jointdist(k_0, k_1)$ of node labels in an edge; here $\jointdist(k_0, k_1)$ gives the probability that an edge selected uniformly at random from $\edges$ contains exactly $k_0$ nodes of label 0 and $k_1$ nodes of label 1.
     Under the $t\rightarrow \infty$ limit this joint distribution can be obtained as the leading eigenvector of a linear map. 
     Let $\at{\jointdist}{t}(k_0, k_1)$ be the joint distribution of label counts in a uniformly random edge after $t$ timesteps, and let $\jointdist(k_0, k_1) = \at{\jointdist}{\infty} \paren{k_0, k_1}$ be the stationary distribution.
     Then, the probability $r(k_0', k_1')$ of realizing an edge with $k_0'$ nodes of label 0 and $k_1'$ nodes of label 1 in timestep $t+1$ is given by 
@@ -230,7 +236,8 @@
     This distribution is symmetric with respect to the two node labels, however, indicating that although local edges may have dominant majority labels, the long-run dynamics converge to equal global label populations.  
     The second eigenvector $v_2$ (panel c), however,  is antisymmetric, describing a transient in which a single label group tends to dominate most edges. 
     When $\same{\copyrate{}}$ is sufficiently large, the spectral gap $1 - \lambda_2$ is small (panel a), indicating that this transient decays slowly and that the system may be dominated by edges with a single majority label for relatively long periods of time before equilibrating to the leading eigenvector (panels (d-e)).
-    This behavior suggests that, although the \model{} model ultimately converges to a stationary state with symmetry between the two node labels, it can also serve through its transients as a reasonable generative model of systems with label asymmetry. 
+
+    The presence of long transients suggests that, although the \model{} model ultimately converges to a stationary regime with power-law degrees and balanced label populations, it may also serve through its transients as a reasonable generative model of systems without these features. 
     We note that in settings it may be an undesirable feature of models to possess long transients; in our setting, since we are especially interested in statistical inference as defined below, the long transients in the dynamics do not pose a direct problem.  
 
     
@@ -617,7 +624,15 @@ The relatively consistent performance of \model{} simulated annealing across the
     We have also demonstrated that, in some circumstances, maximum-likelihood inference of node labels $\vz$ via simulated annealing, though computationally expensive, can outperform both dyadic and recent polyadic community detection algorithms that proceed from the assumption of conditional edge independence. 
     We interpret this latter result as proof-of-concept that explicitly modeling edge-dependence can be a useful framework for community detection in hypergraphs. 
     
-    There are several directions for future work. 
+    Considering the considerable theoretical and computational complications to modeling edge-dependence in hypergraphs, an important question is: \emph{when is it worth the effort to model edge-dependence?} 
+    This answer to this question hinges on the analytic aims and the data under analysis.
+    It is tempting to suppose that, as the number of nodes and edges grows large, the effects of edge-dependence will become asymptotically negligible and that simpler models may be preferred. 
+    The situation is, however, unclear at best. 
+    For example, many large empirical hypergraphs have very high rates of large intersections between edges; furthermore, these rates decay slowly as edges are added to the system \cite{heEdgeCorrelationsLink2025}.
+    These interactions are signatures of edge-dependence operating on long-timescales, suggesting that models that factor in edge dependence may still be preferred in this setting. 
+    A more systematic investigation into when explicitly modeling edge dependence supports data science with hypergraphs would be a very welcome direction of future work.  
+
+    There are several additional directions as well. 
     Most obviously, although our results show that maximum-likelihood inference in the \model{} model is promising for detecting certain kinds of community structure, the simulated annealing method we have used is computationally impractical on data sets of even relatively modest size. 
     Developing more efficient heuristics for maximizing the likelihood over $\vz$ will be an important direction for scalable application of the \model{} model for community detection. 
     Scalability may also imply opportunities for improved performance.
