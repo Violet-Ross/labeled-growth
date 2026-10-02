@@ -138,7 +138,7 @@
     \end{itemize}
     We let $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ denote the complete vector of model parameters. 
     Formally, the probability of realizing a given hypergraph $\hypergraph$ with label vector $\vz$ under \model{} at time $t$ can be described as a time-dependent probability distribution $\at{p}{t}(\hypergraph, \vz ; \paramvector)$ over the space of hypergraphs with labeled nodes; we omit the time index when otherwise clear from context. 
-    Our implementation of \model{} the hypergraph data structure supplied by the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
+    We base our implementation of \model{} on the hypergraph data structure supplied by the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
 
 \begin{figure}
     \includegraphics[width=0.495\textwidth]{../fig/community-structure-sims-combined.png}
@@ -231,6 +231,7 @@
     The second eigenvector $v_2$ (panel c), however,  is antisymmetric, describing a transient in which a single label group tends to dominate most edges. 
     When $\same{\copyrate{}}$ is sufficiently large, the spectral gap $1 - \lambda_2$ is small (panel a), indicating that this transient decays slowly and that the system may be dominated by edges with a single majority label for relatively long periods of time before equilibrating to the leading eigenvector (panels (d-e)).
     This behavior suggests that, although the \model{} model ultimately converges to a stationary state with symmetry between the two node labels, it can also serve through its transients as a reasonable generative model of systems with label asymmetry. 
+    We note that in settings it may be an undesirable feature of models to possess long transients; in our setting, since we are especially interested in statistical inference as defined below, the long transients in the dynamics do not pose a direct problem.  
 
     
 
@@ -239,8 +240,9 @@
     One model feature we can obtain from the stationary joint distribution $\jointdist \paren{k_0, k_1}$ is the asymptotic degree distribution generated from \model{}.
     This asymptotic distribution follows a power law with an exponent which can be computed in closed form from the model parameters and the stationary joint distribution $\jointdist \paren{k_0, k_1}$. 
     Our derivation is similar to that of He et al. \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by Mitzenmacher \cite{mitzenmacherBriefHistoryGenerative2004}. 
-    The argument requires a mean-field assumption: 
-    when a node $\focalnode$ is selected from edge $\seededge$ in the edge-sampling step, the degree $d$ of $\focalnode$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
+    The argument requires a mean-field assumption. 
+    Let $k = k_0 + k_1$ be the size of a uniformly random  edge. 
+    Our assumption is that, when a node $\focalnode$ is selected from edge $\seededge$ in the edge-sampling step, the degree $d$ of $\focalnode$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
     Under this assumption, it is possible to show that the degree distribution follows a power law with exponent
     \begin{align}
         \zeta &= 1 + \frac{\brackets{k_0} + \brackets{k_1}}{1 + \same{\copyrate{}}(\moment_{00} + \moment_{11} - 1) + 2\opp{\copyrate{}} \moment_{01}} \label{eq:power-law-exponent}\\ 
@@ -343,7 +345,6 @@
 \subsection{Community Detection via Simulated Annealing} \label{sec:community-detection}
 
     We also consider the community detection problem of learning the node labels $\vz$ given an observed hypergraph $\hypergraph$ and a fixed parameter vector $\paramvector$.
-
     Since \Cref{eq:likelihood} defines a likelihood function over both the parameter vector $\paramvector$ and the node labels $\vz$, we can attempt to also learn $\vz$ via maximum-likelihood estimation.
     Unlike in stochastic block model variants in which there are several heuristics with favorable computational properties \cite{newman2016equivalence,chodrowGenerativeHypergraphClustering2021,chodrowNonbacktrackingSpectralClustering2023,ruggeriCommunityDetectionLarge2023,kritschgauCommunityDetectionHypergraphs2024,hood2026broad,li2026higher}, the edge dependence structure encoded by \model{} makes it difficult to apply standard efficient heuristics.
     The development of alternative efficient heuristics is an important direction of future work. 
@@ -365,19 +366,51 @@
     In an update step in epoch $\ell$, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random and evaluating the change in likelihood of ``flipping'' the binary node label ($z_j \gets \bar{z}_j$).  
     If the proposal increases $\tilde{\cL}(\vz)$, it is accepted.
     If the proposal decreases $\tilde{\cL}(\vz)$, however, we may also accept it with an acceptance probability $\atalg{\acceptprob}{\ell}$ that decreases with the epoch $\epoch$ and considers the magnitude of the decrease in $\tilde{\cL}(\vz)$.
-    It is possible to store computational components required to evaluate $\tilde{\cL}(\vz)$ in a data structure that allows us to compute the change in likelihood from the prior state without recomputing the entire likelihood.
-    Although this does not result in an asymptotic improvement, experimentally we observe a roughly 30-fold reduction in compute time on our empirical data sets at the expense of increasing memory requirements. 
-    
-    We use a custom acceptance schedule $\atalg{\acceptprob}{\ell}$ for our simulated annealing implementation.
-    Our custom approach is motivated by the observation that, in our application, the change in the objective $\tilde{\cL}$ of a proposal can vary significantly depending on the size of the hypergraph under study.
+
+
+
+    \begin{algorithm}[H]
+        \begin{algorithmic}
+            \caption{\texttt{SimulatedAnnealing}$(\hypergraph, \paramvector)$}\label{algocf:simulated_annealing}
+            \Require{Hypergraph $\hypergraph$, parameters $\paramvector$, number of epochs $\maxepochs$}
+            \Ensure{Label set $\hat{\vz}$, estimate of true labels $\vz$}
+            \State $\sigma_\hypergraph$, $\hat{\vz}$ $\gets$ \texttt{SimulatedAnnealingFirstEpoch}$(\hypergraph, \paramvector)$
+            \For{$\epoch = 1$ to $\maxepochs$}
+                \For{$\step = 1$ to $n$}
+                    \State Sample $j$ $\sim$ Uniform($\{1,...,n\}$)
+                    \State $\hat{\vz}^\prime$ $\gets$ $\hat{\vz}$
+                    \State $z^\prime_j\gets1-z^\prime_j$
+                    \State $\delta \gets \log \tilde{\lik}(\hypergraph, \hat{\vz}^\prime ; \paramvector) - \log \tilde{\lik}(\hypergraph, \hat{\vz} ; \paramvector)$
+                    \If{$\delta>0$}
+                        \State $\hat{\vz} \gets\hat{\vz}^\prime$
+                    \Else
+                        \If{$2 \leq \epoch \leq 5$}
+                            \State $\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2\sigma_\hypergraph)$
+                        \ElsIf{6 $\leq \epoch$}
+                            \State $\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2(1 - \frac{\epoch}{\maxepochs})\sigma_\hypergraph)$
+                        \EndIf
+                        \State Sample $x \sim \text{Uniform}(0,1)$
+                        \If{$x < \atalg{\acceptprob}{\epoch}$} 
+                            \State $\hat{\vz} \gets \hat{\vz}^\prime$
+                        \EndIf
+                    \EndIf
+                \EndFor
+            \EndFor
+            \State \Return$\hat{\vz}$
+        \end{algorithmic}
+    \end{algorithm}
+        
+
+    We also use a custom acceptance schedule $\atalg{\acceptprob}{\ell}$ for our simulated annealing implementation.
+    Our approach is motivated by the observation that, in our application, the change in the objective $\tilde{\cL}$ of a proposal can vary significantly depending on the size of the hypergraph under study.
     Thus, in our early experiments, traditional annealing schedules such as harmonic or exponential decay struggled to still occasionally accept proposals that decrease $\tilde{\cL}$. 
     Our custom implementation instead takes an adaptive approach based on the distribution of proposals previously observed. 
     In the first epoch, we accept \emph{all} proposals, while storing the changes to the objective $\tilde{\cL}$ produced by those proposals. 
-    At the end of the epoch, we compute the standard deviation $\sigma(\Delta \tilde{\cL})$ of the changes in $\tilde{\cL}$ observed during the epoch.
-    For the remaining epochs, we accept proposals that decrease $\tilde{\cL}$ by an amount $\Delta \tilde{\cL}$ stochastically by evaluating a Gaussian density with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$ which decays with epoch $\ell$. 
-    A full specification of the algorithm is provided in \Cref{sec:simulated-annealing-algorithm-spec}.
-
-
+    At the end of the epoch, we compute the standard deviation $\sigma(\Delta \tilde{\cL})$ of the changes in $\tilde{\cL}$ observed during the epoch. 
+    This procedure is handled by the function \texttt{SimulatedAnnealingFirstEpoch} in our implementation (\Cref{algocf:simulated_annealing}).
+    For the remaining epochs, we update the acceptance probability by evaluating a Gaussian density with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$, with constant of proportionality that decays with epoch $\ell$.
+    We provide a detailed discussion of this algorithm, including our approximate objective function, the implementation of the annealing schedule, and the first epoch of the algorithm, in \Cref{sec:simulated-annealing-algorithm-spec}. 
+    
     
     
 
@@ -895,8 +928,8 @@ The relatively consistent performance of \model{} simulated annealing across the
 \raggedbottom
 
 
-    \section{Simulated Annealing for Community Detection}\label{sec:simulated-annealing-algorithm-spec}
-        We now describe the simulated annealing algorithm from \Cref{sec:community-detection} in greater detail. 
+    \section{Computational Notes on Simulated Annealing}\label{sec:simulated-annealing-algorithm-spec}
+        We give several additional details on our simulated annealing method (\Cref{algocf:simulated_annealing}) described in \Cref{sec:community-detection}. 
         Our custom learning schedule uses the first epoch to set the absolute scale of the acceptance probability decay, and we therefore describe this epoch as a separate algorithm (\Cref{algocf:simulated_annealing_first_epoch}).
         We then proceed to the main simulated annealing algorithm (\Cref{algocf:simulated_annealing}), which uses the scale of acceptance probability decay $\sigma_\hypergraph$ computed in the first epoch to set the acceptance probability for label flips in subsequent epochs.
         We only allow the probability to begin to decay after the first four epochs in order to encourage exploration of the label space. 
@@ -924,38 +957,11 @@ The relatively consistent performance of \model{} simulated annealing across the
             \sigma(\vdelta) = \sqrt{\frac{\sum_{i = 1}^n \delta_i^2 - (\frac{1}{n}\sum_{i=1}^n \delta_i)^2}{n-1}}\;.
         \end{align}
 
+        It is possible to store computational components required to evaluate $\tilde{\cL}(\vz)$ in a data structure that allows us to compute the change in likelihood from the prior state without recomputing the entire likelihood.
+        Although this does not result in an asymptotic improvement, experimentally we observe a roughly 30-fold reduction in compute time on our empirical data sets at the expense of increasing memory requirements. 
 
-        \begin{algorithm}[H]
-            \begin{algorithmic}
-                \caption{\texttt{SimulatedAnnealing}$(\hypergraph, \paramvector)$}\label{algocf:simulated_annealing}
-                \Require{Hypergraph $\hypergraph$, parameters $\paramvector$, number of epochs $\maxepochs$}
-                \Ensure{Label set $\hat{\vz}$, estimate of true labels $\vz$}
-                \State $\sigma_\hypergraph$, $\hat{\vz}$ $\gets$ \texttt{SimulatedAnnealingFirstEpoch}$(\hypergraph, \paramvector)$
-                \For{$\epoch = 1$ to $\maxepochs$}
-                    \For{$\step = 1$ to $n$}
-                        \State Sample $j$ $\sim$ Uniform($\{1,...,n\}$)
-                        \State $\hat{\vz}^\prime$ $\gets$ $\hat{\vz}$
-                        \State $z^\prime_j\gets1-z^\prime_j$
-                        \State $\delta \gets \log \tilde{\lik}(\hypergraph, \hat{\vz}^\prime ; \paramvector) - \log \tilde{\lik}(\hypergraph, \hat{\vz} ; \paramvector)$
-                        \If{$\delta>0$}
-                            \State $\hat{\vz} \gets\hat{\vz}^\prime$
-                        \Else
-                            \If{$2 \leq \epoch \leq 5$}
-                                \State $\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2\sigma_\hypergraph)$
-                            \ElsIf{6 $\leq \epoch$}
-                                \State $\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2(1 - \frac{\epoch}{\maxepochs})\sigma_\hypergraph)$
-                            \EndIf
-                            \State Sample $x \sim \text{Uniform}(0,1)$
-                            \If{$x < \atalg{\acceptprob}{\epoch}$} 
-                                \State $\hat{\vz} \gets \hat{\vz}^\prime$
-                            \EndIf
-                        \EndIf
-                    \EndFor
-                \EndFor
-                \State \Return$\hat{\vz}$
-            \end{algorithmic}
-        \end{algorithm}
-        
+
+
     
     \section{Simulated Annealing Illustration}
 
