@@ -22,4 +22,4 @@ cd ~/labeled-growth
 
 source ~/venvs/lab-grow/bin/activate
 
-srun python3 -m scripts.complete_SEM_convergence_poly
+srun python3 -m scripts.complete_sem_convergence_poly
