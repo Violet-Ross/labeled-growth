@@ -122,7 +122,7 @@ class sem_functions:
             e_prime_index = random.randint(1, len(edges) - 1)
             s_prime = self.exp_stats(GH, e_prime_index, [p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er])
             # LEARNING RATE: polynomial decay
-            lr = lr * (1 - t/timesteps)**power
+            lr = initial_rate * (1 - t/timesteps)**power
             # LEARNING RATE: lr weights the stochastic update of the sufficient statistics,
             # mixing the previous statistics s with the newly sampled s_prime.
             s = ((1 - lr) * s) + (lr * s_prime)
@@ -152,7 +152,7 @@ class sem_functions:
             e_prime_index = random.randint(1, len(edges) - 1)
             s_prime = self.exp_stats(GH, e_prime_index, [p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er])
             # LEARNING RATE: polynomial decay
-            lr = lr * (1 - t/timesteps)**power
+            lr = initial_rate * (1 - t/timesteps)**power
             # LEARNING RATE: lr weights the stochastic update of the sufficient statistics,
             # mixing the previous statistics s with the newly sampled s_prime.
             s = ((1 - lr) * s) + (lr * s_prime)
