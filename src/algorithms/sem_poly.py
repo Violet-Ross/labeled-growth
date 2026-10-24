@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.special import logsumexp
 import random
 from src.poisson_hypergraph import GH
 import xgi
@@ -57,23 +58,30 @@ class sem_functions:
         edge_members = GH.get_edges()
         e_prime = edge_members[e_prime_index]
 
-        suff_stats_num = np.zeros(8)
-        suff_stats_denom = np.zeros(8)
+        # Accumulate log-likelihoods and sufficient statistics for every
+        # candidate (seed edge, focal node) pair, then normalize the weights
+        # with log-sum-exp.  Working in log space avoids overflow/underflow for
+        # large edges (the direct likelihood of a several-hundred-node edge is
+        # far outside double range even though the *relative* weights are fine).
+        log_liks = []
+        fs = []
 
         for e_index in range(e_prime_index):
             e = edge_members[e_index]
             for u_index in set(e_prime).intersection(set(e)):
-                lik_f = GH.f_likelihood(e_index, u_index, e_prime_index, theta)
-                suff_stats_num += lik_f[1] * lik_f[0]
-                suff_stats_denom += lik_f[0]
-                # lik = GH.likelihood(e_index, u_index, e_prime_index, theta)
-                # suff_stats_num += self.f(GH, e_index, u_index, e_prime_index) * lik
-                # suff_stats_denom += lik
-        
-        if 0 in suff_stats_denom:
-            return suff_stats_denom
+                log_lik, f = GH.f_log_likelihood(e_index, u_index, e_prime_index, theta)
+                if np.isfinite(log_lik):
+                    log_liks.append(log_lik)
+                    fs.append(f)
 
-        exp_suff_stats = suff_stats_num / suff_stats_denom
+        if not log_liks:
+            # No candidate pair has positive likelihood (same fallback as the
+            # direct-likelihood version, which returned a zero vector here).
+            return np.zeros(8)
+
+        log_liks = np.array(log_liks)
+        weights = np.exp(log_liks - logsumexp(log_liks))
+        exp_suff_stats = weights @ np.array(fs, dtype=float)
         return exp_suff_stats
 
     def g(self, s):

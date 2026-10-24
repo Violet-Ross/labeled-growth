@@ -6,6 +6,21 @@ import pandas as pd
 import math
 import scipy.special as ss; ss.binom
 
+
+
+def _log_binom(n, k):
+    """log of the binomial coefficient C(n, k); 0 when k == 0, -inf when k > n."""
+    if k == 0:
+        return 0.0
+    if k < 0 or k > n:
+        return -np.inf
+    return ss.gammaln(n + 1) - ss.gammaln(k + 1) - ss.gammaln(n - k + 1)
+
+
+def _log_poisson(k, lam):
+    """log of the Poisson pmf  lam**k * exp(-lam) / k!  (lam == 0 allowed)."""
+    return ss.xlogy(k, lam) - lam - math.lgamma(k + 1)
+
 class GH:
     def __init__(self, H, labels, p, q):
         self.H = H
@@ -129,7 +144,16 @@ class GH:
 
         return(prob)        
         
-    def likelihood(self, e_index, u_index, e_prime_index, theta):
+    def f_log_likelihood(self, e_index, u_index, e_prime_index, theta):
+        """Log-likelihood of e_prime being generated from seed edge e with focal
+        node u under parameters theta, together with the sufficient-statistic
+        vector f for that (e, u, e') triple.
+
+        Everything is computed in log space (lgamma instead of factorial,
+        gammaln instead of binom) so that large edges (hundreds of nodes) do
+        not overflow.  Returns [log_lik, f]; log_lik is -inf for impossible
+        configurations.
+        """
         p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er = theta
 
         node_labels = self.node_labels
@@ -140,91 +164,9 @@ class GH:
 
         intersect = e.intersection(e_prime)
 
-        if len(intersect) == 0:
-            return(0)
-        if u_index not in e_prime:
-            return(0)
+        if len(intersect) == 0 or u_index not in e_prime:
+            return [-np.inf, np.zeros(8)]
 
-        node_labels = self.get_labels()
-        e_labels = [node_labels[node] for node in e]
-        e_prime_labels = [node_labels[node] for node in e_prime]
-        int_labels = [node_labels[node] for node in intersect]
-
-        # Get edge and intersection sizes
-        e_prime_num_1 = sum(e_prime_labels)
-        e_prime_num_0 = len(e_prime_labels) - e_prime_num_1
-        e_num_1 = sum(e_labels)
-        e_num_0 = len(e_labels) - e_num_1
-        e_num_u, e_num_r = self.set_values(e_num_0, e_num_1, u_label)
-        e_prime_num_u, e_prime_num_r = self.set_values(e_prime_num_0, e_prime_num_1, u_label)
-        int_num_u, int_num_r = self.set_values(len(int_labels) - sum(int_labels), sum(int_labels), u_label)
-
-        # Get the new nodes
-        prev_nodes = {node for node in self.nodes if self.first_seen[node] < e_prime_index}
-        novel_nodes = {node for node in e_prime if self.first_seen[node] == e_prime_index}
-        novel_labels = [node_labels[node] for node in novel_nodes]
-
-        novel_num_u, novel_num_r = self.set_values(len(novel_labels) - sum(novel_labels), sum(novel_labels), u_label)
-      
-        # Get the external nodes
-        all_ext_nodes = prev_nodes - e
-        all_ext_labels = [node_labels[node] for node in all_ext_nodes]
-
-        all_ext_num_1 = sum(all_ext_labels)
-        all_ext_num_0 = len(all_ext_labels) - sum(all_ext_labels)
-
-        ext_num_u = e_prime_num_u - int_num_u - novel_num_u
-        ext_num_r = e_prime_num_r - int_num_r - novel_num_r
-
-        all_ext_num_u, all_ext_num_r = self.set_values(all_ext_num_0, all_ext_num_1, u_label)
-
-        # Probability calculation
-        prob_e = 1 / e_prime_index
-
-        prob_u = 1 / len(e)
-
-        P1 = p ** (int_num_u - 1)
-        P2 = (1 - p) ** (e_num_u - int_num_u)
-        P3 = q ** (int_num_r)
-        P4 = (1 - q) ** (e_num_r - int_num_r)
-
-        if ext_num_u == 0:
-            prob_those_ext_u = 1
-        else:
-            prob_those_ext_u = 1 / ss.binom(all_ext_num_u, ext_num_u) # formerly: ext_num_u / all_ext_num_u
-        if ext_num_r == 0:
-            prob_those_ext_r = 1
-        else: prob_those_ext_r = 1 / ss.binom(all_ext_num_r, ext_num_r) # formerly: ext_num_r / all_ext_num_r
-
-        P5_numer = (math.e ** (-gamma_eu)) * (gamma_eu ** ext_num_u) * prob_those_ext_u * (math.e ** (-gamma_er)) * (gamma_er ** ext_num_r) * prob_those_ext_r
-        P5_denom = math.factorial(ext_num_u) * math.factorial(ext_num_r)
-        P5 = P5_numer / P5_denom
-        P6_numer = (math.e ** (-gamma_nu)) * (gamma_nu ** novel_num_u) * (math.e ** (-gamma_nr)) * (gamma_nr ** novel_num_r)
-        P6_denom = (math.factorial(novel_num_u) * math.factorial(novel_num_r))
-        P6 = P6_numer / P6_denom
-        prob_e_prime = P1 * P2 * P3 * P4  * P5 * P6
-        
-        prob = prob_e * prob_u * prob_e_prime
-
-        return(prob)
-    
-    def f_likelihood(self, e_index, u_index, e_prime_index, theta):
-        p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er = theta
-
-        node_labels = self.node_labels
-
-        e = self.edge_members[e_index]
-        e_prime = self.edge_members[e_prime_index]
-        u_label = node_labels[u_index]
-
-        intersect = e.intersection(e_prime)
-
-        if len(intersect) == 0:
-            return(0)
-        if u_index not in e_prime:
-            return(0)
-
-        node_labels = self.get_labels()
         e_labels = [node_labels[node] for node in e]
         e_prime_labels = [node_labels[node] for node in e_prime]
         int_labels = [node_labels[node] for node in intersect]
@@ -257,33 +199,28 @@ class GH:
 
         all_ext_num_u, all_ext_num_r = self.set_values(all_ext_num_0, all_ext_num_1, u_label)
 
-        # Probability calculation
-        prob_e = 1 / e_prime_index
+        # Log-probability calculation.  xlogy(k, x) is k*log(x) with the
+        # convention 0*log(0) = 0, matching x**0 == 1 in the direct version.
+        log_prob_e = -math.log(e_prime_index)
+        log_prob_u = -math.log(len(e))
 
-        prob_u = 1 / len(e)
+        log_P1 = ss.xlogy(int_num_u - 1, p)
+        log_P2 = ss.xlogy(e_num_u - int_num_u, 1 - p)
+        log_P3 = ss.xlogy(int_num_r, q)
+        log_P4 = ss.xlogy(e_num_r - int_num_r, 1 - q)
 
-        P1 = p ** (int_num_u - 1)
-        P2 = (1 - p) ** (e_num_u - int_num_u)
-        P3 = q ** (int_num_r)
-        P4 = (1 - q) ** (e_num_r - int_num_r)
+        # log(1 / binom(n, k)) = -(lgamma(n+1) - lgamma(k+1) - lgamma(n-k+1)),
+        # and equals 0 when k == 0.
+        log_prob_those_ext_u = -_log_binom(all_ext_num_u, ext_num_u)
+        log_prob_those_ext_r = -_log_binom(all_ext_num_r, ext_num_r)
 
-        if ext_num_u == 0:
-            prob_those_ext_u = 1
-        else:
-            prob_those_ext_u = 1 / ss.binom(all_ext_num_u, ext_num_u) # formerly: ext_num_u / all_ext_num_u
-        if ext_num_r == 0:
-            prob_those_ext_r = 1
-        else: prob_those_ext_r = 1 / ss.binom(all_ext_num_r, ext_num_r) # formerly: ext_num_r / all_ext_num_r
+        # Poisson terms: log( gamma**k * exp(-gamma) / k! )
+        log_P5 = (_log_poisson(ext_num_u, gamma_eu) + log_prob_those_ext_u
+                  + _log_poisson(ext_num_r, gamma_er) + log_prob_those_ext_r)
+        log_P6 = _log_poisson(novel_num_u, gamma_nu) + _log_poisson(novel_num_r, gamma_nr)
 
-        P5_numer = (math.e ** (-gamma_eu)) * (gamma_eu ** ext_num_u) * prob_those_ext_u * (math.e ** (-gamma_er)) * (gamma_er ** ext_num_r) * prob_those_ext_r
-        P5_denom = math.factorial(ext_num_u) * math.factorial(ext_num_r)
-        P5 = P5_numer / P5_denom
-        P6_numer = (math.e ** (-gamma_nu)) * (gamma_nu ** novel_num_u) * (math.e ** (-gamma_nr)) * (gamma_nr ** novel_num_r)
-        P6_denom = (math.factorial(novel_num_u) * math.factorial(novel_num_r))
-        P6 = P6_numer / P6_denom
-        prob_e_prime = P1 * P2 * P3 * P4  * P5 * P6
-        
-        lik = prob_e * prob_u * prob_e_prime
+        log_lik = (log_prob_e + log_prob_u
+                   + log_P1 + log_P2 + log_P3 + log_P4 + log_P5 + log_P6)
 
         # get s_u and t_u
         s_u = e_num_u - 1
@@ -295,7 +232,15 @@ class GH:
 
         f = np.array([t_u, s_u, t_r, s_r, ext_num_u, ext_num_r, novel_num_u, novel_num_r])
 
-        return([lik, f])
+        return [log_lik, f]
+
+    def likelihood(self, e_index, u_index, e_prime_index, theta):
+        log_lik, _ = self.f_log_likelihood(e_index, u_index, e_prime_index, theta)
+        return math.exp(log_lik) if np.isfinite(log_lik) else 0.0
+
+    def f_likelihood(self, e_index, u_index, e_prime_index, theta):
+        log_lik, f = self.f_log_likelihood(e_index, u_index, e_prime_index, theta)
+        return [math.exp(log_lik) if np.isfinite(log_lik) else 0.0, f]
 
     def add_hyperedge(self, num_edges = 1, gamma_nu = 1, gamma_nr = 1, gamma_eu = 1, gamma_er = 1):
         for i in range(num_edges):

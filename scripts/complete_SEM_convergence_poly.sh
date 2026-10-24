@@ -9,7 +9,7 @@
 # Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mem=12G
 # Job memory request
-#SBATCH --partition=gpu-standard
+#SBATCH --partition=standard
 # Partition (queue)
 #SBATCH --time=48:00:00
 # Time limit hrs:min:sec
@@ -22,4 +22,4 @@ cd ~/labeled-growth
 
 source ~/venvs/lab-grow/bin/activate
 
-srun python3 -m scripts.complete_sem_convergence_poly
+srun python3 -m scripts.complete_SEM_convergence_poly

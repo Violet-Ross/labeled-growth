@@ -108,26 +108,40 @@ true_thetas = [g1, g2, g3, g4, g5,
                g36, g37, g38, g39, g40]
 
 
+def run_rep(i, rep, true_theta):
+    """Generate one hypergraph for parameter set i, run SEM on it, and write
+    the estimates for replicate `rep` to its own CSV."""
+    print(f"  Replicate {rep}/{n_replicates}")
+    GH = sem.generate_hypergraph(true_theta, n_nodes)
+    estimates = sem.SEM_without_likelihood(
+        GH, s_intial, iteration_limit, initial_rate, power
+    )
+    out_path = f"throughput/synthetic_results/graph{i}_rep{rep}_sem_ests_poly.csv"
+    with open(out_path, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(estimates)
+
+
 def run_one(i, true_theta):
     """Generate n_replicates independent hypergraphs for parameter set i,
     run SEM on each, and write each replicate's estimates to its own CSV."""
     print(f"Graph {i}")
     for rep in range(1, n_replicates + 1):
-        print(f"  Replicate {rep}/{n_replicates}")
-        GH = sem.generate_hypergraph(true_theta, n_nodes)
-        estimates = sem.SEM_without_likelihood(
-            GH, s_intial, iteration_limit, initial_rate, power
-        )
-        out_path = f"throughput/synthetic_results/graph{i}_rep{rep}_sem_ests_poly.csv"
-        with open(out_path, "w", newline="") as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerows(estimates)
+        run_rep(i, rep, true_theta)
 
 
 if __name__ == "__main__":
     task_id = os.environ.get("SLURM_ARRAY_TASK_ID")
+    graph_env = os.environ.get("SEM_GRAPH")
+    rep_env = os.environ.get("SEM_REP")
 
-    if task_id is not None:
+    if graph_env is not None and rep_env is not None:
+        # Single (graph, replicate) pair, e.g. for re-running specific
+        # replicates: SEM_GRAPH=35 SEM_REP=6 python3 -m scripts.complete_SEM_convergence_poly
+        idx, rep = int(graph_env), int(rep_env)
+        print(f"Graph {idx}")
+        run_rep(idx, rep, true_thetas[idx - 1])
+    elif task_id is not None:
         # Running as one task of a SLURM job array: process only the
         # parameter set corresponding to this array index (1-based, matches
         # g1..g40 / --array=1-40).
