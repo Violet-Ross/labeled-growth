@@ -167,9 +167,9 @@ class sem_functions:
             p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er  = self.g(s)
             estimates.append([t, p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er])
             # likelihoods.append(self.GH_prob(GH, [p, q, gamma_nu, gamma_nr, gamma_eu, gamma_er]))
-            if t > 800:
+            if t > 500:
                 all_converged = True
-                for i in range(2, 802):
+                for i in range(2, 502):
                     if not np.allclose(
                         estimates[-1][1:],
                         estimates[-i][1:],

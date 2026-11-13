@@ -146,9 +146,17 @@ x_bracket_groups = [
 
 INPUT_DIR = "throughput/synthetic_results"
 N_ITERS = 20
+# iteration_limit used in scripts/complete_SEM_convergence_poly.py: a run that
+# never meets the convergence criterion writes exactly this many rows, while a
+# run that meets it stops early and writes fewer.
+ITERATION_LIMIT = 12000
+n_runs_total = 0
+n_runs_criterion_met = 0
 
 n_rows, n_cols = 10, 4
 kl_values = np.full((n_rows, n_cols), np.nan)
+n_found = np.zeros((n_rows, n_cols), dtype=int)  # replicates found per cell
+missing_by_graph = {}
 
 # Remap: original row index → display row index
 # Original row 9 (graphs 37-40) → display row 6
@@ -172,30 +180,39 @@ for graph_idx, true_theta in enumerate(true_thetas, start=1):
     truth = np.array(true_theta)
 
     iter_kls = []
+    last_found_path = None
     for j in range(1, N_ITERS + 1):
-        csv_path = os.path.join(INPUT_DIR, f"graph{graph_idx}_rep{j}_sem_ests_poly.csv")
+        csv_path = os.path.join(INPUT_DIR, f"graph{graph_idx}_rep{j}_sem_ests_poly_longer.csv")
         if not os.path.exists(csv_path):
             print(f"  [WARNING] Missing: {csv_path}")
+            missing_by_graph.setdefault(graph_idx, []).append(j)
             continue
 
         with open(csv_path, newline="") as f:
             all_rows = list(csv.reader(f))
+
+        n_runs_total += 1
+        if len(all_rows) < ITERATION_LIMIT:
+            n_runs_criterion_met += 1
 
         last_row = [float(v) for v in all_rows[-1] if v.strip() != ""][1:]
         estimate = np.array(last_row)
         kl = total_kl(truth, estimate)
         
         iter_kls.append(kl)
+        last_found_path = csv_path
+
+    n_found[row, col] = len(iter_kls)
 
     if iter_kls:
         mean_kl = np.mean(iter_kls)
         
         if mean_kl > max_kl:
-            kl_file_max = csv_path
+            kl_file_max = last_found_path
             kl_true_theta_max = truth
             max_kl = mean_kl
         if mean_kl < min_kl:
-            kl_file_min = csv_path
+            kl_file_min = last_found_path
             kl_true_theta_min = truth
             min_kl = mean_kl
 
@@ -206,8 +223,19 @@ for graph_idx, true_theta in enumerate(true_thetas, start=1):
         
 
 kl_values = kl_values[:, [0, 1, 3, 2]]
+n_found = n_found[:, [0, 1, 3, 2]]
+
+if missing_by_graph:
+    n_missing = sum(len(v) for v in missing_by_graph.values())
+    print(f"[WARNING] {n_missing} replicate file(s) missing across "
+          f"{len(missing_by_graph)} graph(s); affected cells are averaged over "
+          f"fewer replicates and marked on the heatmap:")
+    for g, reps in missing_by_graph.items():
+        print(f"  graph{g}: {N_ITERS - len(reps)}/{N_ITERS} found, missing reps {reps}")
 
 
+print(f"Convergence criterion met in {n_runs_criterion_met} of {n_runs_total} runs "
+      f"({n_runs_total - n_runs_criterion_met} ran to the {ITERATION_LIMIT}-iteration limit)")
 print(f"File with maximum KL divergence: {kl_file_max}")
 print(f"Maximum KL divergence: {max_kl}")
 print(f"File with minimum KL divergence: {kl_file_min}")
@@ -262,6 +290,21 @@ for i, idx in enumerate([vmin_idx, vmax_idx]):
     val = kl_values[r, c]
     ax.text(c, r, f"{val:.3f}", ha="center", va="center",
             fontsize=10, color=["black", "white"][i])
+
+# Mark cells that are missing replicates with a small "found/total" count
+# in the lower-right corner (cells with no data at all are left blank + marked).
+if (n_found < N_ITERS).any():
+    for r in range(n_rows):
+        for c in range(n_cols):
+            if n_found[r, c] == N_ITERS:
+                continue
+            val = kl_values[r, c]
+            dark_cell = np.isfinite(val) and im.norm(val) > 0.5
+            ax.text(c + 0.46, r + 0.42, f"{n_found[r, c]}/{N_ITERS}",
+                    ha="right", va="bottom", fontsize=6,
+                    color="white" if dark_cell else "black")
+    ax.text(1.0, -0.02, f"k/{N_ITERS}: cell averaged over k of {N_ITERS} replicates",
+            ha="right", va="top", fontsize=7, transform=ax.transAxes)
 
 # ── 6. Y-axis brackets (left side) ───────────────────────────────────────────
 
@@ -400,7 +443,7 @@ for k in range(2):
     lil_ax.plot([0, n_steps], [true_theta[5], true_theta[5]], color=fs.lighten(fs.palette[2]), linestyle='--')
     lines_2, labs_2 = lil_ax.get_legend_handles_labels()
     
-    lil_ax.set_ylim(0, 2.1)
+    lil_ax.set_ylim(0, 2.5)
     
     print(true_theta)
 
@@ -411,16 +454,17 @@ for k in range(2):
         
     lil_ax.semilogx()
     
-    if k == 1:
-        # two column legend
-        lil_ax.legend(lines_2, labs_2, loc='upper right', fontsize=11, ncol=2)
+    if k == 0:
+        # two column legend, top left of panel (c)
+        lil_ax.legend(lines_2, labs_2, loc='upper left', fontsize=11, ncol=2)
         
     if k == 0: 
         lil_ax.set_xticklabels([])
 
-    lil_ax.annotate(labs[2*k+1], xy=(0.05, 0.8), xycoords='axes fraction', fontsize=16, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
+    # panel (c)'s label sits below its legend
+    lil_ax.annotate(labs[2*k+1], xy=(0.05, 0.6 if k == 0 else 0.8), xycoords='axes fraction', fontsize=16, fontweight='bold', bbox=dict(facecolor='white', edgecolor='white', alpha=0.5))
 
-output_path = "fig/sem_convergence_heatmap_poly.png"
+output_path = "fig/sem_convergence_heatmap_poly_longer.png"
 plt.savefig(output_path, dpi=300, bbox_inches="tight")
 print(f"Saved → {output_path}")
 
