@@ -124,8 +124,6 @@
     \begin{itemize}
         \item 
             \textbf{Edge-Copying}: An edge $\seededge$, called the \emph{seed edge}, is sampled uniformly at random from $\at{\edges}{t}$, and a node $\focalnode$, called the \emph{focal node}, is sampled uniformly at random from $\seededge$. 
-            
-            We refer to $\seededge$ as the \textit{seed edge} and $\focalnode$ as the \textit{focal node}.
             The node $\focalnode$ is included in $\newedge$.
             Then, each node $\node$ in $\seededge \setminus \{\focalnode\}$ is included in $\newedge$ with probability $\same{\copyrate{}}$ if $z_{\node} = z_{\focalnode}$ and with probability $\opp{\copyrate{}}$ if $z_{\node} \neq z_{\focalnode}$.
         \item 
@@ -240,7 +238,7 @@
     The presence of long transients suggests that, although the \model{} model ultimately converges to a stationary regime with power-law degrees and balanced label populations, it may also serve through its transients as a reasonable generative model of systems without these features. 
     We note that in settings it may be an undesirable feature of models to possess long transients; in our setting, since we are especially interested in statistical inference as defined below, the long transients in the dynamics do not pose a direct problem.  
 
-    
+    Panel (a) demonstrates a relationship between $\copyrate$ (which influences the edge size) and the rate of convergence to the stationary distribution, but no dependence of homophily level on edge size is shown.
 
 \subsubsection{Degree Distribution} \label{sec:degree-distribution}
 
@@ -287,7 +285,7 @@
     Batch expectation-maximization \cite{dempster1977maximum}  is an alternative approach which maximizes the likelihood without explicitly computing \cref{eq:likelihood}, but even this approach requires forming a belief distribution over the values of all latent variables at each timestep, which again incurs quadratic cost per iteration. 
     
     We therefore use a stochastic expectation-maximization (SEM) algorithm \cite{cappeOnLineExpectationMaximization2009} to estimate the parameters $\paramvector$.
-    Each iteration of SEM consists of two steps: the stochatic E-step, in which noisy exponentially weighted moving averages of the sufficient statistics are calculated using the current parameter estimates, and the stochastic M-step, in which the parameter estimates are updated using the expected sufficient statistics. 
+    Each iteration of SEM consists of two steps: the stochatic E-step, in which noisy averages of the sufficient statistics with polynomially-decaying rates are calculated using the current parameter estimates, and the stochastic M-step, in which the parameter estimates are updated using the expected sufficient statistics. 
 
     To start the SEM algorithm, we initialize a vector $\atalg{\sufficientstatsvec}{0}$ of sufficient statistics to arbitrary values; in the \model{} model there are two sufficient statistics per copy parameter and one sufficient statistic per each of the four addition parameters, so $\sufficientstatsvec$ has length $8$.
     From $\atalg{\sufficientstatsvec}{0}$, we compute an initial estimate of the parameter vector $\atalg{\hat{\paramvector}}{0} = g(\atalg{\sufficientstatsvec}{0})$ via a function $g$ which maps sufficient statistics to parameter estimates; details on both the sufficient statistics $\sufficientstatsvec$ and the mapping $g$ are provided in \Cref{sec:sufficient-statistics}.
@@ -311,7 +309,7 @@
     \begin{align*}
         \atalg{\sufficientstatsvec}{\ell+1} = (1 - \atalg{\lr}{\ell} )\atalg{\sufficientstatsvec}{\ell} + \atalg{\lr}{\ell} \sufficientstatsvec' \;,
     \end{align*}
-    where $\atalg{\lr}{\ell}$ is the learning rate at iteration $\ell$; we use an exponentially decaying learning rate in our experiments.
+    where $\atalg{\lr}{\ell}$ is the learning rate at iteration $\ell$; we use an polynomially decaying learning rate in our experiments.
     Our new estimate of the parameter vector $\paramvector$ is then given by a function $\atalg{\hat{\paramvector}}{\ell+1} = g(\atalg{\sufficientstatsvec}{\ell+1})$ of the sufficient statistics, which we also supply in \Cref{sec:sufficient-statistics}.
     \Cref{alg:sem} summarizes this process. 
     Our version of the algorithm uses an online computation of $\sufficientstatsvec'$, which allows us to perform the double-sum appearing in \cref{eq:sufficient-stats-update,eq:bayes} only once, and without explicitly storing the resulting belief distribution at any point.  
@@ -347,7 +345,7 @@
         h(\atalg{\hat{\paramvector}}{\ell}, \atalg{\hat{\paramvector}}{\ell'}) = \min_{i} \left\{\abs{\atalg{\hat{\param}_i}{\ell} - \atalg{\hat{\param}_i}{\ell'}} - \epsilon_\mathrm{rel} - \epsilon_\mathrm{abs} \atalg{\hat{\param}_i}{\ell'}\right\} \;.
     \end{align*}
     The function $h$ here can be viewed as combining absolute and relative error tolerances, enabling the algorithm to declare convergence even in cases when the parameter estimates are near zero. 
-    In our implementation, we declare convergence at timestep $\ell$ when $h(\atalg{\hat{\paramvector}}{\ell}, \atalg{\hat{\paramvector}}{\ell'}) \geq 0$ for all $\ell'$ in the most recent 800 iterations of the algorithm, with tolerances $\epsilon_\mathrm{rel}$ and $\epsilon_\mathrm{abs}$.
+    In our implementation, we declare convergence at timestep $\ell$ when $h(\atalg{\hat{\paramvector}}{\ell}, \atalg{\hat{\paramvector}}{\ell'}) \geq 0$ for all $\ell'$ in the most recent 400 iterations of the algorithm, with tolerances $\epsilon_\mathrm{rel}$ and $\epsilon_\mathrm{abs}$.
 
 \subsection{Community Detection via Simulated Annealing} \label{sec:community-detection}
 
@@ -431,7 +429,7 @@
 \subsection{Parameter Estimation on Synthetic Data}
 
 \begin{figure*}[t]
-    \includegraphics[width=\textwidth]{../fig/sem_convergence_heatmap.png}
+    \includegraphics[width=\textwidth]{../fig/sem_convergence_heatmap_poly_longer.png}
     \caption{
         Performance of SEM on synthetic hypergraphs. 
         Each pixel in the heatmap (panel (a)) corresponds to a set of parameters $\paramvector$, which can be found in Appendix \ref{sec:SEM-appendix}.        
@@ -497,16 +495,14 @@ Our model presents a simplified picture of the process of collaboration formatio
 Our findings suggest that of these mechanisms, only the latter (the recruitment of novices) displays substantial gender homophily, with novices who share the gender of the focal scientist more likely to be recruited to the collaboration. 
 This effect may be partially due to gender homophily between PhD students and their advisors, a known phenomenon in several scientific areas \cite{schwartz2022impact}. 
 
-The \texttt{senate-bills} data set appears to have weak homophily in the estimates of the edge copy and extant node addition parameters.
-Because new senators are elected far less frequently than bills are cosponsored, the novel node addition parameters are both nearly 0. 
-The analogous \texttt{house-bills} data set has edge copy parameter estimates which are relatively similar to those of \texttt{senate-bills}, but which suggest a small tendency towards heterophily rather than homophily in edge-copying. 
-The slight heterophily in the copy step of \texttt{house-bills} may be related to reciprocity in bipartisan cosponsorship, a phenomenon that has been observed in U.S. legislative bodies \cite{harbridge2023bipartisan,dobson2026selective}.
+Both the \texttt{senate-bills} and \texttt{house-bills} data sets appear to have weak homophily in the estimates of the extant node addition parameters and weak heterophily in the edge copy parameters.
+Because new congresspeople are elected far less frequently than bills are cosponsored, the novel node addition parameters are nearly 0 for both data sets. 
+The slight heterophily in the copy step of \texttt{senate-bills} and \texttt{house-bills} may be related to reciprocity in bipartisan cosponsorship, a phenomenon that has been observed in U.S. legislative bodies \cite{harbridge2023bipartisan,dobson2026selective}.
 We illustrate the connection between reciprocity and edge copy parameters through the following example.
 Consider some bill $\newedge$, where $\focalnode$ is a cosponsor of both bill $\newedge$ and bill $\seededge$.
 If $\focalnode$ is a Democrat, for instance, and the primary sponsor of $\seededge$ is a Republican, then $\focalnode$ was a ``bipartisan'' cosponsor of $\seededge$.
 The reciprocity of bipartisan cosponsorship suggests that the Republican cosponsors of $\seededge$ may also cosponsor $\newedge$ to return the favor.
 However, the other Democratic cosponsors of $\seededge$ are not indebted in the same way to $\focalnode$, possibly making them less likely to cosponsor $\newedge.$
-The mechanisms of and motivations for bipartisan reciprocity vary between the House and the Senate \cite{dobson2026selective}, which may in part explain why we observe heterophily in edge copying for \texttt{house-bills} but not \texttt{senate-bills}.
 Further investigation of the relationship between reciprocity and edge copying in legislative cosponsorship is an interesting direction for future work.
 
 
@@ -529,7 +525,7 @@ Often, an email is precipitated by an existing conversation between that set of 
 
 
 \begin{figure}[t]
-    \includegraphics[width=0.5\textwidth]{../fig/empirical_sem.png}
+    \includegraphics[width=0.5\textwidth]{../fig/empirical_sem_poly.png}
     \caption{
         Model parameters inferred via SEM for six empirical higher-order networks.
         The line of equality is shown as a guide for the eye.
@@ -632,6 +628,9 @@ The relatively consistent performance of \model{} simulated annealing across the
     These interactions are signatures of edge-dependence operating on long-timescales, suggesting that models that factor in edge dependence may still be preferred in this setting. 
     A more systematic investigation into when explicitly modeling edge dependence supports data science with hypergraphs would be a very welcome direction of future work.  
 
+    For some empirical hypergraphs, homophily may vary among the edges in a hypergraph, depending on their size \cite{veldt2023combinatorial}.
+    Existing approaches to explicitly accounting for this dependence in growing hypergraph models \cite{laber2025effects} are not well-suited for our parameterization, where all parameters determine both the expected edge size and the amount of homophily.
+    
     There are several additional directions as well. 
     Most obviously, although our results show that maximum-likelihood inference in the \model{} model is promising for detecting certain kinds of community structure, the simulated annealing method we have used is computationally impractical on data sets of even relatively modest size. 
     Developing more efficient heuristics for maximizing the likelihood over $\vz$ will be an important direction for scalable application of the \model{} model for community detection. 
@@ -791,8 +790,8 @@ The relatively consistent performance of \model{} simulated annealing across the
     
     \subsection{Learning Rate}
 
-        We use an exponentially decaying learning rate for SEM with form $\atalg{\lr}{\epoch} = \atalg{\lr}{0} \cdot e^{-c\epoch}$.
-        The initial learning rate is set to $\atalg{\lr}{0} = 0.01$, and the decay rate $c = 0.001$.
+        We use an polynomially decaying learning rate for SEM with form $\atalg{\lr}{\epoch} = \atalg{\lr}{0} \cdot (1 - \frac{\epoch}{L})^{c}$ where $L$ is the iteration limit.
+        The initial learning rate is set to $\atalg{\lr}{0} = 0.01$, and the decay rate $c = 0.9$.
         We initialized the vector of sufficient statistics $\atalg{\sufficientstatsvec}{0} = (1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5)$.
         Other reasonable choices of hyperparameters did not substantially change the results of our experiments.
         
