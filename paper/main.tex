@@ -309,10 +309,10 @@
     \begin{align*}
         \atalg{\sufficientstatsvec}{\ell+1} = (1 - \atalg{\lr}{\ell} )\atalg{\sufficientstatsvec}{\ell} + \atalg{\lr}{\ell} \sufficientstatsvec' \;,
     \end{align*}
-    where $\atalg{\lr}{\ell}$ is the learning rate at iteration $\ell$; we use an polynomially decaying learning rate in our experiments.
+    where $\atalg{\lr}{\ell}$ is the learning rate at iteration $\ell$; we use a polynomially decaying learning rate in our experiments.
     Our new estimate of the parameter vector $\paramvector$ is then given by a function $\atalg{\hat{\paramvector}}{\ell+1} = g(\atalg{\sufficientstatsvec}{\ell+1})$ of the sufficient statistics, which we also supply in \Cref{sec:sufficient-statistics}.
     \Cref{alg:sem} summarizes this process. 
-    Our version of the algorithm uses an online computation of $\sufficientstatsvec'$, which allows us to perform the double-sum appearing in \cref{eq:sufficient-stats-update,eq:bayes} only once, and without explicitly storing the resulting belief distribution at any point.  
+    Our version of the algorithm uses an online compuation of $\sufficientstatsvec'$, which allows us to perform the double-sum appearing in \cref{eq:sufficient-stats-update,eq:bayes} only once, and without explicitly storing the resulting belief distribution at any point.  
 
 
 
@@ -342,10 +342,10 @@
     We perform SEM by repeating \Cref{alg:sem} until a stopping criterion is met. 
     For our criterion, we define the function 
     \begin{align*}
-        h(\atalg{\hat{\paramvector}}{\ell}, \atalg{\hat{\paramvector}}{\ell'}) = \min_{i} \left\{\abs{\atalg{\hat{\param}_i}{\ell} - \atalg{\hat{\param}_i}{\ell'}} - \epsilon_\mathrm{rel} - \epsilon_\mathrm{abs} \atalg{\hat{\param}_i}{\ell'}\right\} \;.
+        h(\atalg{\hat{\paramvector}}{\ell}, \atalg{\hat{\paramvector}}{\ell'}) = \max_{i} \left\{\abs{\atalg{\hat{\param}_i}{\ell} - \atalg{\hat{\param}_i}{\ell'}} - \epsilon_\mathrm{abs} - \epsilon_\mathrm{rel} \atalg{\hat{\param}_i}{\ell'}\right\} \;.
     \end{align*}
     The function $h$ here can be viewed as combining absolute and relative error tolerances, enabling the algorithm to declare convergence even in cases when the parameter estimates are near zero. 
-    In our implementation, we declare convergence at timestep $\ell$ when $h(\atalg{\hat{\paramvector}}{\ell}, \atalg{\hat{\paramvector}}{\ell'}) \geq 0$ for all $\ell'$ in the most recent 400 iterations of the algorithm, with tolerances $\epsilon_\mathrm{rel}$ and $\epsilon_\mathrm{abs}$.
+    In our implementation, we declare convergence at timestep $\ell$ when $h(\atalg{\hat{\paramvector}}{\ell}, \atalg{\hat{\paramvector}}{\ell'}) \leq 0$ for all $\ell'$ in the most recent 500 iterations of the algorithm, with tolerances $\epsilon_\mathrm{rel} = 0.015$ and $\epsilon_\mathrm{abs} = 0.01$.
 
 \subsection{Community Detection via Simulated Annealing} \label{sec:community-detection}
 
@@ -458,7 +458,7 @@ where $c$ is a factor describing, in expectation, how many nodes of each label a
 For this analysis, we set $c_* = 1$ for both labels.
 
 As seen in \Cref{fig:synthetic_sem}, the quality of the learned parameter estimates depends on the seeded parameter vector. 
-We observe especially low estimation errors when the seeded parameters reflect high copy rates $\copyrate_{*}$ and strong homophily as reflected in the differences $\same{\extantrate} - \opp{\extantrate}$ and $\same{\novelrate} - \opp{\novelrate}$; a typical SEM run for these parameter settings is shown in the top row on the right of \Cref{fig:synthetic_sem}.
+We observe especially low estimation errors when the seeded parameters reflect strong homophily in the edge copy step as reflected in the difference $\same{\copyrate} - \opp{\copyrate}$; a typical SEM run for these parameter settings is shown in the top row on the right of \Cref{fig:synthetic_sem}.
 That said, even in the least successful cases for estimation with high KL divergence, the learned estimates are still visually close to the true values, illustrated in the bottom row on the right of \Cref{fig:synthetic_sem}. 
 
 \subsection{Parameter Estimation on Empirical Data} \label{sec:sem-empirical}
@@ -790,7 +790,7 @@ The relatively consistent performance of \model{} simulated annealing across the
     
     \subsection{Learning Rate}
 
-        We use an polynomially decaying learning rate for SEM with form $\atalg{\lr}{\epoch} = \atalg{\lr}{0} \cdot (1 - \frac{\epoch}{L})^{c}$ where $L$ is the iteration limit.
+        We use a polynomially decaying learning rate for SEM with form $\atalg{\lr}{\epoch} = \atalg{\lr}{0} \cdot (1 - \frac{\epoch}{L})^{c}$ where $L$ is the iteration limit.
         The initial learning rate is set to $\atalg{\lr}{0} = 0.01$, and the decay rate $c = 0.9$.
         We initialized the vector of sufficient statistics $\atalg{\sufficientstatsvec}{0} = (1, 2, 1, 2, 0.5, 0.5, 0.5, 0.5)$.
         Other reasonable choices of hyperparameters did not substantially change the results of our experiments.
