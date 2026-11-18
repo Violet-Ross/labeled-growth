@@ -45,16 +45,17 @@
 
 \date{\today}
 \begin{abstract}
-    There are many extant models of hypergraphs with interactions governed by attribute-based homophily between nodes, but most assume independence between edges conditional on node parameters. 
+    There are many extant models of hypergraphs with interactions governed by attribute-based homophily between nodes, but most of these models assume independence between edges conditional on node parameters. 
     Relaxing this assumption, we study a mechanistic model of growing hypergraphs in which edge formation is influenced by both previous edges and binary node labels. 
-    Edges form in this model as noisy copies of previous edges, where the transmission of nodes from one edge to the next depends on multiple homophilic mechanisms between labels.
-    These homophilic mechanisms give rise to tunable assortative structure in the hypergraph. 
-    We derive a power law for the degree distribution in this model and describe the long-term dynamics of the joint distribution of labels contained in edges. 
+    Edges form in this model as noisy copies of previous edges, where the transmission of nodes from one edge to the next depends on multiple homophilic mechanisms governed by labels.
+    These mechanisms give rise to tunable assortative structure in the hypergraph. 
+    We first derive several asymptotic properties of our model, including the joint distribution of labels within edges and the degree distribution.
+    We then turn to two inference problems. 
     Our model defines a likelihood over a labeled hypergraph, allowing us to use standard maximum-likelihood techniques to structure algorithms. 
     We estimate the model parameters on synthetic and real data via (stochastic) expectation maximization. 
     These estimates give statistically-principled descriptions of the operation of homophily in empirical polyadic systems. 
     We also demonstrate an approach to community detection via simulated annealing which, though computationally expensive, achieves competitive results on both synthetic data and certain empirical data sets known to be challenging to community detection techniques based on the edge-independence assumption. 
-    Our findings highlight the benefits of incorporating edge- and label-dependence in higher-order modeling and data analysis, and point to several directions for future work. 
+    Our findings highlight the importance of incorporating edge- and label-dependence in higher-order modeling and data analysis. 
 \end{abstract}
 
 \maketitle
@@ -64,7 +65,7 @@
 
     Hypergraphs provide a natural, flexible data representation for complex systems with polyadic (multi-way) interactions; such systems form one class of \emph{higher-order networks} \cite{battistonNetworksPairwiseInteractions2020,bick2023higher}.
     Systems naturally modeled as hypergraphs include social interaction networks (both in-person \cite{mastrandrea2015contact} and online \cite{bensonSimplicialClosureHigherorder2018}), academic co-authorship neteworks, \cite{wu2022hypergraph}, and networks of ecological relations \cite{levine2017beyond}. 
-    Much recent work has emphasized the importance of faithfully representing polyadic structure rather than reducing it to dyadic interactions \cite{battistonNetworksPairwiseInteractions2020,bick2023higher} via graph projections.
+    Much recent work has emphasized the importance of faithfully representing polyadic structure rather than reducing it to dyadic interactions via graph projections \cite{battistonNetworksPairwiseInteractions2020,bick2023higher} .
 
     Our focus in this work is the mechanism of homophily---the tendency of nodes to interact with other nodes with similar attributes---in hypergraph data. 
     One way to model homophily in hypergraphs is via stochastic generative models, which define probability distributions over hypergraphs. 
@@ -74,7 +75,7 @@
     \begin{align}
         \lik(\hypergraph | \vz; \paramvector) = \prod_{R \subseteq \nodes} \lik(a_R | \vz_R; \paramvector) \;. \label{eq:edge-independence}
     \end{align}
-    Many generative models fall into this broad scheme, including hypergraph stochastic block models \cite{chodrowGenerativeHypergraphClustering2021,ruggeriCommunityDetectionLarge2023,kim2018stochastic} and some of their generalizations \cite{badalyanStructureInferenceHypergraphs2024,hood2026broad}.
+    Many generative models fall into this broad scheme, including hypergraph stochastic block models and some of their generalizations \cite{chodrowGenerativeHypergraphClustering2021,ruggeriCommunityDetectionLarge2023,kim2018stochastic,badalyanStructureInferenceHypergraphs2024,hood2026broad}.
 
 
     Models of this type often underly algorithms for hypergraph community detection (also called \emph{clustering} or \emph{partitioning}), in which one seeks to estimate the latent node labels $\vz$ given an observed hypergraph $\hypergraph$.
@@ -89,25 +90,25 @@
     When an interaction occurs on a set $R \subseteq \nodes$, this increases the likelihood of observing a new interaction on a set $S \subseteq \nodes$ correlated with $R$ in the sense that $R\cap S$ is larger than would be expected by chance. 
     That is, new interactions are likely to have large overlap with the interactions we have already observed.
     These overlaps can be shown to affect the kinds of dynamics which can unfold on the hypergraph \cite{maliziaHyperedgeOverlapDrives2025,lamata2025hyperedge}. 
-    Several generative models for the growth of hypergraphs with edge-dependence have been proposed \cite{bensonSequencesSets2018,avinRandomPreferentialAttachment2019,heEdgeCorrelationsLink2025,leeTHyMeTemporalHypergraph2021,leeTemporalHypergraphMotifs2023}, including several with explicit nodel labels and corresponding homophilic mechanisms \cite{giroirePreferentialAttachmentHypergraph2022,giroirePreferentialAttachmentHypergraph2022a,kaminski2023hypergraph}; see \cite{laber2026guide} for a recent review.  
-    We note that the above are all models \emph{of} hypergraph formation rather than models of dynamics \emph{on} hypergraphs; recent work argues that the latter may be better expressed via dyadic graph models \cite{peixoto2026graphs} but does not treat the former.
+    Several generative models for the growth of hypergraphs with edge-dependence have been proposed \cite{bensonSequencesSets2018,avinRandomPreferentialAttachment2019,heEdgeCorrelationsLink2025,leeTHyMeTemporalHypergraph2021,leeTemporalHypergraphMotifs2023}, including some with explicit nodel labels and corresponding homophilic mechanisms \cite{giroirePreferentialAttachmentHypergraph2022,giroirePreferentialAttachmentHypergraph2022a,kaminski2023hypergraph}; see \cite{laber2026guide} for a recent review.\footnote{We note that the above are all models \emph{of} hypergraph formation rather than models of dynamics \emph{on} hypergraphs; recent work argues that the latter may be better expressed via dyadic graph models \cite{peixoto2026graphs} but does not treat the former.}
 
     Of the generative models of hypergraph growth with both edge-dependence and node labels, we are unaware of any which allow for statistically-motivated inference of either the dynamical parameters or the latent node labels.
     In this paper, we aim to connect stochastic generative modeling of edge-dependent, node-labeled hypergraphs to inference algorithms. 
     To this end, we introduce a model of hypergraphs with binary node labels in which edges form via a noisy edge copy process tuned by homophilic interactions between the node labels.
     We refer to this model as \Model{} (\model{}).
     Our presentation of \model{} proceeds as follows.
-    In \Cref{sec:model-description}, we describe \model{} and derive limiting descriptions of the joint distribution of node labels within a given edge, as well as the degree distribution of the hypergraph.
+    In \Cref{sec:model-description}, we describe \model{} and describe several of its limiting properties, including edge structure and degree distribution.
     We turn to optimization-based inference methods in \Cref{sec:inference}, considering both parameter inference and community detection.
-    Evaluating the likelihood of our model requires marginalizing over a set of latent variables that govern the noisy copy mechanism, which is computationally expensive. 
-    Therefore, to estimate our model's parameters when node labels are known, we describe a stochastic expectation-maximization algorithm with favorable scaling.
+    Evaluating the likelihood of our model requires marginalizing over a set of latent variables that govern the noisy copy mechanism. 
+    This marginalization is computationally expensive. 
+    To estimate our model's parameters when node labels are known, we therefore describe a stochastic expectation-maximization algorithm with favorable scaling.
     Community detection in this model is much more computationally challenging. 
     As an early step in this direction,we describe a community detection algorithm for estimating node labels via simulated annealing on the \model{} likelihood. 
     In \Cref{sec:results}, we demonstrate our algorithms on synthetic and empirical data. 
     We show that, on synthetic data sampled from \model{}, our stochastic expectation maximization algorithm is both consistent and scalable, and that our simulated annealing algorithm for community detection, though computationally expensive, outperforms other standard methods in certain parameter regimes. 
     On empirical data, our parameter estimates yield insight into the mechanisms governing edge formation.
     \model{} community detection achieves competitive recovery of observed metadata labels on some data sets known to be challenging to other recent community detection methods.
-    We conclude with some discussion of future directions for models of node-labeled hypergraphs with edge-dependence. 
+    We conclude in \Cref{sec:discussion} with some discussion of future directions for models of node-labeled hypergraphs with edge-dependence. 
     Our findings highlight the benefits of using explicit stochastic generative models to guide data analysis algorithms for studying homophily and assortativity in polyadic systems.
 
 \section{The \model{} Model} \label{sec:model-description}
@@ -119,7 +120,7 @@
     \model{} replicates these mechanisms, but adds label-aware parameters to regulate each. 
 
     Formally, a \model{} model state at time $t$ is a hypergraph $\at{\hypergraph}{t} = \paren{\at{\nodes}{t}, \at{\edges}{t}}$, where $\at{\nodes}{t}$ is the set of nodes and $\at{\edges}{t}$ is the set of hyperedges, as well as a binary label vector $\at{\vz}{t} \in \{0, 1\}^{|\at{\nodes}{t}|}$ which assigns to each node a label of either 0 or 1; $z_u$ denotes the label of node $u$.
-    We let $\bar{z} = 1 - z$ denote the opposite label of $z$.
+    Let $\bar{z} = 1 - z$ denote the opposite label of $z$.
     At timestep $t+1$, we add edge $\newedge$ to $\at{\edges}{t}$ to obtain $\at{\edges}{t+1}$, where $\newedge$ is formed according to the following three-step process:
     \begin{itemize}
         \item 
@@ -158,7 +159,8 @@
     For fixed $\opp{\extantrate}$, $\same{\novelrate{}}$, and $\opp{\novelrate{}}$, increasing the difference $\same{\copyrate{}} - \opp{\copyrate{}}$ leads to higher modularity, as does increasing $\same{\extantrate{}}$.
     Hypergraphs sampled from our model using high values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have label-homogeneous cores of densely overlapping hyperedges, which are weakly connected to one another by edges with more heterogeneous label compositions.
     Hypergraphs with lower values of $\same{\copyrate{}}$ and $\same{\extantrate{}}$ tend to have less-structured distributions of labels over hyperedges. 
-    The \model{} model can also be used to generate hypergraphs under heterophilic conditions.
+    We note that the \model{} model can also be used to generate hypergraphs under heterophilic conditions, though we do not explore this regime further here. 
+    We also note that the \model{} model does not incorporate any explicit dependence of homophily on edge size, though such a dependence could be incorporated in future work.
 
 
 \subsection{Asymptotic Properties} \label{sec:asymptotics}
@@ -208,7 +210,7 @@
         k_z' &\sim 1 + \text{Binom}\paren{k_z - 1, \same{\copyrate{}}} + \text{Poisson}(\same{\extantrate{}} + \same{\novelrate{}}) \;, \\
         k_{\bar{z}}' &\sim \text{Binom}\paren{k_{\bar{z}}, \opp{\copyrate{}}} + \text{Poisson}(\opp{\extantrate{}} + \opp{\novelrate{}}) \;.
     \end{align*}
-    The probability of obtaining $k_0'$ nodes of label 0, conditioning on $k_0$ and $k_1$, is 
+    The probability of obtaining $k_0'$ nodes of label 0, conditioning on $k_0$ and $k_1$, is therefore 
     \begin{widetext}
         \begin{align*}
             t(k_0' | k_0, k_1) =& \frac{k_0}{k_0 + k_1} \sum_{i=0}^{k_0' - 1} \binom{k_0 - 1}{i} \same{\copyrate{}}^i (1 - \same{\copyrate{}})^{k_0 - 1 - i} 
@@ -237,8 +239,6 @@
 
     The presence of long transients suggests that, although the \model{} model ultimately converges to a stationary regime with power-law degrees and balanced label populations, it may also serve through its transients as a reasonable generative model of systems without these features. 
     We note that in settings it may be an undesirable feature of models to possess long transients; in our setting, since we are especially interested in statistical inference as defined below, the long transients in the dynamics do not pose a direct problem.  
-
-    Panel (a) demonstrates a relationship between $\copyrate$ (which influences the edge size) and the rate of convergence to the stationary distribution, but no dependence of homophily level on edge size is shown.
 
 \subsubsection{Degree Distribution} \label{sec:degree-distribution}
 
@@ -281,8 +281,9 @@
     A helpful note for computation is that $\lik(\newedge, \vz'_e | \seededge, \focalnode, \at{\vz}{t_e-1}; \atalg{\hat{\paramvector}}{\ell}) = 0$ if either $\focalnode \notin \newedge\cap \seededge$ or $\seededge\not\prec \newedge$. 
 
 
-    The requirement in \cref{eq:likelihood} to sum over the latent variables at each timestep implies a computational cost to evaluate $\lik(\hypergraph, \vz ; \paramvector)$ (or its derivatives) which is quadratic in the number of edges $m$, making direct optimization of the likelihood expensive for data sets of even modest size. 
-    Batch expectation-maximization \cite{dempster1977maximum}  is an alternative approach which maximizes the likelihood without explicitly computing \cref{eq:likelihood}, but even this approach requires forming a belief distribution over the values of all latent variables at each timestep, which again incurs quadratic cost per iteration. 
+    The requirement in \cref{eq:likelihood} to sum over the latent variables $f$ and $u$ at each timestep implies a computational cost to evaluate $\lik(\hypergraph, \vz ; \paramvector)$ (or its derivatives) which is quadratic in the number of edges $m$, making direct optimization of the likelihood expensive for data sets of even modest size. 
+    Batch expectation-maximization \cite{dempster1977maximum}  is an alternative approach which maximizes the likelihood without explicitly computing \cref{eq:likelihood}, but even this approach requires forming a belief distribution over the values of all latent variables at each timestep. 
+    This again incurs a quadratic cost per iteration. 
     
     We therefore use a stochastic expectation-maximization (SEM) algorithm \cite{cappeOnLineExpectationMaximization2009} to estimate the parameters $\paramvector$.
     Each iteration of SEM consists of two steps: the stochatic E-step, in which noisy averages of the sufficient statistics with polynomially-decaying rates are calculated using the current parameter estimates, and the stochastic M-step, in which the parameter estimates are updated using the expected sufficient statistics. 
@@ -350,7 +351,7 @@
 \subsection{Community Detection via Simulated Annealing} \label{sec:community-detection}
 
     We also consider the community detection problem of learning the node labels $\vz$ given an observed hypergraph $\hypergraph$ and a fixed parameter vector $\paramvector$.
-    Since \Cref{eq:likelihood} defines a likelihood function over both the parameter vector $\paramvector$ and the node labels $\vz$, we can attempt to also learn $\vz$ via maximum-likelihood estimation.
+    Since \cref{eq:likelihood} defines a likelihood function over both the parameter vector $\paramvector$ and the node labels $\vz$, we can attempt to also learn $\vz$ via maximum-likelihood estimation.
     Unlike in stochastic block model variants in which there are several heuristics with favorable computational properties \cite{newman2016equivalence,chodrowGenerativeHypergraphClustering2021,chodrowNonbacktrackingSpectralClustering2023,ruggeriCommunityDetectionLarge2023,kritschgauCommunityDetectionHypergraphs2024,hood2026broad,li2026higher}, the edge dependence structure encoded by \model{} makes it difficult to apply standard efficient heuristics.
     The development of alternative efficient heuristics is an important direction of future work. 
     In our present approach, we therefore attempt to learn $\vz$ via simulated annealing \cite{kirkpatrickOptimizationSimulatedAnnealing1983},  a general-purpose optimization algorithm which is typically used when other heuristics are not available. 
@@ -359,7 +360,7 @@
     A direct evaluation of \cref{eq:likelihood} requires $O(m^2)$ terms, making it expensive to evaluate even for data sets of modest size. 
     An important computational limitation of simulated annealing in this context is that the label $z_i$ of node $i$ appears in \emph{all} terms of the likelihood \cref{eq:likelihood} corresponding to edges after which node $i$ arrives. 
     This includes edges in which node $i$ does not participate, implying that we must perform $O(m^2)$ computations even to evaluate the change in likelihood under a proposed change to $z_i$.
-    This contrasts to, for example, modularity \cite{newman2004finding}, where the computational cost of moving a node between communities is constant under appropriate use of data structures. 
+    This contrasts to, for example, modularity \cite{newman2004finding}, where the computational cost of moving a node between communities is constant with careful use of data structures. 
     
     
     To mitigate the computational burden, we use an intersection-based approximation to the likelihood of forming edge $\newedge$ in which we only sum over candidate copied edges $\seededge$ such that $\abs{\seededge \cap \newedge}$ is large.
@@ -368,9 +369,9 @@
     We  therefore design our algorithm to maximize the objective function $\tilde{\cL}(\vz) = \log \tilde{\lik}(\hypergraph, \vz ; \paramvector)$
     where $\tilde{\lik}(\hypergraph, \vz ; \paramvector)$ is the likelihood of $\hypergraph$ and $\vz$ under the intersection-based approximation.
     A single epoch consists of $n$ individual update steps. 
-    In an update step in epoch $\ell$, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random and evaluating the change in likelihood of ``flipping'' the binary node label ($z_j \gets \bar{z}_j$).  
+    In an update step in epoch $\ell$, we propose a change to the labels $\vz$ by generating a node index $j$ uniformly at random and evaluating the change in likelihood associated with flipping the binary node label ($z_j \gets \bar{z}_j$).  
     If the proposal increases $\tilde{\cL}(\vz)$, it is accepted.
-    If the proposal decreases $\tilde{\cL}(\vz)$, however, we may also accept it with an acceptance probability $\atalg{\acceptprob}{\ell}$ that decreases with the epoch $\epoch$ and considers the magnitude of the decrease in $\tilde{\cL}(\vz)$.
+    If the proposal decreases $\tilde{\cL}(\vz)$, however, we may also accept it with an acceptance probability $\atalg{\acceptprob}{\ell}$ that decreases with the epoch $\epoch$ and depends on the magnitude of the decrease in $\tilde{\cL}(\vz)$.
 
 
 
@@ -612,7 +613,7 @@ The relatively consistent performance of \model{} simulated annealing across the
 % \end{figure*}
 
 
-\section{Discussion}
+\section{Discussion} \label{sec:discussion}
 
     We have proposed \Model{} (\model{}), a generative model for the formation of binary-labeled hypergraphs in which edges form as noisy copies of previous edges to which extant and novel nodes are also added.
     The copying, extant, and novel node addition steps are all tuned by node labels and parameters which control the strength of homophily in each of these steps.
@@ -623,7 +624,7 @@ The relatively consistent performance of \model{} simulated annealing across the
     Considering the considerable theoretical and computational complications to modeling edge-dependence in hypergraphs, an important question is: \emph{when is it worth the effort to model edge-dependence?} 
     This answer to this question hinges on the analytic aims and the data under analysis.
     It is tempting to suppose that, as the number of nodes and edges grows large, the effects of edge-dependence will become asymptotically negligible and that simpler models may be preferred. 
-    The situation is, however, unclear at best. 
+    The situation, however, is somewhat unclear. 
     For example, many large empirical hypergraphs have very high rates of large intersections between edges; furthermore, these rates decay slowly as edges are added to the system \cite{heEdgeCorrelationsLink2025}.
     These interactions are signatures of edge-dependence operating on long-timescales, suggesting that models that factor in edge dependence may still be preferred in this setting. 
     A more systematic investigation into when explicitly modeling edge dependence supports data science with hypergraphs would be a very welcome direction of future work.  
@@ -631,7 +632,7 @@ The relatively consistent performance of \model{} simulated annealing across the
     For some empirical hypergraphs, homophily may vary among the edges in a hypergraph, depending on their size \cite{veldt2023combinatorial}.
     Existing approaches to explicitly accounting for this dependence in growing hypergraph models \cite{laber2025effects} are not well-suited for our parameterization, where all parameters determine both the expected edge size and the amount of homophily.
     
-    There are several additional directions as well. 
+    Another direction of future work concerns practical community detection using the \model{} model.
     Most obviously, although our results show that maximum-likelihood inference in the \model{} model is promising for detecting certain kinds of community structure, the simulated annealing method we have used is computationally impractical on data sets of even relatively modest size. 
     Developing more efficient heuristics for maximizing the likelihood over $\vz$ will be an important direction for scalable application of the \model{} model for community detection. 
     Scalability may also imply opportunities for improved performance.
@@ -660,7 +661,7 @@ The relatively consistent performance of \model{} simulated annealing across the
 
     Generative language models were used to assist the authors in implementing the model, methods and experiments shown in this paper. 
     The authors carefully reviewed and revised all code and associated outputs. 
-    The authors take full responsibility for the correctness of all theory, methods and results presented in this paper.
+    The authors are fully responsible for the correctness of all theory, methods and results presented in this paper.
     
 \bibliographystyle{apsrev4-2}
 \bibliography{refs} 

@@ -80,6 +80,9 @@ for i, vary in enumerate(["eta", "lambda", "gamma"]):
 
 axarr[1,0].set_xlim(0.0, 1.01)
 axarr[0,0].set_xlim(0.47, 1)
+axarr[0, 0].set_ylim(0, None)
+axarr[0, 1].set_ylim(0, None)
+axarr[1, 0].set_ylim(0, None)
 
 # axarr[i].set_ylim(0, None)
         
