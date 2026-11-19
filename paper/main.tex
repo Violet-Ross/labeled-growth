@@ -99,8 +99,7 @@
     Our presentation of \model{} proceeds as follows.
     In \Cref{sec:model-description}, we describe \model{} and describe several of its limiting properties, including edge structure and degree distribution.
     We turn to optimization-based inference methods in \Cref{sec:inference}, considering both parameter inference and community detection.
-    Evaluating the likelihood of our model requires marginalizing over a set of latent variables that govern the noisy copy mechanism. 
-    This marginalization is computationally expensive. 
+    Evaluating the likelihood of our model requires marginalizing over a set of latent variables that govern the noisy copy mechanism, which is computationally expensive. 
     To estimate our model's parameters when node labels are known, we therefore describe a stochastic expectation-maximization algorithm with favorable scaling.
     Community detection in this model is much more computationally challenging. 
     As an early step in this direction,we describe a community detection algorithm for estimating node labels via simulated annealing on the \model{} likelihood. 
@@ -137,7 +136,7 @@
     \end{itemize}
     We let $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ denote the complete vector of model parameters. 
     Formally, the probability of realizing a given hypergraph $\hypergraph$ with label vector $\vz$ under \model{} at time $t$ can be described as a time-dependent probability distribution $\at{p}{t}(\hypergraph, \vz ; \paramvector)$ over the space of hypergraphs with labeled nodes; we omit the time index when otherwise clear from context. 
-    We base our implementation of \model{} on the hypergraph data structure supplied by the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
+    Our \model{} model leverages the hypergraph data structure supplied by the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
 
 \begin{figure}
     \includegraphics[width=0.495\textwidth]{../fig/community-structure-sims-combined.png}
@@ -246,8 +245,8 @@
     This asymptotic distribution follows a power law with an exponent which can be computed in closed form from the model parameters and the stationary joint distribution $\jointdist \paren{k_0, k_1}$. 
     Our derivation is similar to that of He et al. \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by Mitzenmacher \cite{mitzenmacherBriefHistoryGenerative2004}. 
     The argument requires a mean-field assumption. 
-    Let $k = k_0 + k_1$ be the size of a uniformly random  edge. 
-    Our assumption is that, when a node $\focalnode$ is selected from edge $\seededge$ in the edge-sampling step, the degree $d$ of $\focalnode$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
+    Let $k = k_0 + k_1$ be the size of a uniformly random edge. 
+    We assume that, when a node $\focalnode$ is selected from edge $\seededge$ in the edge-sampling step, the degree $d$ of $\focalnode$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
     Under this assumption, it is possible to show that the degree distribution follows a power law with exponent
     \begin{align}
         \zeta &= 1 + \frac{\brackets{k_0} + \brackets{k_1}}{1 + \same{\copyrate{}}(\moment_{00} + \moment_{11} - 1) + 2\opp{\copyrate{}} \moment_{01}} \label{eq:power-law-exponent}\\ 
@@ -360,7 +359,7 @@
     A direct evaluation of \cref{eq:likelihood} requires $O(m^2)$ terms, making it expensive to evaluate even for data sets of modest size. 
     An important computational limitation of simulated annealing in this context is that the label $z_i$ of node $i$ appears in \emph{all} terms of the likelihood \cref{eq:likelihood} corresponding to edges after which node $i$ arrives. 
     This includes edges in which node $i$ does not participate, implying that we must perform $O(m^2)$ computations even to evaluate the change in likelihood under a proposed change to $z_i$.
-    This contrasts to, for example, modularity \cite{newman2004finding}, where the computational cost of moving a node between communities is constant with careful use of data structures. 
+    This contrasts to, for example, modularity \cite{newman2004finding}, where the computational cost of moving a node between communities is constant with appropriate use of data structures. 
     
     
     To mitigate the computational burden, we use an intersection-based approximation to the likelihood of forming edge $\newedge$ in which we only sum over candidate copied edges $\seededge$ such that $\abs{\seededge \cap \newedge}$ is large.
@@ -386,14 +385,14 @@
                     \State Sample $j$ $\sim$ Uniform($\{1,...,n\}$)
                     \State $\hat{\vz}^\prime$ $\gets$ $\hat{\vz}$
                     \State $z^\prime_j\gets1-z^\prime_j$
-                    \State $\delta \gets \log \tilde{\lik}(\hypergraph, \hat{\vz}^\prime ; \paramvector) - \log \tilde{\lik}(\hypergraph, \hat{\vz} ; \paramvector)$
+                    \State $\delta \gets (\log \tilde{\lik}(\hypergraph, \hat{\vz}^\prime ; \paramvector) - \log \tilde{\lik}(\hypergraph, \hat{\vz} ; \paramvector))/\sigma_\hypergraph$
                     \If{$\delta>0$}
                         \State $\hat{\vz} \gets\hat{\vz}^\prime$
                     \Else
                         \If{$2 \leq \epoch \leq 5$}
-                            \State $\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2\sigma_\hypergraph)$
+                            \State $\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2)$
                         \ElsIf{6 $\leq \epoch$}
-                            \State $\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2(1 - \frac{\epoch}{\maxepochs})\sigma_\hypergraph)$
+                            \State $\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2(1 - \frac{\epoch}{\maxepochs}))$
                         \EndIf
                         \State Sample $x \sim \text{Uniform}(0,1)$
                         \If{$x < \atalg{\acceptprob}{\epoch}$} 
@@ -414,7 +413,7 @@
     In the first epoch, we accept \emph{all} proposals, while storing the changes to the objective $\tilde{\cL}$ produced by those proposals. 
     At the end of the epoch, we compute the standard deviation $\sigma(\Delta \tilde{\cL})$ of the changes in $\tilde{\cL}$ observed during the epoch. 
     This procedure is handled by the function \texttt{SimulatedAnnealingFirstEpoch} in our implementation (\Cref{algocf:simulated_annealing}).
-    For the remaining epochs, we update the acceptance probability by evaluating a Gaussian density with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$, with constant of proportionality that decays with epoch $\ell$.
+    For the remaining epochs, we accept proposals with a probability found by evaluating a Gaussian density with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$, with constant of proportionality that decays with epoch $\ell$.
     We provide a detailed discussion of this algorithm, including our approximate objective function, the implementation of the annealing schedule, and the first epoch of the algorithm, in \Cref{sec:simulated-annealing-algorithm-spec}. 
     
     
@@ -622,7 +621,7 @@ The relatively consistent performance of \model{} simulated annealing across the
     We interpret this latter result as proof-of-concept that explicitly modeling edge-dependence can be a useful framework for community detection in hypergraphs. 
     
     Considering the considerable theoretical and computational complications to modeling edge-dependence in hypergraphs, an important question is: \emph{when is it worth the effort to model edge-dependence?} 
-    This answer to this question hinges on the analytic aims and the data under analysis.
+    The answer to this question hinges on the analytic aims and the data under analysis.
     It is tempting to suppose that, as the number of nodes and edges grows large, the effects of edge-dependence will become asymptotically negligible and that simpler models may be preferred. 
     The situation, however, is somewhat unclear. 
     For example, many large empirical hypergraphs have very high rates of large intersections between edges; furthermore, these rates decay slowly as edges are added to the system \cite{heEdgeCorrelationsLink2025}.
