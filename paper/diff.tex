@@ -1,7 +1,7 @@
 % /Users/philchodrow/.../main.tex
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL main-prev.tex   Fri Oct  2 09:03:33 2026
-%DIF ADD main.tex        Wed Nov 18 16:08:24 2026
+%DIF ADD main.tex        Thu Nov 19 09:41:21 2026
 % RevTeX 4.2 minimal starter document
 
 \documentclass[aps,pre,reprint,superscriptaddress,nofootinbib]{revtex4-2}
@@ -207,10 +207,9 @@ but does not treat the former.}}
     To this end, we introduce a model of hypergraphs with binary node labels in which edges form via a noisy edge copy process tuned by homophilic interactions between the node labels.
     We refer to this model as \Model{} (\model{}).
     Our presentation of \model{} proceeds as follows.
-    In \Cref{sec:model-description}, we describe \model{} and \DIFdelbegin \DIFdel{derive limiting descriptions of the joint distribution of node labels within a given edge, as well as the degree distributionof the hypergraph}\DIFdelend \DIFaddbegin \DIFadd{describe several of its limiting properties, including edge structure and degree distribution}\DIFaddend .
+    In \Cref{sec:model-description}, we describe \model{} and \DIFdelbegin \DIFdel{derive limiting descriptions of the joint distribution of node labels within a given edge, as well as the degree distributionof the hypergraph}\DIFdelend \DIFaddbegin \DIFadd{several of its limiting properties, including edge structure and degree distribution}\DIFaddend .
     We turn to optimization-based inference methods in \Cref{sec:inference}, considering both parameter inference and community detection.
-    Evaluating the likelihood of our model requires marginalizing over a set of latent variables that govern the noisy copy mechanism\DIFdelbegin \DIFdel{, which }\DIFdelend \DIFaddbegin \DIFadd{. 
-    This marginalization }\DIFaddend is computationally expensive. 
+    Evaluating the likelihood of our model requires marginalizing over a set of latent variables that govern the noisy copy mechanism, which is computationally expensive. 
     \DIFdelbegin \DIFdel{Therefore, to }\DIFdelend \DIFaddbegin \DIFadd{To }\DIFaddend estimate our model's parameters when node labels are known, we \DIFaddbegin \DIFadd{therefore }\DIFaddend describe a stochastic expectation-maximization algorithm with favorable scaling.
     Community detection in this model is much more computationally challenging. 
     As an early step in this direction,we describe a community detection algorithm for estimating node labels via simulated annealing on the \model{} likelihood. 
@@ -255,7 +254,7 @@ but does not treat the former.}}
     \end{itemize}
     We let $\paramvector = (\same{\copyrate{}}, \opp{\copyrate{}}, \same{\extantrate{}}, \opp{\extantrate{}}, \same{\novelrate{}}, \opp{\novelrate{}})$ denote the complete vector of model parameters. 
     Formally, the probability of realizing a given hypergraph $\hypergraph$ with label vector $\vz$ under \model{} at time $t$ can be described as a time-dependent probability distribution $\at{p}{t}(\hypergraph, \vz ; \paramvector)$ over the space of hypergraphs with labeled nodes; we omit the time index when otherwise clear from context. 
-    \DIFdelbegin \DIFdel{Our }\DIFdelend \DIFaddbegin \DIFadd{We base our }\DIFaddend implementation of \model{} \DIFaddbegin \DIFadd{on }\DIFaddend the hypergraph data structure supplied by the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
+    Our \DIFdelbegin \DIFdel{implementation of }\DIFdelend \model{} \DIFaddbegin \DIFadd{model leverages }\DIFaddend the hypergraph data structure supplied by the XGI package for polyadic data analysis in Python \cite{landryXGIPythonPackage2023}. 
 
 \begin{figure}
     \includegraphics[width=0.495\textwidth]{../fig/community-structure-sims-combined.png}
@@ -373,8 +372,8 @@ but does not treat the former.}}
     Our derivation is similar to that of He et al. \cite{heEdgeCorrelationsLink2025}, which in turn is based on a derivation by Mitzenmacher \cite{mitzenmacherBriefHistoryGenerative2004}. 
     The argument requires a mean-field assumption\DIFdelbegin \DIFdel{: 
     }\DIFdelend \DIFaddbegin \DIFadd{. 
-    Let $k = k_0 + k_1$ be the size of a uniformly random  edge. 
-    Our assumption is that, }\DIFaddend when a node $\focalnode$ is selected from edge $\seededge$ in the edge-sampling step, the degree $d$ of $\focalnode$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
+    Let $k = k_0 + k_1$ be the size of a uniformly random edge. 
+    We assume that, }\DIFaddend when a node $\focalnode$ is selected from edge $\seededge$ in the edge-sampling step, the degree $d$ of $\focalnode$ is independent of the ratio $\frac{k_0}{k}$ of label-0 nodes in the edge $\seededge$ sampled to form the new edge $\newedge$.
     Under this assumption, it is possible to show that the degree distribution follows a power law with exponent
     \begin{align}
         \zeta &= 1 + \frac{\brackets{k_0} + \brackets{k_1}}{1 + \same{\copyrate{}}(\moment_{00} + \moment_{11} - 1) + 2\opp{\copyrate{}} \moment_{01}} \label{eq:power-law-exponent}\\ 
@@ -494,7 +493,7 @@ but does not treat the former.}}
     A direct evaluation of \cref{eq:likelihood} requires $O(m^2)$ terms, making it expensive to evaluate even for data sets of modest size. 
     An important computational limitation of simulated annealing in this context is that the label $z_i$ of node $i$ appears in \emph{all} terms of the likelihood \cref{eq:likelihood} corresponding to edges after which node $i$ arrives. 
     This includes edges in which node $i$ does not participate, implying that we must perform $O(m^2)$ computations even to evaluate the change in likelihood under a proposed change to $z_i$.
-    This contrasts to, for example, modularity \cite{newman2004finding}, where the computational cost of moving a node between communities is constant \DIFdelbegin \DIFdel{under appropriate }\DIFdelend \DIFaddbegin \DIFadd{with careful }\DIFaddend use of data structures. 
+    This contrasts to, for example, modularity \cite{newman2004finding}, where the computational cost of moving a node between communities is constant \DIFdelbegin \DIFdel{under }\DIFdelend \DIFaddbegin \DIFadd{with }\DIFaddend appropriate use of data structures. 
 
     
     To mitigate the computational burden, we use an intersection-based approximation to the likelihood of forming edge $\newedge$ in which we only sum over candidate copied edges $\seededge$ such that $\abs{\seededge \cap \newedge}$ is large.
@@ -523,14 +522,14 @@ but does not treat the former.}}
                     \State \DIFadd{Sample $j$ $\sim$ Uniform($\{1,...,n\}$)
                     }\State \DIFadd{$\hat{\vz}^\prime$ $\gets$ $\hat{\vz}$
                     }\State \DIFadd{$z^\prime_j\gets1-z^\prime_j$
-                    }\State \DIFadd{$\delta \gets \log \tilde{\lik}(\hypergraph, \hat{\vz}^\prime ; \paramvector) - \log \tilde{\lik}(\hypergraph, \hat{\vz} ; \paramvector)$
+                    }\State \DIFadd{$\delta \gets (\log \tilde{\lik}(\hypergraph, \hat{\vz}^\prime ; \paramvector) - \log \tilde{\lik}(\hypergraph, \hat{\vz} ; \paramvector))/\sigma_\hypergraph$
                     }\If{$\delta>0$}
                         \State \DIFadd{$\hat{\vz} \gets\hat{\vz}^\prime$
                     }\Else
                         \If{$2 \leq \epoch \leq 5$}
-                            \State \DIFadd{$\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2\sigma_\hypergraph)$
+                            \State \DIFadd{$\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2)$
                         }\ElsIf{6 $\leq \epoch$}
-                            \State \DIFadd{$\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2(1 - \frac{\epoch}{\maxepochs})\sigma_\hypergraph)$
+                            \State \DIFadd{$\atalg{\acceptprob}{\epoch}$ $\gets$ $\mathrm{Gaussian}(\delta;\mu = 0, \sigma=2(1 - \frac{\epoch}{\maxepochs}))$
                         }\EndIf
                         \State \DIFadd{Sample $x \sim \text{Uniform}(0,1)$
                         }\If{$x < \atalg{\acceptprob}{\epoch}$} 
@@ -553,7 +552,7 @@ but does not treat the former.}}
     \DIFaddbegin \DIFadd{This procedure is handled by the function }\texttt{\DIFadd{SimulatedAnnealingFirstEpoch}} \DIFadd{in our implementation (\mbox{%DIFAUXCMD
 \Cref{algocf:simulated_annealing}}\hskip0pt%DIFAUXCMD
 ).
-    }\DIFaddend For the remaining epochs, we \DIFdelbegin \DIFdel{accept proposals that decrease $\tilde{\cL}$ by an amount $\Delta \tilde{\cL}$ stochastically by }\DIFdelend \DIFaddbegin \DIFadd{update the acceptance probability by }\DIFaddend evaluating a Gaussian density with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$\DIFdelbegin \DIFdel{which }\DIFdelend \DIFaddbegin \DIFadd{, with constant of proportionality that }\DIFaddend decays with epoch $\ell$.
+    }\DIFaddend For the remaining epochs, we accept proposals \DIFdelbegin \DIFdel{that decrease $\tilde{\cL}$ by an amount $\Delta \tilde{\cL}$ stochastically by }\DIFdelend \DIFaddbegin \DIFadd{with a probability obtained by }\DIFaddend evaluating a Gaussian density with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$\DIFdelbegin \DIFdel{which }\DIFdelend \DIFaddbegin \DIFadd{, with constant of proportionality that }\DIFaddend decays with epoch $\ell$.
     \DIFdelbegin \DIFdel{A full specification of the algorithm is provided }\DIFdelend \DIFaddbegin \DIFadd{We provide a detailed discussion of this algorithm, including our approximate objective function, the implementation of the annealing schedule, and the first epoch of the algorithm, }\DIFaddend in \Cref{sec:simulated-annealing-algorithm-spec}. 
 
     
@@ -603,7 +602,37 @@ As seen in \Cref{fig:synthetic_sem}, the quality of the learned parameter estima
 We observe especially low estimation errors when the seeded parameters reflect \DIFdelbegin \DIFdel{high copy rates $\copyrate_{*}$ and strong homophily }\DIFdelend \DIFaddbegin \DIFadd{strong homophily in the edge copy step }\DIFaddend as reflected in the \DIFdelbegin \DIFdel{differences $\same{\extantrate} - \opp{\extantrate}$ and $\same{\novelrate} - \opp{\novelrate}$}\DIFdelend \DIFaddbegin \DIFadd{difference $\same{\copyrate} - \opp{\copyrate}$}\DIFaddend ; a typical SEM run for these parameter settings is shown in the top row on the right of \Cref{fig:synthetic_sem}.
 That said, even in the least successful cases for estimation with high KL divergence, the learned estimates are still visually close to the true values, illustrated in the bottom row on the right of \Cref{fig:synthetic_sem}. 
 
-\subsection{Parameter Estimation on Empirical Data} \label{sec:sem-empirical}
+
+\DIFaddbegin \begin{table*}
+    \caption{\DIFaddFL{Data sets used in this paper. We show the number of nodes $n$, edges $m$, average degree $\langle d \rangle$, and average edge size $\langle k \rangle$ for each data set.
+    All data sets are used for parameter estimation. Only }\texttt{\DIFaddFL{senate-bills}}\DIFaddFL{, }\texttt{\DIFaddFL{high-school}}\DIFaddFL{, and }\texttt{\DIFaddFL{primary-school}} \DIFaddFL{are used in community detection experiments.}}\label{tab:datasets}
+    \begin{tabular}{lrrrrrrr}
+        %DIF >  \toprule
+        & \DIFaddFL{$n$ }& \DIFaddFL{$m$ }& \DIFaddFL{$\langle d \rangle$ }& \DIFaddFL{$\langle k \rangle$ }& \DIFaddFL{Nodes are }& \DIFaddFL{Edges are }& \DIFaddFL{Labels represent}\\
+        \midrule
+        \texttt{\DIFaddFL{senate-bills}} \DIFaddFL{\mbox{%DIFAUXCMD
+\cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} }\hskip0pt%DIFAUXCMD
+}& \DIFaddFL{294 }& \DIFaddFL{29,157 }& \DIFaddFL{789.6 }& \DIFaddFL{8.0 }& \DIFaddFL{Senators }& \DIFaddFL{Cosponsored bills }& \DIFaddFL{Political party}\\
+        \texttt{\DIFaddFL{house-bills}} \DIFaddFL{\mbox{%DIFAUXCMD
+\cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} }\hskip0pt%DIFAUXCMD
+}&  \DIFaddFL{1,494 }& \DIFaddFL{60,987 }& \DIFaddFL{835.8 }& \DIFaddFL{20.5 }& \DIFaddFL{Congresspeople }& \DIFaddFL{Cosponsored bills }& \DIFaddFL{Political party  }\\
+        \texttt{\DIFaddFL{high-school}} \DIFaddFL{\mbox{%DIFAUXCMD
+\cite{gemmetto2014mitigation,stehle2011high} }\hskip0pt%DIFAUXCMD
+}& \DIFaddFL{320 }& \DIFaddFL{60,544 }& \DIFaddFL{484.6 }& \DIFaddFL{2.6 }& \DIFaddFL{Students }& \DIFaddFL{Social interactions }& \DIFaddFL{Gender  }\\
+        \texttt{\DIFaddFL{primary-school}} \DIFaddFL{\mbox{%DIFAUXCMD
+\cite{mastrandrea2015contact} }\hskip0pt%DIFAUXCMD
+}& \DIFaddFL{227 }& \DIFaddFL{44,626 }& \DIFaddFL{590.7 }& \DIFaddFL{3.0 }& \DIFaddFL{Students }& \DIFaddFL{Social interactions }& \DIFaddFL{Gender }\\
+        \texttt{\DIFaddFL{coauthorship}} \DIFaddFL{\mbox{%DIFAUXCMD
+\cite{agarwal2016women} }\hskip0pt%DIFAUXCMD
+}& \DIFaddFL{105,256 }& \DIFaddFL{142,834 }& \DIFaddFL{3.4 }& \DIFaddFL{2.5 }& \DIFaddFL{Authors }& \DIFaddFL{Papers }& \DIFaddFL{Gender }\\
+        \texttt{\DIFaddFL{enron-emails}} \DIFaddFL{\mbox{%DIFAUXCMD
+\cite{klimt2004enron}  }\hskip0pt%DIFAUXCMD
+}& \DIFaddFL{14,901 }& \DIFaddFL{83,372 }& \DIFaddFL{18.5 }& \DIFaddFL{3.3 }& \DIFaddFL{Email addresses }& \DIFaddFL{Email threads }& \DIFaddFL{Fringe vs. core }\\
+        \bottomrule
+    \end{tabular}
+\end{table*}
+
+\DIFaddend \subsection{Parameter Estimation on Empirical Data} \label{sec:sem-empirical}
 
 We also used our method to infer parameters for six empirical hypergraph data sets described in \Cref{tab:datasets}. 
 Although many labeled hypergraph data sets are now available for community detection, relatively few have natively binary node labels. 
@@ -613,23 +642,106 @@ In these data sets, we consider a sequence of interactions to correspond to a si
 The \texttt{coauthorship} data set \cite{agarwal2016women} contains publishing records for 81 computer science conferences from 2000 to 2015, with an inferred binary gender label for each author.
 Finally, we considered the \texttt{enron-emails} data set, which contains the email records for 145 users associated with the Enron Corporation \cite{klimt2004enron}.
 
-\begin{table*}
-    \caption{Data sets used in this paper. We show the number of nodes $n$, edges $m$, average degree $\langle d \rangle$, and average edge size $\langle k \rangle$ for each data set.
-    All data sets are used for parameter estimation. Only \texttt{senate-bills}, \texttt{high-school}, and \texttt{primary-school} are used in community detection experiments.}\label{tab:datasets}
-        \begin{tabular}{lrrrrrrr}
-        % \toprule
-        & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Nodes are & Edges are & Labels represent\\
-        \midrule
-        \texttt{senate-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} & 294 & 29,157 & 789.6 & 8.0 & Senators & Cosponsored bills & Political party\\
-        \texttt{house-bills} \cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} &  1,494 & 60,987 & 835.8 & 20.5 & Congresspeople & Cosponsored bills & Political party  \\
-        \texttt{high-school} \cite{gemmetto2014mitigation,stehle2011high} & 320 & 60,544 & 484.6 & 2.6 & Students & Social interactions & Gender  \\
-        \texttt{primary-school} \cite{mastrandrea2015contact} & 227 & 44,626 & 590.7 & 3.0 & Students & Social interactions & Gender \\
-        \texttt{coauthorship} \cite{agarwal2016women} & 105,256 & 142,834 & 3.4 & 2.5 & Authors & Papers & Gender \\
-        \texttt{enron-emails} \cite{klimt2004enron}  & 14,901 & 83,372 & 18.5 & 3.3 & Email addresses & Email threads & Fringe vs. core \\
-        \bottomrule
-        \end{tabular}
-\end{table*}
-\Cref{fig:empirical_sem} shows our parameter estimates for each of the empirical data sets under the \model{} model. 
+
+\DIFdelbegin %DIFDELCMD < \begin{table*}
+%DIFDELCMD <     %%%
+%DIFDELCMD < \caption{%
+{%DIFAUXCMD
+\DIFdelFL{Data sets used in this paper. We show the number of nodes $n$, edges $m$, average degree $\langle d \rangle$, and average edge size $\langle k \rangle$ for each data set.
+    All data sets are used for parameter estimation. Only }\texttt{\DIFdelFL{senate-bills}}%DIFAUXCMD
+\DIFdelFL{, }\texttt{\DIFdelFL{high-school}}%DIFAUXCMD
+\DIFdelFL{, and }\texttt{\DIFdelFL{primary-school}} %DIFAUXCMD
+\DIFdelFL{are used in community detection experiments.}}%DIFAUXCMD
+%DIFDELCMD < \label{tab:datasets}
+%DIFDELCMD <         \begin{tabular}{lrrrrrrr}
+%DIFDELCMD <         %%%
+%DIF <  \toprule
+        %DIFDELCMD < & %%%
+\DIFdelFL{$n$ }%DIFDELCMD < & %%%
+\DIFdelFL{$m$ }%DIFDELCMD < & %%%
+\DIFdelFL{$\langle d \rangle$ }%DIFDELCMD < & %%%
+\DIFdelFL{$\langle k \rangle$ }%DIFDELCMD < & %%%
+\DIFdelFL{Nodes are }%DIFDELCMD < & %%%
+\DIFdelFL{Edges are }%DIFDELCMD < & %%%
+\DIFdelFL{Labels represent}%DIFDELCMD < \\
+%DIFDELCMD <         \midrule
+%DIFDELCMD <         %%%
+\texttt{\DIFdelFL{senate-bills}} %DIFAUXCMD
+\DIFdelFL{\mbox{%DIFAUXCMD
+\cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} }\hskip0pt%DIFAUXCMD
+}%DIFDELCMD < & %%%
+\DIFdelFL{294 }%DIFDELCMD < & %%%
+\DIFdelFL{29,157 }%DIFDELCMD < & %%%
+\DIFdelFL{789.6 }%DIFDELCMD < & %%%
+\DIFdelFL{8.0 }%DIFDELCMD < & %%%
+\DIFdelFL{Senators }%DIFDELCMD < & %%%
+\DIFdelFL{Cosponsored bills }%DIFDELCMD < & %%%
+\DIFdelFL{Political party}%DIFDELCMD < \\
+%DIFDELCMD <         %%%
+\texttt{\DIFdelFL{house-bills}} %DIFAUXCMD
+\DIFdelFL{\mbox{%DIFAUXCMD
+\cite{fowler2006connecting,fowler2006legislative,chodrowGenerativeHypergraphClustering2021} }\hskip0pt%DIFAUXCMD
+}%DIFDELCMD < &  %%%
+\DIFdelFL{1,494 }%DIFDELCMD < & %%%
+\DIFdelFL{60,987 }%DIFDELCMD < & %%%
+\DIFdelFL{835.8 }%DIFDELCMD < & %%%
+\DIFdelFL{20.5 }%DIFDELCMD < & %%%
+\DIFdelFL{Congresspeople }%DIFDELCMD < & %%%
+\DIFdelFL{Cosponsored bills }%DIFDELCMD < & %%%
+\DIFdelFL{Political party  }%DIFDELCMD < \\
+%DIFDELCMD <         %%%
+\texttt{\DIFdelFL{high-school}} %DIFAUXCMD
+\DIFdelFL{\mbox{%DIFAUXCMD
+\cite{gemmetto2014mitigation,stehle2011high} }\hskip0pt%DIFAUXCMD
+}%DIFDELCMD < & %%%
+\DIFdelFL{320 }%DIFDELCMD < & %%%
+\DIFdelFL{60,544 }%DIFDELCMD < & %%%
+\DIFdelFL{484.6 }%DIFDELCMD < & %%%
+\DIFdelFL{2.6 }%DIFDELCMD < & %%%
+\DIFdelFL{Students }%DIFDELCMD < & %%%
+\DIFdelFL{Social interactions }%DIFDELCMD < & %%%
+\DIFdelFL{Gender  }%DIFDELCMD < \\
+%DIFDELCMD <         %%%
+\texttt{\DIFdelFL{primary-school}} %DIFAUXCMD
+\DIFdelFL{\mbox{%DIFAUXCMD
+\cite{mastrandrea2015contact} }\hskip0pt%DIFAUXCMD
+}%DIFDELCMD < & %%%
+\DIFdelFL{227 }%DIFDELCMD < & %%%
+\DIFdelFL{44,626 }%DIFDELCMD < & %%%
+\DIFdelFL{590.7 }%DIFDELCMD < & %%%
+\DIFdelFL{3.0 }%DIFDELCMD < & %%%
+\DIFdelFL{Students }%DIFDELCMD < & %%%
+\DIFdelFL{Social interactions }%DIFDELCMD < & %%%
+\DIFdelFL{Gender }%DIFDELCMD < \\
+%DIFDELCMD <         %%%
+\texttt{\DIFdelFL{coauthorship}} %DIFAUXCMD
+\DIFdelFL{\mbox{%DIFAUXCMD
+\cite{agarwal2016women} }\hskip0pt%DIFAUXCMD
+}%DIFDELCMD < & %%%
+\DIFdelFL{105,256 }%DIFDELCMD < & %%%
+\DIFdelFL{142,834 }%DIFDELCMD < & %%%
+\DIFdelFL{3.4 }%DIFDELCMD < & %%%
+\DIFdelFL{2.5 }%DIFDELCMD < & %%%
+\DIFdelFL{Authors }%DIFDELCMD < & %%%
+\DIFdelFL{Papers }%DIFDELCMD < & %%%
+\DIFdelFL{Gender }%DIFDELCMD < \\
+%DIFDELCMD <         %%%
+\texttt{\DIFdelFL{enron-emails}} %DIFAUXCMD
+\DIFdelFL{\mbox{%DIFAUXCMD
+\cite{klimt2004enron}  }\hskip0pt%DIFAUXCMD
+}%DIFDELCMD < & %%%
+\DIFdelFL{14,901 }%DIFDELCMD < & %%%
+\DIFdelFL{83,372 }%DIFDELCMD < & %%%
+\DIFdelFL{18.5 }%DIFDELCMD < & %%%
+\DIFdelFL{3.3 }%DIFDELCMD < & %%%
+\DIFdelFL{Email addresses }%DIFDELCMD < & %%%
+\DIFdelFL{Email threads }%DIFDELCMD < & %%%
+\DIFdelFL{Fringe vs. core }%DIFDELCMD < \\
+%DIFDELCMD <         \bottomrule
+%DIFDELCMD <         \end{tabular}
+%DIFDELCMD < \end{table*}
+%DIFDELCMD < %%%
+\DIFdelend \Cref{fig:empirical_sem} shows our parameter estimates for each of the empirical data sets under the \model{} model. 
 In each panel, we plot the same-label and opposite-label parameter estimates on opposing axes. 
 Some data sets, like the gendered \texttt{primary-school} contact network, appear on or near the line of equality in all three panels, suggesting that homophily with respect to the given binary labels is not a major driver of network evolution. 
 The \texttt{coauthorship} data, meanwhile, falls on the line of equality for the edge copy and extant node addition mechanisms, but there is a difference in the novel node addition parameters: $\same{\hat{\novelrate}} > \opp{\hat{\novelrate}}$.
@@ -774,7 +886,7 @@ The relatively consistent performance of \model{} simulated annealing across the
     We interpret this latter result as proof-of-concept that explicitly modeling edge-dependence can be a useful framework for community detection in hypergraphs. 
 
     \DIFdelbegin \DIFdel{There are several directions for future work}\DIFdelend \DIFaddbegin \DIFadd{Considering the considerable theoretical and computational complications to modeling edge-dependence in hypergraphs, an important question is: }\emph{\DIFadd{when is it worth the effort to model edge-dependence?}} 
-    \DIFadd{This answer to this question hinges on the analytic aims and the data under analysis.
+    \DIFadd{The answer to this question hinges on the analytic aims and the data under analysis.
     It is tempting to suppose that, as the number of nodes and edges grows large, the effects of edge-dependence will become asymptotically negligible and that simpler models may be preferred. 
     The situation, however, is somewhat unclear. 
     For example, many large empirical hypergraphs have very high rates of large intersections between edges; furthermore, these rates decay slowly as edges are added to the system \mbox{%DIFAUXCMD

@@ -97,7 +97,7 @@
     To this end, we introduce a model of hypergraphs with binary node labels in which edges form via a noisy edge copy process tuned by homophilic interactions between the node labels.
     We refer to this model as \Model{} (\model{}).
     Our presentation of \model{} proceeds as follows.
-    In \Cref{sec:model-description}, we describe \model{} and describe several of its limiting properties, including edge structure and degree distribution.
+    In \Cref{sec:model-description}, we describe \model{} and several of its limiting properties, including edge structure and degree distribution.
     We turn to optimization-based inference methods in \Cref{sec:inference}, considering both parameter inference and community detection.
     Evaluating the likelihood of our model requires marginalizing over a set of latent variables that govern the noisy copy mechanism, which is computationally expensive. 
     To estimate our model's parameters when node labels are known, we therefore describe a stochastic expectation-maximization algorithm with favorable scaling.
@@ -413,7 +413,7 @@
     In the first epoch, we accept \emph{all} proposals, while storing the changes to the objective $\tilde{\cL}$ produced by those proposals. 
     At the end of the epoch, we compute the standard deviation $\sigma(\Delta \tilde{\cL})$ of the changes in $\tilde{\cL}$ observed during the epoch. 
     This procedure is handled by the function \texttt{SimulatedAnnealingFirstEpoch} in our implementation (\Cref{algocf:simulated_annealing}).
-    For the remaining epochs, we accept proposals with a probability found by evaluating a Gaussian density with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$, with constant of proportionality that decays with epoch $\ell$.
+    For the remaining epochs, we accept proposals with a probability obtained by evaluating a Gaussian density with mean 0 and a standard deviation proportional to $\sigma(\Delta \tilde{\cL})$, with constant of proportionality that decays with epoch $\ell$.
     We provide a detailed discussion of this algorithm, including our approximate objective function, the implementation of the annealing schedule, and the first epoch of the algorithm, in \Cref{sec:simulated-annealing-algorithm-spec}. 
     
     
@@ -461,20 +461,11 @@ As seen in \Cref{fig:synthetic_sem}, the quality of the learned parameter estima
 We observe especially low estimation errors when the seeded parameters reflect strong homophily in the edge copy step as reflected in the difference $\same{\copyrate} - \opp{\copyrate}$; a typical SEM run for these parameter settings is shown in the top row on the right of \Cref{fig:synthetic_sem}.
 That said, even in the least successful cases for estimation with high KL divergence, the learned estimates are still visually close to the true values, illustrated in the bottom row on the right of \Cref{fig:synthetic_sem}. 
 
-\subsection{Parameter Estimation on Empirical Data} \label{sec:sem-empirical}
-
-We also used our method to infer parameters for six empirical hypergraph data sets described in \Cref{tab:datasets}. 
-Although many labeled hypergraph data sets are now available for community detection, relatively few have natively binary node labels. 
-The \texttt{senate-bills} and \texttt{house-bills} data sets \cite{fowler2006connecting,fowler2006legislative} are hypergraphs of cosponsorships of bills in the U.S. Senate and House of Representatives, respectively, with node labels corresponding to the political party of each legislator; we use the version of these data sets used in \cite{chodrowGenerativeHypergraphClustering2021}.
-The \texttt{high-school} and \texttt{primary-school} data sets \cite{gemmetto2014mitigation,stehle2011high,mastrandrea2015contact} are hypergraphs of social interactions between students in a high school and primary school, respectively, with node labels corresponding to the gender of each student; these data sets were collected through the SocioPatterns project.
-In these data sets, we consider a sequence of interactions to correspond to a single hyperedge if those interactions are identical as sets and temporally contiguous. 
-The \texttt{coauthorship} data set \cite{agarwal2016women} contains publishing records for 81 computer science conferences from 2000 to 2015, with an inferred binary gender label for each author.
-Finally, we considered the \texttt{enron-emails} data set, which contains the email records for 145 users associated with the Enron Corporation \cite{klimt2004enron}.
 
 \begin{table*}
     \caption{Data sets used in this paper. We show the number of nodes $n$, edges $m$, average degree $\langle d \rangle$, and average edge size $\langle k \rangle$ for each data set.
     All data sets are used for parameter estimation. Only \texttt{senate-bills}, \texttt{high-school}, and \texttt{primary-school} are used in community detection experiments.}\label{tab:datasets}
-        \begin{tabular}{lrrrrrrr}
+    \begin{tabular}{lrrrrrrr}
         % \toprule
         & $n$ & $m$ & $\langle d \rangle$ & $\langle k \rangle$ & Nodes are & Edges are & Labels represent\\
         \midrule
@@ -485,8 +476,20 @@ Finally, we considered the \texttt{enron-emails} data set, which contains the em
         \texttt{coauthorship} \cite{agarwal2016women} & 105,256 & 142,834 & 3.4 & 2.5 & Authors & Papers & Gender \\
         \texttt{enron-emails} \cite{klimt2004enron}  & 14,901 & 83,372 & 18.5 & 3.3 & Email addresses & Email threads & Fringe vs. core \\
         \bottomrule
-        \end{tabular}
+    \end{tabular}
 \end{table*}
+
+\subsection{Parameter Estimation on Empirical Data} \label{sec:sem-empirical}
+
+We also used our method to infer parameters for six empirical hypergraph data sets described in \Cref{tab:datasets}. 
+Although many labeled hypergraph data sets are now available for community detection, relatively few have natively binary node labels. 
+The \texttt{senate-bills} and \texttt{house-bills} data sets \cite{fowler2006connecting,fowler2006legislative} are hypergraphs of cosponsorships of bills in the U.S. Senate and House of Representatives, respectively, with node labels corresponding to the political party of each legislator; we use the version of these data sets used in \cite{chodrowGenerativeHypergraphClustering2021}.
+The \texttt{high-school} and \texttt{primary-school} data sets \cite{gemmetto2014mitigation,stehle2011high,mastrandrea2015contact} are hypergraphs of social interactions between students in a high school and primary school, respectively, with node labels corresponding to the gender of each student; these data sets were collected through the SocioPatterns project.
+In these data sets, we consider a sequence of interactions to correspond to a single hyperedge if those interactions are identical as sets and temporally contiguous. 
+The \texttt{coauthorship} data set \cite{agarwal2016women} contains publishing records for 81 computer science conferences from 2000 to 2015, with an inferred binary gender label for each author.
+Finally, we considered the \texttt{enron-emails} data set, which contains the email records for 145 users associated with the Enron Corporation \cite{klimt2004enron}.
+
+
 \Cref{fig:empirical_sem} shows our parameter estimates for each of the empirical data sets under the \model{} model. 
 In each panel, we plot the same-label and opposite-label parameter estimates on opposing axes. 
 Some data sets, like the gendered \texttt{primary-school} contact network, appear on or near the line of equality in all three panels, suggesting that homophily with respect to the given binary labels is not a major driver of network evolution. 
